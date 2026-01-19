@@ -3,138 +3,705 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Calendario</title>
+  <title>Calendario Scout nel Bosco (2026–2029)</title>
+
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    .box { max-width: 700px; margin: auto; }
-    h1 { text-align: center; }
-    .cal { border: 1px solid #ddd; border-radius: 10px; padding: 12px; }
-    .header { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-    button { padding: 8px 12px; border: 1px solid #ccc; background: #fff; border-radius: 8px; cursor: pointer; }
-    button:hover { background: #f2f2f2; }
-    .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
-    .dayname { font-size: 12px; color: #666; text-align: center; }
-    .cell { height: 70px; border: 1px solid #eee; border-radius: 10px; padding: 6px; }
-    .num { font-weight: bold; }
-    .today { border: 2px solid #000; }
-    .event { margin-top: 6px; font-size: 12px; background: #e8f0ff; padding: 4px; border-radius: 6px; }
+    :root{
+      --bg1:#0b2a17;
+      --bg2:#123a20;
+      --card: rgba(255,255,255,.10);
+      --card2: rgba(255,255,255,.14);
+      --text:#eef7ef;
+      --muted: rgba(238,247,239,.75);
+      --accent:#7CFF8A;
+      --danger:#ff4d4d;
+      --gold:#ffd24d;
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --radius: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      overflow-x:hidden;
+      background:
+        radial-gradient(1200px 800px at 20% 10%, rgba(124,255,138,.18), transparent 55%),
+        radial-gradient(900px 600px at 90% 20%, rgba(255,210,77,.16), transparent 60%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      position:relative;
+    }
+
+    /* “Bosco” fake: nebbia + particelle luce */
+    .mist{
+      position:fixed; inset:-50px;
+      background:
+        radial-gradient(500px 300px at 30% 30%, rgba(255,255,255,.10), transparent 70%),
+        radial-gradient(650px 400px at 70% 50%, rgba(255,255,255,.08), transparent 72%),
+        radial-gradient(520px 340px at 40% 80%, rgba(255,255,255,.07), transparent 70%);
+      filter: blur(14px);
+      opacity:.8;
+      animation: drift 16s ease-in-out infinite alternate;
+      pointer-events:none;
+      z-index:0;
+    }
+    @keyframes drift{
+      from{ transform: translate3d(-10px, 0, 0) scale(1.02); }
+      to  { transform: translate3d(10px, -8px, 0) scale(1.03); }
+    }
+
+    .fireflies{
+      position:fixed; inset:0;
+      pointer-events:none;
+      z-index:0;
+    }
+    .firefly{
+      position:absolute;
+      width:6px; height:6px;
+      border-radius:50%;
+      background: rgba(255,210,77,.9);
+      box-shadow: 0 0 18px rgba(255,210,77,.85);
+      opacity:.0;
+      animation: fly 8s linear infinite;
+    }
+    @keyframes fly{
+      0%{ transform: translate(0,0) scale(.8); opacity:0; }
+      10%{ opacity:.9; }
+      50%{ opacity:.35; }
+      90%{ opacity:.9; }
+      100%{ transform: translate(220px,-180px) scale(1.25); opacity:0; }
+    }
+
+    .wrap{
+      position:relative;
+      z-index:1;
+      max-width: 1040px;
+      margin: 22px auto 46px;
+      padding: 14px;
+    }
+
+    .topbar{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      padding: 14px 14px;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .title{
+      display:flex; gap:10px; align-items:center;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .badge{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(124,255,138,.14);
+      border:1px solid rgba(124,255,138,.35);
+      color: var(--text);
+      font-size: 13px;
+      white-space:nowrap;
+    }
+
+    .controls{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    button, select{
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.22);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      outline:none;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+    }
+    button:hover, select:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.32); }
+    button:active{ transform: translateY(0px) scale(.98); }
+
+    .monthTitle{
+      font-size: 18px;
+      font-weight: 800;
+      text-transform: capitalize;
+    }
+    .muted{ color: var(--muted); font-size:13px; }
+
+    /* Card calendario + cornice */
+    .stage{
+      margin-top: 14px;
+      position:relative;
+      border-radius: 22px;
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      border:1px solid rgba(255,255,255,.14);
+      background:
+        radial-gradient(900px 500px at 50% 0%, rgba(124,255,138,.12), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      backdrop-filter: blur(10px);
+    }
+
+    /* Cornice immagine (la tua) */
+    .frame{
+      position:absolute;
+      inset:0;
+      background: url("frame.jpg") center/cover no-repeat;
+      opacity:.95;
+      pointer-events:none;
+      mix-blend-mode: normal;
+    }
+
+    /* Area centrale bianca dell’immagine: noi ci mettiamo sopra la griglia */
+    .content{
+      position:relative;
+      z-index:2;
+      padding: 34px 26px 26px;
+    }
+
+    /* Griglia calendario */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+    .dow{
+      text-align:center;
+      font-weight:800;
+      font-size: 13px;
+      color: rgba(0,0,0,.75);
+      background: rgba(255,255,255,.82);
+      border-radius: 12px;
+      padding: 10px 6px;
+      border: 1px solid rgba(0,0,0,.08);
+    }
+
+    .day{
+      min-height: 84px;
+      border-radius: 16px;
+      padding: 10px 10px 8px;
+      background: rgba(255,255,255,.88);
+      border: 1px solid rgba(0,0,0,.08);
+      color: rgba(0,0,0,.88);
+      cursor:pointer;
+      position:relative;
+      overflow:hidden;
+      transform: translateZ(0);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .day:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0,0,0,.18);
+    }
+    .day:active{ transform: translateY(0px) scale(.99); }
+
+    .day .n{
+      font-weight:900;
+      font-size: 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+    }
+
+    /* “tema natura”: foglia animata in background */
+    .leaf{
+      position:absolute;
+      right:-8px;
+      bottom:-10px;
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: radial-gradient(circle at 30% 30%, rgba(124,255,138,.65), rgba(18,58,32,.15));
+      transform: rotate(18deg);
+      opacity:.55;
+      filter: blur(.2px);
+      animation: leafPulse 3.2s ease-in-out infinite;
+    }
+    @keyframes leafPulse{
+      0%,100%{ transform: rotate(18deg) scale(1); opacity:.45; }
+      50%{ transform: rotate(10deg) scale(1.06); opacity:.62; }
+    }
+
+    /* Stato: fuori mese */
+    .off{ opacity:.55; }
+
+    /* Stato: Oggi */
+    .today{
+      outline: 3px solid rgba(124,255,138,.75);
+      outline-offset: -3px;
+    }
+
+    /* Stato: giorno rosso (festività o compleanno) */
+    .red{
+      border: 2px solid rgba(255,77,77,.65);
+      box-shadow: inset 0 0 0 2px rgba(255,77,77,.08);
+    }
+    .red .n{ color: var(--danger); }
+
+    /* Tag eventi */
+    .tags{
+      margin-top: 8px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+    .tag{
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border:1px solid rgba(0,0,0,.10);
+      background: rgba(0,0,0,.06);
+      color: rgba(0,0,0,.75);
+    }
+    .tag.bday{ background: rgba(255,77,77,.12); border-color: rgba(255,77,77,.28); }
+    .tag.holi{ background: rgba(255,77,77,.12); border-color: rgba(255,77,77,.28); }
+    .tag.saint{ background: rgba(255,210,77,.20); border-color: rgba(255,210,77,.42); }
+
+    /* MODAL animato */
+    .modalBackdrop{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      z-index:99;
+    }
+    .modalBackdrop.show{ display:flex; }
+
+    .modal{
+      width:min(560px, 96vw);
+      background: rgba(18,58,32,.92);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 16px 16px 14px;
+      transform: translateY(20px) scale(.95);
+      opacity:0;
+      animation: pop .32s ease forwards;
+      position:relative;
+      overflow:hidden;
+    }
+    @keyframes pop{
+      to{ transform: translateY(0) scale(1); opacity:1; }
+    }
+    .modal::before{
+      content:"";
+      position:absolute;
+      inset:-60px;
+      background:
+        radial-gradient(300px 220px at 20% 20%, rgba(124,255,138,.28), transparent 60%),
+        radial-gradient(300px 220px at 80% 30%, rgba(255,210,77,.22), transparent 60%);
+      filter: blur(10px);
+      opacity:.8;
+      pointer-events:none;
+    }
+    .modalHeader{
+      position:relative;
+      display:flex; justify-content:space-between; align-items:flex-start;
+      gap:12px;
+      padding: 6px 6px 10px;
+    }
+    .modalTitle{
+      font-weight: 900;
+      font-size: 18px;
+      margin:0;
+    }
+    .closeBtn{
+      border-radius: 14px;
+      padding: 8px 10px;
+      background: rgba(0,0,0,.22);
+    }
+    .modalBody{
+      position:relative;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: 12px;
+      margin: 6px;
+    }
+    .line{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding: 10px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.10);
+      margin-bottom: 10px;
+      animation: slideIn .35s ease both;
+    }
+    .line:nth-child(2){ animation-delay: .05s; }
+    .line:nth-child(3){ animation-delay: .10s; }
+    @keyframes slideIn{
+      from{ transform: translateX(-10px); opacity:0; }
+      to{ transform: translateX(0); opacity:1; }
+    }
+    .ico{ font-size: 20px; line-height: 1; }
+    .txt{ margin:0; }
+    .sub{ color: rgba(238,247,239,.85); font-size: 13px; margin: 2px 0 0; }
+
+    .hint{
+      margin-top: 10px;
+      text-align:center;
+      color: rgba(255,255,255,.75);
+      font-size: 12px;
+    }
+
+    @media (max-width: 700px){
+      .content{ padding: 20px 14px 16px; }
+      .day{ min-height: 74px; }
+      .grid{ gap: 8px; }
+    }
   </style>
 </head>
-<body>
-  <div class="box">
-    <h1>📅 Calendario</h1>
 
-    <div class="cal">
-      <div class="header">
-        <button id="prev">⬅️</button>
-        <h2 id="title" style="margin:0;"></h2>
-        <button id="next">➡️</button>
+<body>
+  <div class="mist"></div>
+  <div class="fireflies" id="fireflies"></div>
+
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <div class="title">
+          <div style="font-size:20px;">🌲</div>
+          <div>
+            <div style="font-size:16px;font-weight:900;">Calendario Scout nel Bosco</div>
+            <div class="muted">2026 → 2029 • clicca un giorno per vedere eventi</div>
+          </div>
+        </div>
       </div>
 
-      <div class="grid" id="names"></div>
-      <div class="grid" id="grid"></div>
+      <div class="controls">
+        <button id="prev">⬅️</button>
+
+        <div class="monthTitle" id="monthTitle">—</div>
+
+        <button id="next">➡️</button>
+
+        <select id="yearSel" title="Seleziona anno">
+          <option>2026</option>
+          <option>2027</option>
+          <option>2028</option>
+          <option>2029</option>
+        </select>
+
+        <button id="todayBtn">Oggi</button>
+
+        <span class="badge">🔴 Rosso: feste & compleanni</span>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="frame"></div>
+
+      <div class="content">
+        <div class="grid" id="dow"></div>
+        <div style="height:10px"></div>
+        <div class="grid" id="cal"></div>
+      </div>
+    </div>
+
+    <div class="hint">✨ Tema natura: foglie animate, lucciole, popup con animazione.</div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modalBackdrop" id="backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+      <div class="modalHeader">
+        <h3 class="modalTitle" id="mTitle">Dettagli</h3>
+        <button class="closeBtn" id="close">Chiudi ✖</button>
+      </div>
+      <div class="modalBody" id="mBody"></div>
     </div>
   </div>
 
 <script>
-  const dayNames = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"];
+  // ====== UTIL ======
+  const pad = n => String(n).padStart(2,"0");
+  const ymd = (y,m,d) => `${y}-${pad(m)}-${pad(d)}`;
+  const itMonth = (y,m) => new Date(y, m-1, 1).toLocaleString("it-IT",{month:"long", year:"numeric"});
 
-  // Eventi di esempio: modifica come vuoi
-  // formato data: "YYYY-MM-DD"
-  const events = {
-    "2026-01-25": "🎂 Compleanno",
-    "2026-02-02": "🏕️ Uscita scout"
+  // ====== DATI EVENTI ======
+  // Tipi: bday, holi, saint, note
+  // IMPORTANT: i compleanni e festività finiscono in ROSSO automaticamente.
+  const EVENTS = {
+    // Compleanno richiesto:
+    "2026-01-20": [
+      { type:"bday", icon:"🎂", title:"Compleanno di Simone", detail:"Oggi si festeggia Simone! 🥳" }
+    ],
+
+    // Esempi festività (aggiungine quante vuoi):
+    "2026-01-01": [{ type:"holi", icon:"🎆", title:"Capodanno", detail:"Buon anno!" }],
+    "2026-01-06": [{ type:"holi", icon:"🧹", title:"Epifania", detail:"L’Epifania tutte le feste porta via." }],
+    "2026-04-05": [{ type:"holi", icon:"🐣", title:"Pasqua", detail:"Giornata di festa (data da aggiornare ogni anno)." }],
+    "2026-04-06": [{ type:"holi", icon:"🌿", title:"Pasquetta", detail:"Gita nella natura!" }],
+    "2026-04-25": [{ type:"holi", icon:"🇮🇹", title:"Festa della Liberazione", detail:"25 aprile." }],
+    "2026-05-01": [{ type:"holi", icon:"🛠️", title:"Festa dei Lavoratori", detail:"1 maggio." }],
+    "2026-06-02": [{ type:"holi", icon:"🎖️", title:"Festa della Repubblica", detail:"2 giugno." }],
+    "2026-08-15": [{ type:"holi", icon:"☀️", title:"Ferragosto", detail:"Giornata estiva di festa." }],
+    "2026-11-01": [{ type:"holi", icon:"🕯️", title:"Ognissanti", detail:"1 novembre." }],
+    "2026-12-08": [{ type:"holi", icon:"✨", title:"Immacolata", detail:"8 dicembre." }],
+    "2026-12-25": [{ type:"holi", icon:"🎄", title:"Natale", detail:"25 dicembre." }],
+    "2026-12-26": [{ type:"holi", icon:"🎁", title:"Santo Stefano", detail:"26 dicembre." }],
+
+    // Celebrazioni / santi (esempi, aggiungi elenco completo se vuoi):
+    "2026-02-24": [{ type:"saint", icon:"⛪", title:"San Mattia", detail:"Celebrazione di San Mattia." }],
+    "2026-08-08": [{ type:"saint", icon:"⛪", title:"San Domenico", detail:"Celebrazione di San Domenico." }]
   };
 
-  let current = new Date();
-  current.setDate(1);
+  // ====== UI ======
+  const dowEl = document.getElementById("dow");
+  const calEl = document.getElementById("cal");
+  const monthTitleEl = document.getElementById("monthTitle");
+  const yearSel = document.getElementById("yearSel");
 
-  const namesEl = document.getElementById("names");
-  const gridEl = document.getElementById("grid");
-  const titleEl = document.getElementById("title");
+  const backdrop = document.getElementById("backdrop");
+  const closeBtn = document.getElementById("close");
+  const mTitle = document.getElementById("mTitle");
+  const mBody = document.getElementById("mBody");
 
-  function pad(n){ return String(n).padStart(2,"0"); }
-  function ymd(d){
-    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-  }
+  // Giorni settimana (Lun -> Dom)
+  const DOW = ["Lun","Mar","Mer","Gio","Ven","Sab","Dom"];
 
-  function renderNames(){
-    namesEl.innerHTML = "";
-    dayNames.forEach(n=>{
-      const d=document.createElement("div");
-      d.className="dayname";
-      d.textContent=n;
-      namesEl.appendChild(d);
+  // ====== STATO CALENDARIO ======
+  let stateYear = 2026;
+  let stateMonth = 1; // 1..12
+
+  // ====== RENDER DOW ======
+  function renderDOW(){
+    dowEl.innerHTML = "";
+    DOW.forEach(d=>{
+      const div = document.createElement("div");
+      div.className="dow";
+      div.textContent = d;
+      dowEl.appendChild(div);
     });
   }
 
-  function render(){
-    const year = current.getFullYear();
-    const month = current.getMonth();
+  // ====== CALCOLO GRIGLIA MESE ======
+  function firstDayOffset(y,m){
+    // JS getDay(): 0=Dom..6=Sab. Noi vogliamo Lun=0..Dom=6
+    const js = new Date(y, m-1, 1).getDay();
+    return (js + 6) % 7;
+  }
 
-    const monthName = current.toLocaleString("it-IT", { month: "long" });
-    titleEl.textContent = `${monthName.charAt(0).toUpperCase()+monthName.slice(1)} ${year}`;
+  function daysInMonth(y,m){
+    return new Date(y, m, 0).getDate();
+  }
 
-    gridEl.innerHTML="";
+  function inRange(y){
+    return y>=2026 && y<=2029;
+  }
 
-    // Primo giorno del mese (JS: 0=Dom...6=Sab). Noi vogliamo Lun=0...Dom=6
-    const first = new Date(year, month, 1);
-    let jsDay = first.getDay();        // 0 dom,1 lun...
-    let startOffset = (jsDay + 6) % 7; // lun=0 ... dom=6
+  // ====== EVENTI PER DATA ======
+  function eventsFor(key){
+    return EVENTS[key] || [];
+  }
 
-    // Numero giorni mese
-    const last = new Date(year, month+1, 0);
-    const daysInMonth = last.getDate();
+  function isRedDay(key){
+    const ev = eventsFor(key);
+    return ev.some(e => e.type==="bday" || e.type==="holi");
+  }
 
-    // Celle vuote iniziali
-    for(let i=0;i<startOffset;i++){
-      const cell=document.createElement("div");
-      cell.className="cell";
-      cell.style.visibility="hidden";
-      gridEl.appendChild(cell);
+  // ====== MODAL ======
+  function openModal(dateKey, niceLabel, evs){
+    mTitle.textContent = niceLabel;
+
+    if(!evs.length){
+      mBody.innerHTML = `
+        <div class="line">
+          <div class="ico">🌿</div>
+          <div>
+            <p class="txt" style="margin:0;font-weight:900;">Nessun evento segnato</p>
+            <p class="sub">Giornata perfetta per una buona azione scout 😊</p>
+          </div>
+        </div>`;
+    } else {
+      mBody.innerHTML = evs.map((e)=>`
+        <div class="line">
+          <div class="ico">${e.icon || "📌"}</div>
+          <div>
+            <p class="txt" style="margin:0;font-weight:900;">${e.title}</p>
+            <p class="sub">${e.detail || ""}</p>
+          </div>
+        </div>
+      `).join("");
     }
 
+    backdrop.classList.add("show");
+  }
+
+  function closeModal(){
+    backdrop.classList.remove("show");
+  }
+
+  closeBtn.addEventListener("click", closeModal);
+  backdrop.addEventListener("click", (e)=>{ if(e.target === backdrop) closeModal(); });
+  window.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeModal(); });
+
+  // ====== RENDER CALENDARIO ======
+  function renderCalendar(){
+    if(!inRange(stateYear)){
+      stateYear = Math.min(2029, Math.max(2026, stateYear));
+    }
+    monthTitleEl.textContent = itMonth(stateYear, stateMonth);
+
+    yearSel.value = String(stateYear);
+
+    calEl.innerHTML = "";
+
+    const offset = firstDayOffset(stateYear, stateMonth);
+    const dim = daysInMonth(stateYear, stateMonth);
+
+    // Per riempire la griglia in modo “completo” (42 celle):
+    // calcolo giorni mese precedente/seguente
+    const prevMonth = stateMonth === 1 ? 12 : stateMonth - 1;
+    const prevYear  = stateMonth === 1 ? stateYear - 1 : stateYear;
+    const nextMonth = stateMonth === 12 ? 1 : stateMonth + 1;
+    const nextYear  = stateMonth === 12 ? stateYear + 1 : stateYear;
+
+    const dimPrev = daysInMonth(prevYear, prevMonth);
+
     const today = new Date();
-    const todayKey = ymd(today);
+    const todayKey = ymd(today.getFullYear(), today.getMonth()+1, today.getDate());
 
-    for(let day=1; day<=daysInMonth; day++){
-      const d = new Date(year, month, day);
-      const key = ymd(d);
+    let cells = 0;
 
-      const cell=document.createElement("div");
-      cell.className="cell" + (key===todayKey ? " today" : "");
+    // Celle mese precedente
+    for(let i=0;i<offset;i++){
+      const dayNum = dimPrev - offset + 1 + i;
+      const key = ymd(prevYear, prevMonth, dayNum);
 
-      const num=document.createElement("div");
-      num.className="num";
-      num.textContent=day;
+      const cell = makeDayCell(prevYear, prevMonth, dayNum, key, true, todayKey);
+      calEl.appendChild(cell);
+      cells++;
+    }
 
-      cell.appendChild(num);
+    // Celle mese corrente
+    for(let d=1; d<=dim; d++){
+      const key = ymd(stateYear, stateMonth, d);
+      const cell = makeDayCell(stateYear, stateMonth, d, key, false, todayKey);
+      calEl.appendChild(cell);
+      cells++;
+    }
 
-      if(events[key]){
-        const ev=document.createElement("div");
-        ev.className="event";
-        ev.textContent=events[key];
-        cell.appendChild(ev);
-      }
-
-      gridEl.appendChild(cell);
+    // Celle mese successivo fino a 42
+    let nextDay = 1;
+    while(cells < 42){
+      const key = ymd(nextYear, nextMonth, nextDay);
+      const cell = makeDayCell(nextYear, nextMonth, nextDay, key, true, todayKey);
+      calEl.appendChild(cell);
+      cells++;
+      nextDay++;
     }
   }
 
-  document.getElementById("prev").onclick=()=>{
-    current.setMonth(current.getMonth()-1);
-    current.setDate(1);
-    render();
-  };
+  function makeDayCell(y,m,d,key,isOff,todayKey){
+    const evs = eventsFor(key);
 
-  document.getElementById("next").onclick=()=>{
-    current.setMonth(current.getMonth()+1);
-    current.setDate(1);
-    render();
-  };
+    const div = document.createElement("div");
+    div.className = "day" + (isOff ? " off" : "") + (key===todayKey ? " today" : "") + (isRedDay(key) ? " red" : "");
 
-  renderNames();
-  render();
+    div.innerHTML = `
+      <div class="leaf"></div>
+      <div class="n">
+        <span>${d}</span>
+        <span style="font-size:12px;opacity:.8;">${evs.some(e=>e.type==="bday") ? "🎂" : evs.some(e=>e.type==="holi") ? "🎉" : evs.some(e=>e.type==="saint") ? "⛪" : ""}</span>
+      </div>
+      <div class="tags">
+        ${evs.slice(0,3).map(e => {
+          const cls = e.type==="bday" ? "bday" : e.type==="holi" ? "holi" : e.type==="saint" ? "saint" : "";
+          const label = e.type==="bday" ? "Compleanno" : e.type==="holi" ? "Festivo" : e.type==="saint" ? "Santo" : "Evento";
+          return `<span class="tag ${cls}">${label}</span>`;
+        }).join("")}
+      </div>
+    `;
+
+    div.addEventListener("click", ()=>{
+      const nice = new Date(y, m-1, d).toLocaleDateString("it-IT", {weekday:"long", day:"2-digit", month:"long", year:"numeric"});
+      // Se clicchi su un giorno "fuori mese", ti porto direttamente a quel mese/anno
+      if(isOff){
+        stateYear = y;
+        stateMonth = m;
+        renderCalendar();
+      }
+      openModal(key, nice, evs);
+    });
+
+    return div;
+  }
+
+  // ====== NAV ======
+  document.getElementById("prev").addEventListener("click", ()=>{
+    stateMonth--;
+    if(stateMonth<1){ stateMonth=12; stateYear--; }
+    if(!inRange(stateYear)){ stateYear=2026; stateMonth=1; }
+    renderCalendar();
+  });
+
+  document.getElementById("next").addEventListener("click", ()=>{
+    stateMonth++;
+    if(stateMonth>12){ stateMonth=1; stateYear++; }
+    if(!inRange(stateYear)){ stateYear=2029; stateMonth=12; }
+    renderCalendar();
+  });
+
+  yearSel.addEventListener("change", ()=>{
+    stateYear = parseInt(yearSel.value,10);
+    renderCalendar();
+  });
+
+  document.getElementById("todayBtn").addEventListener("click", ()=>{
+    const t = new Date();
+    // se oggi non è tra 2026–2029, torno a 2026 gennaio (puoi cambiare)
+    if(t.getFullYear()<2026 || t.getFullYear()>2029){
+      stateYear = 2026; stateMonth = 1;
+    } else {
+      stateYear = t.getFullYear();
+      stateMonth = t.getMonth()+1;
+    }
+    renderCalendar();
+  });
+
+  // ====== FIREFLIES (lucciole) ======
+  function spawnFireflies(){
+    const box = document.getElementById("fireflies");
+    box.innerHTML = "";
+    const n = 16;
+    for(let i=0;i<n;i++){
+      const f = document.createElement("div");
+      f.className = "firefly";
+      const x = Math.random()*window.innerWidth*0.9;
+      const y = Math.random()*window.innerHeight*0.9;
+      f.style.left = x+"px";
+      f.style.top  = y+"px";
+      f.style.animationDuration = (6+Math.random()*7)+"s";
+      f.style.animationDelay = (Math.random()*3)+"s";
+      box.appendChild(f);
+    }
+  }
+  window.addEventListener("resize", spawnFireflies);
+
+  // ====== AVVIO ======
+  renderDOW();
+  spawnFireflies();
+  renderCalendar();
 </script>
 </body>
 </html>
