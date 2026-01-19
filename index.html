@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calendario</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .box { max-width: 700px; margin: auto; }
+    h1 { text-align: center; }
+    .cal { border: 1px solid #ddd; border-radius: 10px; padding: 12px; }
+    .header { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    button { padding: 8px 12px; border: 1px solid #ccc; background: #fff; border-radius: 8px; cursor: pointer; }
+    button:hover { background: #f2f2f2; }
+    .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
+    .dayname { font-size: 12px; color: #666; text-align: center; }
+    .cell { height: 70px; border: 1px solid #eee; border-radius: 10px; padding: 6px; }
+    .num { font-weight: bold; }
+    .today { border: 2px solid #000; }
+    .event { margin-top: 6px; font-size: 12px; background: #e8f0ff; padding: 4px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>📅 Calendario</h1>
+
+    <div class="cal">
+      <div class="header">
+        <button id="prev">⬅️</button>
+        <h2 id="title" style="margin:0;"></h2>
+        <button id="next">➡️</button>
+      </div>
+
+      <div class="grid" id="names"></div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </div>
+
+<script>
+  const dayNames = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"];
+
+  // Eventi di esempio: modifica come vuoi
+  // formato data: "YYYY-MM-DD"
+  const events = {
+    "2026-01-25": "🎂 Compleanno",
+    "2026-02-02": "🏕️ Uscita scout"
+  };
+
+  let current = new Date();
+  current.setDate(1);
+
+  const namesEl = document.getElementById("names");
+  const gridEl = document.getElementById("grid");
+  const titleEl = document.getElementById("title");
+
+  function pad(n){ return String(n).padStart(2,"0"); }
+  function ymd(d){
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  }
+
+  function renderNames(){
+    namesEl.innerHTML = "";
+    dayNames.forEach(n=>{
+      const d=document.createElement("div");
+      d.className="dayname";
+      d.textContent=n;
+      namesEl.appendChild(d);
+    });
+  }
+
+  function render(){
+    const year = current.getFullYear();
+    const month = current.getMonth();
+
+    const monthName = current.toLocaleString("it-IT", { month: "long" });
+    titleEl.textContent = `${monthName.charAt(0).toUpperCase()+monthName.slice(1)} ${year}`;
+
+    gridEl.innerHTML="";
+
+    // Primo giorno del mese (JS: 0=Dom...6=Sab). Noi vogliamo Lun=0...Dom=6
+    const first = new Date(year, month, 1);
+    let jsDay = first.getDay();        // 0 dom,1 lun...
+    let startOffset = (jsDay + 6) % 7; // lun=0 ... dom=6
+
+    // Numero giorni mese
+    const last = new Date(year, month+1, 0);
+    const daysInMonth = last.getDate();
+
+    // Celle vuote iniziali
+    for(let i=0;i<startOffset;i++){
+      const cell=document.createElement("div");
+      cell.className="cell";
+      cell.style.visibility="hidden";
+      gridEl.appendChild(cell);
+    }
+
+    const today = new Date();
+    const todayKey = ymd(today);
+
+    for(let day=1; day<=daysInMonth; day++){
+      const d = new Date(year, month, day);
+      const key = ymd(d);
+
+      const cell=document.createElement("div");
+      cell.className="cell" + (key===todayKey ? " today" : "");
+
+      const num=document.createElement("div");
+      num.className="num";
+      num.textContent=day;
+
+      cell.appendChild(num);
+
+      if(events[key]){
+        const ev=document.createElement("div");
+        ev.className="event";
+        ev.textContent=events[key];
+        cell.appendChild(ev);
+      }
+
+      gridEl.appendChild(cell);
+    }
+  }
+
+  document.getElementById("prev").onclick=()=>{
+    current.setMonth(current.getMonth()-1);
+    current.setDate(1);
+    render();
+  };
+
+  document.getElementById("next").onclick=()=>{
+    current.setMonth(current.getMonth()+1);
+    current.setDate(1);
+    render();
+  };
+
+  renderNames();
+  render();
+</script>
+</body>
+</html>
