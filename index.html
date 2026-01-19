@@ -7,77 +7,148 @@
 
   <style>
     :root{
-      --bg1:#0b2a17;
-      --bg2:#123a20;
-      --card: rgba(255,255,255,.10);
-      --card2: rgba(255,255,255,.14);
       --text:#eef7ef;
-      --muted: rgba(238,247,239,.75);
-      --accent:#7CFF8A;
-      --danger:#ff4d4d;
+      --muted: rgba(238,247,239,.78);
+      --danger:#ff3f3f;
       --gold:#ffd24d;
+
+      /* Tema dinamico (cambia mese + giorno/notte) */
+      --overlayA: rgba(8,25,14,.55);
+      --overlayB: rgba(8,25,14,.25);
+      --panel: rgba(255,255,255,.10);
+      --panel2: rgba(255,255,255,.14);
+      --btn: rgba(0,0,0,.22);
+      --btnBorder: rgba(255,255,255,.18);
       --shadow: 0 18px 50px rgba(0,0,0,.55);
       --radius: 18px;
+
+      /* Sfondo dinamico */
+      --bgUrl: url("bg_forest.jpg");
+
+      /* Intensità lucciole */
+      --fliesOpacity: .75;
     }
 
     *{ box-sizing:border-box; }
+    html, body { height:100%; }
     body{
       margin:0;
-      min-height:100vh;
       color:var(--text);
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       overflow-x:hidden;
+      background: #08190e;
+    }
+
+    /* Sfondo bosco */
+    .bg{
+      position:fixed; inset:0;
+      background-image: var(--bgUrl);
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.03);
+      filter: saturate(1.05) contrast(1.05);
+      z-index:-3;
+    }
+    /* overlay per rendere leggibile */
+    .bgOverlay{
+      position:fixed; inset:0;
       background:
         radial-gradient(1200px 800px at 20% 10%, rgba(124,255,138,.18), transparent 55%),
         radial-gradient(900px 600px at 90% 20%, rgba(255,210,77,.16), transparent 60%),
-        linear-gradient(160deg, var(--bg1), var(--bg2));
-      position:relative;
+        linear-gradient(160deg, var(--overlayA), var(--overlayB));
+      z-index:-2;
     }
 
-    /* “Bosco” fake: nebbia + particelle luce */
+    /* Nebbia */
     .mist{
-      position:fixed; inset:-50px;
+      position:fixed; inset:-60px;
       background:
-        radial-gradient(500px 300px at 30% 30%, rgba(255,255,255,.10), transparent 70%),
-        radial-gradient(650px 400px at 70% 50%, rgba(255,255,255,.08), transparent 72%),
+        radial-gradient(520px 340px at 30% 30%, rgba(255,255,255,.10), transparent 70%),
+        radial-gradient(700px 440px at 70% 45%, rgba(255,255,255,.08), transparent 72%),
         radial-gradient(520px 340px at 40% 80%, rgba(255,255,255,.07), transparent 70%);
       filter: blur(14px);
-      opacity:.8;
+      opacity:.85;
       animation: drift 16s ease-in-out infinite alternate;
       pointer-events:none;
-      z-index:0;
+      z-index:-1;
     }
     @keyframes drift{
       from{ transform: translate3d(-10px, 0, 0) scale(1.02); }
       to  { transform: translate3d(10px, -8px, 0) scale(1.03); }
     }
 
+    /* Foglie che cadono */
+    .leaves{
+      position:fixed; inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:0;
+      opacity:.95;
+    }
+    .leafFall{
+      position:absolute;
+      top:-80px;
+      width: 28px; height: 28px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,210,77,.9), rgba(18,58,32,.25));
+      border-radius: 6px 18px 6px 18px;
+      filter: blur(.2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,.18);
+      transform: rotate(0deg);
+      opacity:.0;
+      animation:
+        leafDown var(--t) linear infinite,
+        leafSpin calc(var(--t) * .75) ease-in-out infinite;
+    }
+    .leafFall::after{
+      content:"";
+      position:absolute; inset:0;
+      border-radius: inherit;
+      background: linear-gradient(120deg, rgba(255,255,255,.25), transparent 55%);
+      mix-blend-mode: overlay;
+      opacity:.7;
+    }
+
+    @keyframes leafDown{
+      0%   { transform: translate3d(0,-60px,0); opacity:0; }
+      8%   { opacity:.85; }
+      50%  { opacity:.55; }
+      92%  { opacity:.85; }
+      100% { transform: translate3d(var(--dx), 110vh, 0); opacity:0; }
+    }
+    @keyframes leafSpin{
+      0%   { rotate: 0deg; }
+      50%  { rotate: 130deg; }
+      100% { rotate: 260deg; }
+    }
+
+    /* Lucciole */
     .fireflies{
       position:fixed; inset:0;
       pointer-events:none;
       z-index:0;
+      opacity: var(--fliesOpacity);
     }
     .firefly{
       position:absolute;
       width:6px; height:6px;
       border-radius:50%;
-      background: rgba(255,210,77,.9);
+      background: rgba(255,210,77,.95);
       box-shadow: 0 0 18px rgba(255,210,77,.85);
-      opacity:.0;
-      animation: fly 8s linear infinite;
+      opacity:0;
+      animation: fly var(--t) linear infinite;
     }
     @keyframes fly{
       0%{ transform: translate(0,0) scale(.8); opacity:0; }
-      10%{ opacity:.9; }
+      12%{ opacity:.95; }
       50%{ opacity:.35; }
-      90%{ opacity:.9; }
-      100%{ transform: translate(220px,-180px) scale(1.25); opacity:0; }
+      88%{ opacity:.95; }
+      100%{ transform: translate(var(--dx), var(--dy)) scale(1.25); opacity:0; }
     }
 
     .wrap{
       position:relative;
-      z-index:1;
-      max-width: 1040px;
+      z-index:2;
+      max-width: 1080px;
       margin: 22px auto 46px;
       padding: 14px;
     }
@@ -89,8 +160,8 @@
       justify-content:space-between;
       flex-wrap:wrap;
       padding: 14px 14px;
-      background: var(--card);
-      border: 1px solid rgba(255,255,255,.14);
+      background: var(--panel);
+      border: 1px solid var(--panel2);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       backdrop-filter: blur(10px);
@@ -98,7 +169,7 @@
 
     .title{
       display:flex; gap:10px; align-items:center;
-      font-weight:800;
+      font-weight:900;
       letter-spacing:.2px;
     }
     .badge{
@@ -109,7 +180,6 @@
       border-radius: 999px;
       background: rgba(124,255,138,.14);
       border:1px solid rgba(124,255,138,.35);
-      color: var(--text);
       font-size: 13px;
       white-space:nowrap;
     }
@@ -122,24 +192,56 @@
     }
 
     button, select{
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.22);
+      border:1px solid var(--btnBorder);
+      background: var(--btn);
       color: var(--text);
       padding: 10px 12px;
       border-radius: 14px;
       cursor:pointer;
       outline:none;
-      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
     }
-    button:hover, select:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.32); }
+    button:hover, select:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.32);
+      box-shadow: 0 12px 24px rgba(0,0,0,.18);
+    }
     button:active{ transform: translateY(0px) scale(.98); }
 
     .monthTitle{
       font-size: 18px;
-      font-weight: 800;
+      font-weight: 900;
       text-transform: capitalize;
     }
     .muted{ color: var(--muted); font-size:13px; }
+
+    .tog{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid var(--btnBorder);
+      background: var(--btn);
+      user-select:none;
+      cursor:pointer;
+    }
+    .dot{
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.30);
+      box-shadow: inset 0 0 0 2px rgba(0,0,0,.25);
+      position:relative;
+      overflow:hidden;
+    }
+    .dot::after{
+      content:"";
+      position:absolute; inset:0;
+      background: rgba(124,255,138,.85);
+      transform: translateX(-100%);
+      transition: transform .25s ease;
+    }
+    .tog.on .dot::after{ transform: translateX(0%); }
 
     /* Card calendario + cornice */
     .stage{
@@ -160,19 +262,18 @@
       position:absolute;
       inset:0;
       background: url("frame.jpg") center/cover no-repeat;
-      opacity:.95;
+      opacity:.96;
       pointer-events:none;
-      mix-blend-mode: normal;
+      z-index:1;
     }
 
-    /* Area centrale bianca dell’immagine: noi ci mettiamo sopra la griglia */
+    /* Area centrale */
     .content{
       position:relative;
       z-index:2;
       padding: 34px 26px 26px;
     }
 
-    /* Griglia calendario */
     .grid{
       display:grid;
       grid-template-columns: repeat(7, 1fr);
@@ -180,26 +281,25 @@
     }
     .dow{
       text-align:center;
-      font-weight:800;
+      font-weight:900;
       font-size: 13px;
-      color: rgba(0,0,0,.75);
-      background: rgba(255,255,255,.82);
+      color: rgba(0,0,0,.80);
+      background: rgba(255,255,255,.84);
       border-radius: 12px;
       padding: 10px 6px;
       border: 1px solid rgba(0,0,0,.08);
     }
 
     .day{
-      min-height: 84px;
+      min-height: 86px;
       border-radius: 16px;
       padding: 10px 10px 8px;
-      background: rgba(255,255,255,.88);
+      background: rgba(255,255,255,.90);
       border: 1px solid rgba(0,0,0,.08);
       color: rgba(0,0,0,.88);
       cursor:pointer;
       position:relative;
       overflow:hidden;
-      transform: translateZ(0);
       transition: transform .15s ease, box-shadow .15s ease;
     }
     .day:hover{
@@ -215,67 +315,68 @@
       align-items:center;
       justify-content:space-between;
       gap:8px;
+      position:relative;
+      z-index:2;
     }
 
-    /* “tema natura”: foglia animata in background */
-    .leaf{
+    /* Foglia decorativa nel riquadro (tema natura) */
+    .leafBadge{
       position:absolute;
-      right:-8px;
-      bottom:-10px;
-      width: 52px;
-      height: 52px;
-      border-radius: 16px;
+      right:-10px;
+      bottom:-12px;
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
       background: radial-gradient(circle at 30% 30%, rgba(124,255,138,.65), rgba(18,58,32,.15));
       transform: rotate(18deg);
       opacity:.55;
-      filter: blur(.2px);
       animation: leafPulse 3.2s ease-in-out infinite;
+      z-index:1;
     }
     @keyframes leafPulse{
       0%,100%{ transform: rotate(18deg) scale(1); opacity:.45; }
       50%{ transform: rotate(10deg) scale(1.06); opacity:.62; }
     }
 
-    /* Stato: fuori mese */
     .off{ opacity:.55; }
-
-    /* Stato: Oggi */
     .today{
       outline: 3px solid rgba(124,255,138,.75);
       outline-offset: -3px;
     }
 
-    /* Stato: giorno rosso (festività o compleanno) */
+    /* Rosso: festivi + compleanni */
     .red{
-      border: 2px solid rgba(255,77,77,.65);
-      box-shadow: inset 0 0 0 2px rgba(255,77,77,.08);
+      border: 2px solid rgba(255,63,63,.70);
+      box-shadow: inset 0 0 0 2px rgba(255,63,63,.08);
     }
     .red .n{ color: var(--danger); }
 
-    /* Tag eventi */
     .tags{
       margin-top: 8px;
       display:flex;
       flex-wrap:wrap;
       gap:6px;
+      position:relative;
+      z-index:2;
     }
     .tag{
       font-size: 11px;
-      font-weight: 800;
+      font-weight: 900;
       padding: 4px 8px;
       border-radius: 999px;
       border:1px solid rgba(0,0,0,.10);
       background: rgba(0,0,0,.06);
       color: rgba(0,0,0,.75);
     }
-    .tag.bday{ background: rgba(255,77,77,.12); border-color: rgba(255,77,77,.28); }
-    .tag.holi{ background: rgba(255,77,77,.12); border-color: rgba(255,77,77,.28); }
-    .tag.saint{ background: rgba(255,210,77,.20); border-color: rgba(255,210,77,.42); }
+    .tag.bday{ background: rgba(255,63,63,.12); border-color: rgba(255,63,63,.28); }
+    .tag.holi{ background: rgba(255,63,63,.12); border-color: rgba(255,63,63,.28); }
+    .tag.saint{ background: rgba(255,210,77,.22); border-color: rgba(255,210,77,.45); }
+    .tag.scout{ background: rgba(124,255,138,.18); border-color: rgba(124,255,138,.35); }
 
-    /* MODAL animato */
+    /* MODAL */
     .modalBackdrop{
       position:fixed; inset:0;
-      background: rgba(0,0,0,.55);
+      background: rgba(0,0,0,.60);
       display:none;
       align-items:center;
       justify-content:center;
@@ -285,48 +386,43 @@
     .modalBackdrop.show{ display:flex; }
 
     .modal{
-      width:min(560px, 96vw);
-      background: rgba(18,58,32,.92);
+      width:min(620px, 96vw);
+      background: rgba(14,44,25,.92);
       border:1px solid rgba(255,255,255,.14);
       border-radius: 22px;
       box-shadow: var(--shadow);
       padding: 16px 16px 14px;
-      transform: translateY(20px) scale(.95);
+      transform: translateY(18px) scale(.95);
       opacity:0;
       animation: pop .32s ease forwards;
       position:relative;
       overflow:hidden;
     }
-    @keyframes pop{
-      to{ transform: translateY(0) scale(1); opacity:1; }
-    }
+    @keyframes pop{ to{ transform: translateY(0) scale(1); opacity:1; } }
+
     .modal::before{
       content:"";
       position:absolute;
-      inset:-60px;
+      inset:-80px;
       background:
-        radial-gradient(300px 220px at 20% 20%, rgba(124,255,138,.28), transparent 60%),
-        radial-gradient(300px 220px at 80% 30%, rgba(255,210,77,.22), transparent 60%);
-      filter: blur(10px);
-      opacity:.8;
+        radial-gradient(320px 240px at 18% 18%, rgba(124,255,138,.28), transparent 60%),
+        radial-gradient(320px 240px at 82% 26%, rgba(255,210,77,.22), transparent 60%),
+        radial-gradient(320px 240px at 65% 88%, rgba(255,63,63,.18), transparent 60%);
+      filter: blur(12px);
+      opacity:.9;
       pointer-events:none;
     }
+
     .modalHeader{
       position:relative;
       display:flex; justify-content:space-between; align-items:flex-start;
       gap:12px;
       padding: 6px 6px 10px;
+      z-index:2;
     }
-    .modalTitle{
-      font-weight: 900;
-      font-size: 18px;
-      margin:0;
-    }
-    .closeBtn{
-      border-radius: 14px;
-      padding: 8px 10px;
-      background: rgba(0,0,0,.22);
-    }
+    .modalTitle{ font-weight: 900; font-size: 18px; margin:0; }
+    .closeBtn{ border-radius: 14px; padding: 8px 10px; }
+
     .modalBody{
       position:relative;
       background: rgba(255,255,255,.08);
@@ -334,28 +430,32 @@
       border-radius: 18px;
       padding: 12px;
       margin: 6px;
+      z-index:2;
+      overflow:hidden;
     }
+
     .line{
       display:flex;
       gap:10px;
       align-items:flex-start;
       padding: 10px;
       border-radius: 14px;
-      background: rgba(0,0,0,.18);
+      background: rgba(0,0,0,.20);
       border:1px solid rgba(255,255,255,.10);
       margin-bottom: 10px;
       animation: slideIn .35s ease both;
     }
-    .line:nth-child(2){ animation-delay: .05s; }
-    .line:nth-child(3){ animation-delay: .10s; }
+    .line:nth-child(2){ animation-delay: .06s; }
+    .line:nth-child(3){ animation-delay: .12s; }
+    .line:nth-child(4){ animation-delay: .18s; }
+
     @keyframes slideIn{
-      from{ transform: translateX(-10px); opacity:0; }
+      from{ transform: translateX(-12px); opacity:0; }
       to{ transform: translateX(0); opacity:1; }
     }
-    .ico{ font-size: 20px; line-height: 1; }
-    .txt{ margin:0; }
-    .sub{ color: rgba(238,247,239,.85); font-size: 13px; margin: 2px 0 0; }
 
+    .ico{ font-size: 22px; line-height: 1; }
+    .sub{ color: rgba(238,247,239,.85); font-size: 13px; margin: 2px 0 0; }
     .hint{
       margin-top: 10px;
       text-align:center;
@@ -363,23 +463,88 @@
       font-size: 12px;
     }
 
-    @media (max-width: 700px){
-      .content{ padding: 20px 14px 16px; }
+    /* Effetti compleanno: palloncini + coriandoli */
+    .fxLayer{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:3;
+    }
+    .balloon{
+      position:absolute;
+      bottom:-40px;
+      width: 22px;
+      height: 28px;
+      border-radius: 50% 50% 45% 45%;
+      background: rgba(255,63,63,.92);
+      box-shadow: 0 10px 18px rgba(0,0,0,.18);
+      animation: balloonUp 1.8s ease-out forwards;
+      opacity:.0;
+    }
+    .balloon::after{
+      content:"";
+      position:absolute;
+      left:50%; top: 26px;
+      width:2px; height: 22px;
+      background: rgba(255,255,255,.75);
+      transform: translateX(-50%);
+      opacity:.65;
+    }
+    @keyframes balloonUp{
+      0%{ transform: translateY(0) scale(.9); opacity:0; }
+      10%{ opacity:.95; }
+      100%{ transform: translateY(-320px) scale(1.05); opacity:0; }
+    }
+
+    .conf{
+      position:absolute;
+      top:-10px;
+      width: 8px; height: 10px;
+      border-radius: 2px;
+      background: rgba(255,210,77,.95);
+      opacity:0;
+      animation: confetti 1.4s linear forwards;
+    }
+    @keyframes confetti{
+      0%{ transform: translateY(0) rotate(0deg); opacity:0; }
+      10%{ opacity:1; }
+      100%{ transform: translateY(360px) rotate(360deg); opacity:0; }
+    }
+
+    /* Mobile / vista settimana */
+    @media (max-width: 780px){
+      .content{ padding: 18px 14px 14px; }
       .day{ min-height: 74px; }
       .grid{ gap: 8px; }
+      .monthTitle{ font-size: 16px; }
+    }
+
+    /* STAMPA: pulita, senza animazioni e sfondo */
+    @media print{
+      .bg, .bgOverlay, .mist, .leaves, .fireflies, .hint, .badge { display:none !important; }
+      .topbar{ box-shadow:none !important; background:#fff !important; color:#000 !important; }
+      button, select, .tog { display:none !important; }
+      body{ color:#000 !important; background:#fff !important; }
+      .stage{ box-shadow:none !important; border:none !important; }
+      .frame{ opacity:.18 !important; }
+      .day{ break-inside: avoid; }
     }
   </style>
 </head>
 
 <body>
+  <div class="bg"></div>
+  <div class="bgOverlay"></div>
   <div class="mist"></div>
+
+  <div class="leaves" id="leaves"></div>
   <div class="fireflies" id="fireflies"></div>
 
   <div class="wrap">
     <div class="topbar">
       <div>
         <div class="title">
-          <div style="font-size:20px;">🌲</div>
+          <div style="font-size:22px;">🌲</div>
           <div>
             <div style="font-size:16px;font-weight:900;">Calendario Scout nel Bosco</div>
             <div class="muted">2026 → 2029 • clicca un giorno per vedere eventi</div>
@@ -389,9 +554,7 @@
 
       <div class="controls">
         <button id="prev">⬅️</button>
-
         <div class="monthTitle" id="monthTitle">—</div>
-
         <button id="next">➡️</button>
 
         <select id="yearSel" title="Seleziona anno">
@@ -402,12 +565,18 @@
         </select>
 
         <button id="todayBtn">Oggi</button>
+        <button id="printBtn">🖨️ Stampa</button>
+
+        <div class="tog" id="weekToggle" title="Su telefono puoi usare la vista settimana e lo swipe">
+          <span class="dot"></span>
+          <span style="font-weight:900;font-size:13px;">Vista settimana</span>
+        </div>
 
         <span class="badge">🔴 Rosso: feste & compleanni</span>
       </div>
     </div>
 
-    <div class="stage">
+    <div class="stage" id="stage">
       <div class="frame"></div>
 
       <div class="content">
@@ -417,7 +586,7 @@
       </div>
     </div>
 
-    <div class="hint">✨ Tema natura: foglie animate, lucciole, popup con animazione.</div>
+    <div class="hint">🍂 Foglie che cadono • ✨ lucciole (più di sera) • 🎈 compleanni con effetti • swipe su mobile</div>
   </div>
 
   <!-- MODAL -->
@@ -427,30 +596,37 @@
         <h3 class="modalTitle" id="mTitle">Dettagli</h3>
         <button class="closeBtn" id="close">Chiudi ✖</button>
       </div>
-      <div class="modalBody" id="mBody"></div>
+      <div class="modalBody" id="mBody">
+        <div class="fxLayer" id="fx"></div>
+      </div>
     </div>
   </div>
 
 <script>
-  // ====== UTIL ======
+  // =========================
+  // UTIL
+  // =========================
   const pad = n => String(n).padStart(2,"0");
   const ymd = (y,m,d) => `${y}-${pad(m)}-${pad(d)}`;
   const itMonth = (y,m) => new Date(y, m-1, 1).toLocaleString("it-IT",{month:"long", year:"numeric"});
 
-  // ====== DATI EVENTI ======
-  // Tipi: bday, holi, saint, note
-  // IMPORTANT: i compleanni e festività finiscono in ROSSO automaticamente.
+  const DOW = ["Lun","Mar","Mer","Gio","Ven","Sab","Dom"];
+
+  function inRange(y){ return y>=2026 && y<=2029; }
+
+  // =========================
+  // EVENTI (aggiungi qui!)
+  // Tipi: bday, holi, saint, scout, note
+  // =========================
   const EVENTS = {
     // Compleanno richiesto:
     "2026-01-20": [
-      { type:"bday", icon:"🎂", title:"Compleanno di Simone", detail:"Oggi si festeggia Simone! 🥳" }
+      { type:"bday", icon:"🎂", title:"Compleanno di Simone", detail:"Oggi si festeggia Simone! 🥳🎈" }
     ],
 
-    // Esempi festività (aggiungine quante vuoi):
+    // FESTIVITA' (principali - IT)
     "2026-01-01": [{ type:"holi", icon:"🎆", title:"Capodanno", detail:"Buon anno!" }],
     "2026-01-06": [{ type:"holi", icon:"🧹", title:"Epifania", detail:"L’Epifania tutte le feste porta via." }],
-    "2026-04-05": [{ type:"holi", icon:"🐣", title:"Pasqua", detail:"Giornata di festa (data da aggiornare ogni anno)." }],
-    "2026-04-06": [{ type:"holi", icon:"🌿", title:"Pasquetta", detail:"Gita nella natura!" }],
     "2026-04-25": [{ type:"holi", icon:"🇮🇹", title:"Festa della Liberazione", detail:"25 aprile." }],
     "2026-05-01": [{ type:"holi", icon:"🛠️", title:"Festa dei Lavoratori", detail:"1 maggio." }],
     "2026-06-02": [{ type:"holi", icon:"🎖️", title:"Festa della Repubblica", detail:"2 giugno." }],
@@ -460,12 +636,38 @@
     "2026-12-25": [{ type:"holi", icon:"🎄", title:"Natale", detail:"25 dicembre." }],
     "2026-12-26": [{ type:"holi", icon:"🎁", title:"Santo Stefano", detail:"26 dicembre." }],
 
-    // Celebrazioni / santi (esempi, aggiungi elenco completo se vuoi):
+    // SANTI (esempi — puoi aggiungerne tanti)
     "2026-02-24": [{ type:"saint", icon:"⛪", title:"San Mattia", detail:"Celebrazione di San Mattia." }],
-    "2026-08-08": [{ type:"saint", icon:"⛪", title:"San Domenico", detail:"Celebrazione di San Domenico." }]
+    "2026-08-08": [{ type:"saint", icon:"⛪", title:"San Domenico", detail:"Celebrazione di San Domenico." }],
+
+    // EVENTI SCOUT (esempi)
+    "2026-02-22": [{ type:"scout", icon:"⚜️", title:"Giornata del Pensiero", detail:"Pensiero scout nel mondo." }],
+    "2026-04-23": [{ type:"scout", icon:"🛡️", title:"San Giorgio (Scout)", detail:"Tradizione scout: coraggio e servizio." }]
   };
 
-  // ====== UI ======
+  // Helper: aggiunge festività fisse per tutti gli anni (2026-2029)
+  function addFixedHolidayAllYears(mm,dd, obj){
+    for(let y=2026; y<=2029; y++){
+      const k = `${y}-${pad(mm)}-${pad(dd)}`;
+      EVENTS[k] = EVENTS[k] || [];
+      EVENTS[k].push(obj);
+    }
+  }
+  // Replico festivi principali su tutti gli anni (così non devi scriverli 4 volte)
+  addFixedHolidayAllYears(1,1,{type:"holi",icon:"🎆",title:"Capodanno",detail:"Buon anno!"});
+  addFixedHolidayAllYears(1,6,{type:"holi",icon:"🧹",title:"Epifania",detail:""});
+  addFixedHolidayAllYears(4,25,{type:"holi",icon:"🇮🇹",title:"Liberazione",detail:"25 aprile."});
+  addFixedHolidayAllYears(5,1,{type:"holi",icon:"🛠️",title:"Festa dei Lavoratori",detail:"1 maggio."});
+  addFixedHolidayAllYears(6,2,{type:"holi",icon:"🎖️",title:"Festa della Repubblica",detail:"2 giugno."});
+  addFixedHolidayAllYears(8,15,{type:"holi",icon:"☀️",title:"Ferragosto",detail:""});
+  addFixedHolidayAllYears(11,1,{type:"holi",icon:"🕯️",title:"Ognissanti",detail:""});
+  addFixedHolidayAllYears(12,8,{type:"holi",icon:"✨",title:"Immacolata",detail:""});
+  addFixedHolidayAllYears(12,25,{type:"holi",icon:"🎄",title:"Natale",detail:""});
+  addFixedHolidayAllYears(12,26,{type:"holi",icon:"🎁",title:"Santo Stefano",detail:""});
+
+  // =========================
+  // UI
+  // =========================
   const dowEl = document.getElementById("dow");
   const calEl = document.getElementById("cal");
   const monthTitleEl = document.getElementById("monthTitle");
@@ -475,15 +677,54 @@
   const closeBtn = document.getElementById("close");
   const mTitle = document.getElementById("mTitle");
   const mBody = document.getElementById("mBody");
+  const fx = document.getElementById("fx");
 
-  // Giorni settimana (Lun -> Dom)
-  const DOW = ["Lun","Mar","Mer","Gio","Ven","Sab","Dom"];
+  const stage = document.getElementById("stage");
+  const weekToggle = document.getElementById("weekToggle");
 
-  // ====== STATO CALENDARIO ======
   let stateYear = 2026;
   let stateMonth = 1; // 1..12
+  let weekView = false;
 
-  // ====== RENDER DOW ======
+  // =========================
+  // Tema mese + giorno/notte
+  // =========================
+  const monthTheme = {
+    winter: { overlayA:"rgba(8,16,32,.62)", overlayB:"rgba(8,16,32,.28)", bg:"bg_winter.jpg" },
+    spring: { overlayA:"rgba(8,25,14,.55)", overlayB:"rgba(8,25,14,.22)", bg:"bg_spring.jpg" },
+    summer: { overlayA:"rgba(40,22,6,.55)", overlayB:"rgba(15,35,18,.20)", bg:"bg_summer.jpg" },
+    autumn: { overlayA:"rgba(22,12,6,.60)", overlayB:"rgba(15,30,16,.22)", bg:"bg_autumn.jpg" }
+  };
+
+  function setThemeFor(y,m){
+    // stagione
+    let season = "spring";
+    if([12,1,2].includes(m)) season = "winter";
+    if([3,4,5].includes(m)) season = "spring";
+    if([6,7,8].includes(m)) season = "summer";
+    if([9,10,11].includes(m)) season = "autumn";
+
+    // giorno/notte (semplice)
+    const hour = new Date().getHours();
+    const night = (hour >= 20 || hour < 7);
+
+    const t = monthTheme[season];
+    document.documentElement.style.setProperty("--overlayA", night ? "rgba(0,0,0,.72)" : t.overlayA);
+    document.documentElement.style.setProperty("--overlayB", night ? "rgba(0,0,0,.32)" : t.overlayB);
+
+    // lucciole più visibili di sera
+    document.documentElement.style.setProperty("--fliesOpacity", night ? ".95" : ".55");
+
+    // sfondo: se manca l’immagine stagionale usa bg_forest.jpg
+    const img = (season && t && t.bg) ? t.bg : "bg_forest.jpg";
+    // Non possiamo sapere se file esiste, quindi proviamo: se non carichi bg_* userà comunque forest
+    // (il browser se manca non “rompe” tutto, solo non mostra quell’immagine)
+    document.documentElement.style.setProperty("--bgUrl", `url("${img}")`);
+  }
+
+  // =========================
+  // DOW
+  // =========================
   function renderDOW(){
     dowEl.innerHTML = "";
     DOW.forEach(d=>{
@@ -494,54 +735,117 @@
     });
   }
 
-  // ====== CALCOLO GRIGLIA MESE ======
+  // =========================
+  // Calcoli mese
+  // =========================
   function firstDayOffset(y,m){
-    // JS getDay(): 0=Dom..6=Sab. Noi vogliamo Lun=0..Dom=6
-    const js = new Date(y, m-1, 1).getDay();
-    return (js + 6) % 7;
+    const js = new Date(y, m-1, 1).getDay(); // 0 dom..6 sab
+    return (js + 6) % 7; // lun=0..dom=6
   }
-
   function daysInMonth(y,m){
     return new Date(y, m, 0).getDate();
   }
 
-  function inRange(y){
-    return y>=2026 && y<=2029;
-  }
-
-  // ====== EVENTI PER DATA ======
-  function eventsFor(key){
-    return EVENTS[key] || [];
-  }
-
+  // =========================
+  // Eventi
+  // =========================
+  function eventsFor(key){ return EVENTS[key] || []; }
   function isRedDay(key){
     const ev = eventsFor(key);
     return ev.some(e => e.type==="bday" || e.type==="holi");
   }
 
-  // ====== MODAL ======
+  function tagLabel(type){
+    if(type==="bday") return "Compleanno";
+    if(type==="holi") return "Festivo";
+    if(type==="saint") return "Santo";
+    if(type==="scout") return "Scout";
+    return "Evento";
+  }
+
+  // =========================
+  // Effetti animati modal
+  // =========================
+  function clearFx(){ fx.innerHTML = ""; }
+
+  function spawnBalloons(){
+    // 10 palloncini
+    for(let i=0;i<10;i++){
+      const b = document.createElement("div");
+      b.className = "balloon";
+      b.style.left = (6 + Math.random()*88) + "%";
+      b.style.animationDelay = (Math.random()*0.35) + "s";
+      // colori diversi
+      const r = 120 + Math.floor(Math.random()*135);
+      const g = 80 + Math.floor(Math.random()*140);
+      const a = 0.92;
+      b.style.background = `rgba(${r},${g},120,${a})`;
+      fx.appendChild(b);
+    }
+  }
+
+  function spawnConfetti(){
+    // 30 coriandoli
+    for(let i=0;i<30;i++){
+      const c = document.createElement("div");
+      c.className = "conf";
+      c.style.left = (Math.random()*100) + "%";
+      c.style.animationDelay = (Math.random()*0.35) + "s";
+      c.style.transform = `rotate(${Math.random()*360}deg)`;
+      // colori
+      const colors = [
+        "rgba(255,210,77,.95)","rgba(124,255,138,.95)","rgba(255,63,63,.95)","rgba(150,200,255,.95)"
+      ];
+      c.style.background = colors[Math.floor(Math.random()*colors.length)];
+      fx.appendChild(c);
+    }
+  }
+
+  // =========================
+  // MODAL
+  // =========================
   function openModal(dateKey, niceLabel, evs){
     mTitle.textContent = niceLabel;
+    clearFx();
 
+    // contenuto
     if(!evs.length){
-      mBody.innerHTML = `
-        <div class="line">
-          <div class="ico">🌿</div>
-          <div>
-            <p class="txt" style="margin:0;font-weight:900;">Nessun evento segnato</p>
-            <p class="sub">Giornata perfetta per una buona azione scout 😊</p>
-          </div>
+      mBody.querySelectorAll(".line").forEach(n=>n.remove());
+      const line = document.createElement("div");
+      line.className="line";
+      line.innerHTML = `
+        <div class="ico">🌿</div>
+        <div>
+          <p style="margin:0;font-weight:900;">Nessun evento segnato</p>
+          <p class="sub">Giornata perfetta per una buona azione scout 😊</p>
         </div>`;
-    } else {
-      mBody.innerHTML = evs.map((e)=>`
-        <div class="line">
+      mBody.appendChild(line);
+    }else{
+      // rimuove line vecchie
+      mBody.querySelectorAll(".line").forEach(n=>n.remove());
+
+      evs.forEach((e)=>{
+        const line = document.createElement("div");
+        line.className="line";
+        line.innerHTML = `
           <div class="ico">${e.icon || "📌"}</div>
           <div>
-            <p class="txt" style="margin:0;font-weight:900;">${e.title}</p>
+            <p style="margin:0;font-weight:900;">${e.title}</p>
             <p class="sub">${e.detail || ""}</p>
-          </div>
-        </div>
-      `).join("");
+          </div>`;
+        mBody.appendChild(line);
+      });
+
+      // se c’è compleanno → super effetti
+      if(evs.some(e=>e.type==="bday")){
+        spawnBalloons();
+        spawnConfetti();
+      } else {
+        // se è festivo: solo un po' di coriandoli
+        if(evs.some(e=>e.type==="holi")){
+          spawnConfetti();
+        }
+      }
     }
 
     backdrop.classList.add("show");
@@ -549,28 +853,74 @@
 
   function closeModal(){
     backdrop.classList.remove("show");
+    clearFx();
   }
-
   closeBtn.addEventListener("click", closeModal);
   backdrop.addEventListener("click", (e)=>{ if(e.target === backdrop) closeModal(); });
   window.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeModal(); });
 
-  // ====== RENDER CALENDARIO ======
+  // =========================
+  // Vista settimana (mobile)
+  // - mostra solo 7 giorni centrati su "oggi" se mese corrente
+  // - altrimenti mostra prima settimana del mese
+  // =========================
+  function getWeekDates(y,m){
+    // se siamo nello stesso mese di oggi, centra sulla data di oggi
+    const t = new Date();
+    let base = new Date(y, m-1, 1);
+    if(t.getFullYear()===y && (t.getMonth()+1)===m){
+      base = new Date(y, m-1, t.getDate());
+    }
+    // porta base a lunedì
+    const js = base.getDay(); // 0 dom..6 sab
+    const offset = (js + 6) % 7;
+    base.setDate(base.getDate() - offset);
+
+    const out = [];
+    for(let i=0;i<7;i++){
+      out.push(new Date(base));
+      base.setDate(base.getDate()+1);
+    }
+    return out;
+  }
+
+  // =========================
+  // Render calendario
+  // =========================
   function renderCalendar(){
     if(!inRange(stateYear)){
       stateYear = Math.min(2029, Math.max(2026, stateYear));
     }
     monthTitleEl.textContent = itMonth(stateYear, stateMonth);
-
     yearSel.value = String(stateYear);
+
+    setThemeFor(stateYear, stateMonth);
 
     calEl.innerHTML = "";
 
+    const today = new Date();
+    const todayKey = ymd(today.getFullYear(), today.getMonth()+1, today.getDate());
+
+    // se weekView attivo: 7 celle
+    if(weekView){
+      calEl.style.gridTemplateColumns = "repeat(7, 1fr)";
+      const dates = getWeekDates(stateYear, stateMonth);
+
+      dates.forEach(d=>{
+        const y = d.getFullYear();
+        const m = d.getMonth()+1;
+        const day = d.getDate();
+        const key = ymd(y,m,day);
+        const isOff = (y!==stateYear || m!==stateMonth);
+        calEl.appendChild(makeDayCell(y,m,day,key,isOff,todayKey));
+      });
+      return;
+    }
+
+    // vista mese: 42 celle
     const offset = firstDayOffset(stateYear, stateMonth);
     const dim = daysInMonth(stateYear, stateMonth);
 
-    // Per riempire la griglia in modo “completo” (42 celle):
-    // calcolo giorni mese precedente/seguente
     const prevMonth = stateMonth === 1 ? 12 : stateMonth - 1;
     const prevYear  = stateMonth === 1 ? stateYear - 1 : stateYear;
     const nextMonth = stateMonth === 12 ? 1 : stateMonth + 1;
@@ -578,35 +928,25 @@
 
     const dimPrev = daysInMonth(prevYear, prevMonth);
 
-    const today = new Date();
-    const todayKey = ymd(today.getFullYear(), today.getMonth()+1, today.getDate());
-
     let cells = 0;
 
-    // Celle mese precedente
     for(let i=0;i<offset;i++){
       const dayNum = dimPrev - offset + 1 + i;
       const key = ymd(prevYear, prevMonth, dayNum);
-
-      const cell = makeDayCell(prevYear, prevMonth, dayNum, key, true, todayKey);
-      calEl.appendChild(cell);
+      calEl.appendChild(makeDayCell(prevYear, prevMonth, dayNum, key, true, todayKey));
       cells++;
     }
 
-    // Celle mese corrente
     for(let d=1; d<=dim; d++){
       const key = ymd(stateYear, stateMonth, d);
-      const cell = makeDayCell(stateYear, stateMonth, d, key, false, todayKey);
-      calEl.appendChild(cell);
+      calEl.appendChild(makeDayCell(stateYear, stateMonth, d, key, false, todayKey));
       cells++;
     }
 
-    // Celle mese successivo fino a 42
     let nextDay = 1;
     while(cells < 42){
       const key = ymd(nextYear, nextMonth, nextDay);
-      const cell = makeDayCell(nextYear, nextMonth, nextDay, key, true, todayKey);
-      calEl.appendChild(cell);
+      calEl.appendChild(makeDayCell(nextYear, nextMonth, nextDay, key, true, todayKey));
       cells++;
       nextDay++;
     }
@@ -618,24 +958,33 @@
     const div = document.createElement("div");
     div.className = "day" + (isOff ? " off" : "") + (key===todayKey ? " today" : "") + (isRedDay(key) ? " red" : "");
 
+    const iconMini =
+      evs.some(e=>e.type==="bday")  ? "🎂" :
+      evs.some(e=>e.type==="holi")  ? "🎉" :
+      evs.some(e=>e.type==="scout") ? "⚜️" :
+      evs.some(e=>e.type==="saint") ? "⛪" : "";
+
     div.innerHTML = `
-      <div class="leaf"></div>
+      <div class="leafBadge"></div>
       <div class="n">
         <span>${d}</span>
-        <span style="font-size:12px;opacity:.8;">${evs.some(e=>e.type==="bday") ? "🎂" : evs.some(e=>e.type==="holi") ? "🎉" : evs.some(e=>e.type==="saint") ? "⛪" : ""}</span>
+        <span style="font-size:12px;opacity:.85;">${iconMini}</span>
       </div>
       <div class="tags">
         ${evs.slice(0,3).map(e => {
-          const cls = e.type==="bday" ? "bday" : e.type==="holi" ? "holi" : e.type==="saint" ? "saint" : "";
-          const label = e.type==="bday" ? "Compleanno" : e.type==="holi" ? "Festivo" : e.type==="saint" ? "Santo" : "Evento";
-          return `<span class="tag ${cls}">${label}</span>`;
+          const cls =
+            e.type==="bday" ? "bday" :
+            e.type==="holi" ? "holi" :
+            e.type==="saint" ? "saint" :
+            e.type==="scout" ? "scout" : "";
+          return `<span class="tag ${cls}">${tagLabel(e.type)}</span>`;
         }).join("")}
       </div>
     `;
 
     div.addEventListener("click", ()=>{
       const nice = new Date(y, m-1, d).toLocaleDateString("it-IT", {weekday:"long", day:"2-digit", month:"long", year:"numeric"});
-      // Se clicchi su un giorno "fuori mese", ti porto direttamente a quel mese/anno
+      // se clicchi un giorno fuori mese, vai a quel mese
       if(isOff){
         stateYear = y;
         stateMonth = m;
@@ -647,17 +996,30 @@
     return div;
   }
 
-  // ====== NAV ======
+  // =========================
+  // NAV + BOTTONI
+  // =========================
   document.getElementById("prev").addEventListener("click", ()=>{
-    stateMonth--;
-    if(stateMonth<1){ stateMonth=12; stateYear--; }
+    if(weekView){
+      // in weekView: sposta di 7 giorni indietro (semplificato: mese -1)
+      stateMonth--;
+      if(stateMonth<1){ stateMonth=12; stateYear--; }
+    } else {
+      stateMonth--;
+      if(stateMonth<1){ stateMonth=12; stateYear--; }
+    }
     if(!inRange(stateYear)){ stateYear=2026; stateMonth=1; }
     renderCalendar();
   });
 
   document.getElementById("next").addEventListener("click", ()=>{
-    stateMonth++;
-    if(stateMonth>12){ stateMonth=1; stateYear++; }
+    if(weekView){
+      stateMonth++;
+      if(stateMonth>12){ stateMonth=1; stateYear++; }
+    } else {
+      stateMonth++;
+      if(stateMonth>12){ stateMonth=1; stateYear++; }
+    }
     if(!inRange(stateYear)){ stateYear=2029; stateMonth=12; }
     renderCalendar();
   });
@@ -669,7 +1031,6 @@
 
   document.getElementById("todayBtn").addEventListener("click", ()=>{
     const t = new Date();
-    // se oggi non è tra 2026–2029, torno a 2026 gennaio (puoi cambiare)
     if(t.getFullYear()<2026 || t.getFullYear()>2029){
       stateYear = 2026; stateMonth = 1;
     } else {
@@ -679,7 +1040,52 @@
     renderCalendar();
   });
 
-  // ====== FIREFLIES (lucciole) ======
+  document.getElementById("printBtn").addEventListener("click", ()=> window.print());
+
+  weekToggle.addEventListener("click", ()=>{
+    weekView = !weekView;
+    weekToggle.classList.toggle("on", weekView);
+    renderCalendar();
+  });
+
+  // Swipe su mobile (stage)
+  let touchStartX = null;
+  stage.addEventListener("touchstart",(e)=>{ touchStartX = e.touches[0].clientX; }, {passive:true});
+  stage.addEventListener("touchend",(e)=>{
+    if(touchStartX===null) return;
+    const endX = e.changedTouches[0].clientX;
+    const dx = endX - touchStartX;
+    touchStartX = null;
+    if(Math.abs(dx) < 40) return;
+    if(dx < 0) document.getElementById("next").click();
+    else document.getElementById("prev").click();
+  }, {passive:true});
+
+  // =========================
+  // Foglie che cadono (molte!)
+  // =========================
+  function spawnLeaves(){
+    const box = document.getElementById("leaves");
+    box.innerHTML = "";
+    const n = 26; // quante foglie
+    for(let i=0;i<n;i++){
+      const l = document.createElement("div");
+      l.className = "leafFall";
+      l.style.left = (Math.random()*100) + "%";
+      l.style.setProperty("--t", (8 + Math.random()*10) + "s");
+      l.style.setProperty("--dx", ((Math.random()*220)-110) + "px");
+      l.style.animationDelay = (Math.random()*6) + "s";
+      // varia grandezza
+      const s = 0.75 + Math.random()*1.0;
+      l.style.width = (28*s) + "px";
+      l.style.height = (28*s) + "px";
+      box.appendChild(l);
+    }
+  }
+
+  // =========================
+  // Lucciole
+  // =========================
   function spawnFireflies(){
     const box = document.getElementById("fireflies");
     box.innerHTML = "";
@@ -687,21 +1093,32 @@
     for(let i=0;i<n;i++){
       const f = document.createElement("div");
       f.className = "firefly";
-      const x = Math.random()*window.innerWidth*0.9;
-      const y = Math.random()*window.innerHeight*0.9;
-      f.style.left = x+"px";
-      f.style.top  = y+"px";
-      f.style.animationDuration = (6+Math.random()*7)+"s";
-      f.style.animationDelay = (Math.random()*3)+"s";
+      f.style.left = (Math.random()*100) + "%";
+      f.style.top  = (Math.random()*100) + "%";
+      f.style.setProperty("--t", (6 + Math.random()*8) + "s");
+      f.style.setProperty("--dx", ((Math.random()*240)-120) + "px");
+      f.style.setProperty("--dy", ((Math.random()*220)-160) + "px");
+      f.style.animationDelay = (Math.random()*3) + "s";
       box.appendChild(f);
     }
   }
-  window.addEventListener("resize", spawnFireflies);
 
-  // ====== AVVIO ======
+  window.addEventListener("resize", ()=>{
+    spawnLeaves();
+    spawnFireflies();
+  });
+
+  // =========================
+  // AVVIO
+  // =========================
   renderDOW();
+  spawnLeaves();
   spawnFireflies();
+  setThemeFor(stateYear, stateMonth);
   renderCalendar();
+
+  // aggiorna giorno/notte ogni 60s
+  setInterval(()=> setThemeFor(stateYear, stateMonth), 60000);
 </script>
 </body>
 </html>
