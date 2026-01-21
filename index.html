@@ -16,7 +16,10 @@
     --btnBorder: rgba(255,255,255,.18);
     --shadow: 0 18px 50px rgba(0,0,0,.55);
     --radius: 18px;
-    --bgUrl: url("bg_forest.jpg");
+
+    /* ✅ SFONDO NUOVO */
+    --bgUrl: url("ChatGPT Image 19 gen 2026, 21_00_05.png");
+
     --fliesOpacity: .75;
   }
 
@@ -30,7 +33,7 @@
     background:#08190e;
   }
 
-  /* SFONDO BOSCO */
+  /* SFONDO */
   .bg{ position:fixed; inset:0; background-image:var(--bgUrl); background-size:cover; background-position:center; transform:scale(1.03); z-index:-3; }
   .bgOverlay{
     position:fixed; inset:0;
@@ -102,7 +105,6 @@
   }
   .title{ display:flex; gap:10px; align-items:center; font-weight:900; }
   .controls{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-
   button, select{
     border:1px solid var(--btnBorder);
     background: var(--btn);
@@ -114,7 +116,6 @@
     font-family:inherit;
   }
   button:hover, select:hover{ transform: translateY(-1px); }
-
   .monthTitle{ font-size:18px; font-weight:900; text-transform:capitalize; }
   .muted{ color: var(--muted); font-size:13px; }
 
@@ -134,9 +135,7 @@
   .grid{ display:grid; grid-template-columns:repeat(7, 1fr); gap:10px; }
 
   .dow{
-    text-align:center;
-    font-weight:900;
-    font-size:13px;
+    text-align:center; font-weight:900; font-size:13px;
     color: rgba(0,0,0,.80);
     background: rgba(255,255,255,.84);
     border-radius:12px;
@@ -164,19 +163,28 @@
     outline-offset:-3px;
   }
 
+  /* ✅ EVENTI IMPORTANTI sul calendario: piccolo marker */
+  .marker{
+    position:absolute;
+    right:8px;
+    bottom:8px;
+    font-size:14px;
+    opacity:.9;
+  }
+
   /* TELEFONO: caselle più quadrate */
   @media (max-width: 780px){
     .content{ padding: 18px 14px 14px; }
     .grid{ gap: 8px; }
     .day{
-      aspect-ratio: 1 / 1;     /* QUADRATA */
+      aspect-ratio: 1 / 1; /* QUADRATA */
       padding: 8px;
     }
     .day .n{ font-size:14px; }
     .monthTitle{ font-size:16px; }
   }
 
-  /* SEZIONI SOTTO */
+  /* PANEL sotto */
   .panel{
     margin-top:14px;
     background:var(--panel);
@@ -217,6 +225,29 @@
 
   @media (max-width: 900px){
     .cards{ grid-template-columns: 1fr; }
+  }
+
+  /* Diario (cosa ti passa per la mente) */
+  .journalBox{
+    width:100%;
+    border:1px solid rgba(255,255,255,.18);
+    background: rgba(0,0,0,.18);
+    color: var(--text);
+    border-radius: 16px;
+    padding: 12px;
+    min-height: 110px;
+    outline:none;
+    font-family: inherit;
+    resize: vertical;
+  }
+
+  /* Immagine sotto */
+  .belowImg{
+    width:100%;
+    border-radius: 18px;
+    border:1px solid rgba(255,255,255,.14);
+    box-shadow: var(--shadow);
+    display:block;
   }
 
   /* MODAL LEGGI SCOUT */
@@ -263,19 +294,16 @@
   .ico{ font-size: 22px; line-height:1; }
   .sub{ color: rgba(238,247,239,.85); font-size: 13px; margin:2px 0 0; }
 
-  /* Footer Baden-Powell */
-  .bp{
+  /* Footer window */
+  .footerWindow{
     margin-top:14px;
-    background:var(--panel);
-    border:1px solid var(--panel2);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    backdrop-filter: blur(10px);
-    padding:14px;
+    background: rgba(0,0,0,.25);
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 18px;
+    padding: 14px;
     text-align:center;
+    box-shadow: var(--shadow);
   }
-  .bp b{ font-weight:900; }
-  .bp p{ margin:8px 0 0; color: var(--muted); }
 </style>
 </head>
 
@@ -292,7 +320,7 @@
         <div style="font-size:22px;">🌲</div>
         <div>
           <div style="font-size:16px;font-weight:900;">Calendario Scout nel Bosco</div>
-          <div class="muted">2026 → 2029 • solo calendario + giornate a tema + countdown</div>
+          <div class="muted">2026 → 2029 • diario + giornate a tema + countdown reale</div>
         </div>
       </div>
 
@@ -321,36 +349,44 @@
       </div>
     </div>
 
-    <!-- LEGGE SCOUT SOTTO AL CALENDARIO -->
+    <!-- LEGGE SCOUT SOTTO -->
     <div class="panel">
       <h3>📜 Legge Scout</h3>
-      <p class="muted" style="margin:0 0 10px;">
-        Tocca il pulsante per leggere le leggi scout.
-      </p>
+      <p class="muted" style="margin:0 0 10px;">Tocca il pulsante per leggere le leggi scout.</p>
       <button id="lawsBtn">Leggi Scout</button>
+    </div>
+
+    <!-- ✅ DIARIO -->
+    <div class="panel">
+      <h3>💭 Cosa ti passa per la mente?</h3>
+      <p class="muted" style="margin:0 0 10px;">Scrivi qui. Rimane salvato anche se ricarichi il sito.</p>
+      <textarea id="journal" class="journalBox" placeholder="Scrivi qui quello che ti passa per la mente..."></textarea>
+      <div class="muted" id="journalStatus" style="margin-top:8px;"></div>
     </div>
 
     <!-- GIORNATE A TEMA -->
     <div class="panel">
       <h3>🌍 Giornate a tema</h3>
-      <p class="muted" style="margin:0 0 10px;">
-        Qui vedi le prossime giornate speciali (con simboli). Quando una data arriva, diventa “Oggi”.
-      </p>
+      <p class="muted" style="margin:0 0 10px;">Le prossime giornate speciali (vere) con simboli.</p>
       <div class="cards" id="themeCards"></div>
     </div>
 
-    <!-- COUNTDOWN -->
+    <!-- ✅ COUNTDOWN basato SOLO su eventi nel calendario -->
     <div class="panel">
       <h3>🧭 Countdown agli eventi importanti</h3>
-      <p class="muted" style="margin:0 0 10px;">
-        Conto alla rovescia automatico dagli eventi che decidi tu.
-      </p>
+      <p class="muted" style="margin:0 0 10px;">Mostra il countdown solo se hai impostato eventi reali nel calendario.</p>
       <div class="cards" id="countCards"></div>
     </div>
 
-    <div class="bp">
-      <div>⚜️ <b>Robert Baden-Powell</b> (fondatore degli scout)</div>
-      <p>“Lascia il posto migliore di come lo hai trovato.”</p>
+    <!-- ✅ IMMAGINE SOTTO AL CALENDARIO -->
+    <div class="panel">
+      <h3>📷 Foto</h3>
+      <img class="belowImg" src="Immagine 2026-01-21 205031.png" alt="Immagine sotto al calendario">
+    </div>
+
+    <!-- FINESTRA FINALE -->
+    <div class="footerWindow">
+      <b>Site created by Mattia Spensieri</b>
     </div>
   </div>
 
@@ -390,29 +426,39 @@
   const calEl = document.getElementById("cal");
   const monthTitleEl = document.getElementById("monthTitle");
   const yearSel = document.getElementById("yearSel");
+  const themeCards = document.getElementById("themeCards");
+  const countCards = document.getElementById("countCards");
 
+  // Diario
+  const journal = document.getElementById("journal");
+  const journalStatus = document.getElementById("journalStatus");
+
+  // Leggi Scout modal
   const lawsBtn = document.getElementById("lawsBtn");
   const lawsBackdrop = document.getElementById("lawsBackdrop");
   const lawsClose = document.getElementById("lawsClose");
 
-  const themeCards = document.getElementById("themeCards");
-  const countCards = document.getElementById("countCards");
-
-  // =========================
-  // STATO
-  // =========================
+  // Stato
   let stateYear = 2026;
   let stateMonth = 1;
 
   // =========================
-  // NIENTE EVENTI SUL CALENDARIO ✅
-  // (qui non mettiamo nulla nei giorni)
+  // ✅ EVENTI IMPORTANTI NEL CALENDARIO (serve per COUNTDOWN)
+  // Se questa lista è vuota → countdown non mostra nulla.
+  // Metti qui le date vere.
   // =========================
+  const IMPORTANT_EVENTS = [
+    { date:"2026-07-15", icon:"🔥", name:"Campo estivo" },
+    { date:"2026-08-24", icon:"🧭", name:"Route" }
+  ];
+
+  function markerForDate(key){
+    const ev = IMPORTANT_EVENTS.find(e => e.date === key);
+    return ev ? ev.icon : "";
+  }
 
   // =========================
-  // GIORNATE A TEMA (vere) ✅
-  // Puoi aggiungere quante vuoi.
-  // Formato: { date:"MM-DD", name:"...", icon:"..." }
+  // GIORNATE A TEMA (vere)
   // =========================
   const THEME_DAYS = [
     { date:"01-21", icon:"🤗", name:"Giornata Mondiale degli Abbracci" },
@@ -425,19 +471,9 @@
     { date:"10-04", icon:"🐾", name:"Giornata Mondiale degli Animali" }
   ];
 
-  // Giornate scout “a tema” (non mondiali, ma per il calendario scout)
   const SCOUT_THEME = [
     { date:"02-22", icon:"⚜️", name:"Giornata del Pensiero (Scout)" },
     { date:"04-23", icon:"🛡️", name:"San Giorgio (tradizione scout)" }
-  ];
-
-  // =========================
-  // COUNTDOWN EVENTI IMPORTANTI ✅
-  // (qui metti le date reali dei tuoi eventi)
-  // =========================
-  const COUNTDOWN_EVENTS = [
-    { date:"2026-07-15", icon:"🔥", name:"Campo estivo" },
-    { date:"2026-08-24", icon:"🧭", name:"Route" }
   ];
 
   // =========================
@@ -445,31 +481,27 @@
   // =========================
   function firstDayOffset(y,m){
     const js = new Date(y, m-1, 1).getDay();
-    return (js + 6) % 7; // lun=0..dom=6
+    return (js + 6) % 7;
   }
   function daysInMonth(y,m){ return new Date(y, m, 0).getDate(); }
 
-  // =========================
-  // TEMA: giorno/notte + stagione (solo overlay e lucciole)
-  // =========================
+  // Tema giorno/notte
   function setTheme(){
     const m = stateMonth;
     const hour = new Date().getHours();
     const night = (hour >= 20 || hour < 7);
 
     let overlayA = "rgba(8,25,14,.55)", overlayB = "rgba(8,25,14,.25)";
-    if([12,1,2].includes(m)) { overlayA="rgba(8,16,32,.62)"; overlayB="rgba(8,16,32,.28)"; }    // inverno
-    if([6,7,8].includes(m)) { overlayA="rgba(40,22,6,.55)"; overlayB="rgba(15,35,18,.20)"; }     // estate
-    if([9,10,11].includes(m)) { overlayA="rgba(22,12,6,.60)"; overlayB="rgba(15,30,16,.22)"; }   // autunno
+    if([12,1,2].includes(m)) { overlayA="rgba(8,16,32,.62)"; overlayB="rgba(8,16,32,.28)"; }
+    if([6,7,8].includes(m)) { overlayA="rgba(40,22,6,.55)"; overlayB="rgba(15,35,18,.20)"; }
+    if([9,10,11].includes(m)) { overlayA="rgba(22,12,6,.60)"; overlayB="rgba(15,30,16,.22)"; }
 
     document.documentElement.style.setProperty("--overlayA", night ? "rgba(0,0,0,.72)" : overlayA);
     document.documentElement.style.setProperty("--overlayB", night ? "rgba(0,0,0,.32)" : overlayB);
     document.documentElement.style.setProperty("--fliesOpacity", night ? ".95" : ".55");
   }
 
-  // =========================
-  // RENDER DOW
-  // =========================
+  // DOW
   function renderDOW(){
     dowEl.innerHTML = "";
     DOW.forEach(d=>{
@@ -480,9 +512,7 @@
     });
   }
 
-  // =========================
-  // RENDER CALENDARIO (senza eventi)
-  // =========================
+  // Render calendario (con marker SOLO per eventi importanti)
   function renderCalendar(){
     if(!inRange(stateYear)){ stateYear=2026; stateMonth=1; }
     setTheme();
@@ -531,19 +561,13 @@
   function makeDayCell(y,m,d,key,isOff,todayKey){
     const div = document.createElement("div");
     div.className = "day" + (isOff ? " off" : "") + (key===todayKey ? " today" : "");
-    div.innerHTML = `<div class="n">${d}</div>`;
+    const marker = markerForDate(key);
+    div.innerHTML = `<div class="n">${d}</div>${marker ? `<div class="marker">${marker}</div>` : ""}`;
     return div;
   }
 
   // =========================
-  // LEGGE SCOUT (modal)
-  // =========================
-  lawsBtn.addEventListener("click", ()=> lawsBackdrop.classList.add("show"));
-  lawsClose.addEventListener("click", ()=> lawsBackdrop.classList.remove("show"));
-  lawsBackdrop.addEventListener("click", (e)=>{ if(e.target===lawsBackdrop) lawsBackdrop.classList.remove("show"); });
-
-  // =========================
-  // GIORNATE A TEMA: mostra prossime 6
+  // GIORNATE A TEMA
   // =========================
   function nextThemeDays(){
     const now = new Date();
@@ -581,7 +605,7 @@
   }
 
   // =========================
-  // COUNTDOWN
+  // ✅ COUNTDOWN SOLO SE EVENTI ESISTONO DAVVERO
   // =========================
   function daysBetween(a,b){
     const A = new Date(a.getFullYear(), a.getMonth(), a.getDate());
@@ -594,8 +618,17 @@
     const now = new Date();
     countCards.innerHTML = "";
 
-    // ordina per prossimità e mostra 3
-    const list = COUNTDOWN_EVENTS
+    if(!IMPORTANT_EVENTS.length){
+      const card = document.createElement("div");
+      card.className="card";
+      card.innerHTML = `<div class="kicker">🧭 Countdown</div>
+        <p class="big">Nessun evento impostato</p>
+        <p class="small">Aggiungi date in IMPORTANT_EVENTS per far comparire il countdown.</p>`;
+      countCards.appendChild(card);
+      return;
+    }
+
+    const list = IMPORTANT_EVENTS
       .map(e=>{
         const [y,m,d] = e.date.split("-").map(n=>parseInt(n,10));
         const dateObj = new Date(y, m-1, d);
@@ -608,8 +641,9 @@
     if(list.length === 0){
       const card = document.createElement("div");
       card.className="card";
-      card.innerHTML = `<div class="kicker">🧭 Countdown</div><p class="big">Nessun evento impostato</p>
-        <p class="small">Aggiungi date nel codice (COUNTDOWN_EVENTS).</p>`;
+      card.innerHTML = `<div class="kicker">🧭 Countdown</div>
+        <p class="big">Nessun evento futuro</p>
+        <p class="small">Tutti gli eventi impostati sono già passati.</p>`;
       countCards.appendChild(card);
       return;
     }
@@ -630,6 +664,35 @@
       countCards.appendChild(card);
     });
   }
+
+  // =========================
+  // Diario persistente (localStorage)
+  // =========================
+  const JOURNAL_KEY = "scout_journal_thoughts_v1";
+
+  function loadJournal(){
+    const saved = localStorage.getItem(JOURNAL_KEY);
+    if(saved !== null) journal.value = saved;
+    journalStatus.textContent = saved ? "✅ Testo caricato (salvato sul tuo dispositivo)" : "✍️ Inizia a scrivere…";
+  }
+
+  let saveTimer = null;
+  function scheduleSave(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(()=>{
+      localStorage.setItem(JOURNAL_KEY, journal.value);
+      const t = new Date();
+      journalStatus.textContent = "💾 Salvato: " + t.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"});
+    }, 250);
+  }
+  journal.addEventListener("input", scheduleSave);
+
+  // =========================
+  // Leggi Scout (modal)
+  // =========================
+  lawsBtn.addEventListener("click", ()=> lawsBackdrop.classList.add("show"));
+  lawsClose.addEventListener("click", ()=> lawsBackdrop.classList.remove("show"));
+  lawsBackdrop.addEventListener("click", (e)=>{ if(e.target===lawsBackdrop) lawsBackdrop.classList.remove("show"); });
 
   // =========================
   // NAV
@@ -657,7 +720,7 @@
     renderCalendar();
   });
 
-  // Swipe mese su mobile (sul calendario)
+  // Swipe mese su mobile
   const stage = document.getElementById("stage");
   let touchStartX = null;
   stage.addEventListener("touchstart",(e)=>{ touchStartX = e.touches[0].clientX; }, {passive:true});
@@ -720,6 +783,8 @@
   renderCalendar();
   renderThemeDays();
   renderCountdown();
+  loadJournal();
+  setTheme();
   setInterval(()=>{ setTheme(); renderThemeDays(); renderCountdown(); }, 60000);
 </script>
 </body>
