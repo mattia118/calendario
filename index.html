@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="it">
 <head>
@@ -10,10 +9,10 @@
 :root{
   --bg:url("ChatGPT Image 19 gen 2026, 21_00_05.png");
   --text:#eef7ef;
+  --glass: rgba(0,0,0,.45);
 }
 
 *{box-sizing:border-box;}
-
 body{
   margin:0;
   font-family: system-ui, Arial;
@@ -22,62 +21,43 @@ body{
   overflow-x:hidden;
 }
 
-/* SFONDO */
-.bg{
-  position:fixed;
-  inset:0;
-  background:var(--bg) center/cover no-repeat;
-  z-index:-3;
-}
-.overlay{
-  position:fixed;
-  inset:0;
-  background:linear-gradient(180deg,rgba(0,0,0,.65),rgba(0,0,0,.25));
-  z-index:-2;
-}
+.bg{ position:fixed; inset:0; background:var(--bg) center/cover no-repeat; z-index:-4; }
+.overlay{ position:fixed; inset:0; background:linear-gradient(180deg,rgba(0,0,0,.65),rgba(0,0,0,.25)); z-index:-3; }
 
-/* VENTO */
 .wind{
-  position:fixed;
-  inset:-50px;
-  pointer-events:none;
-  background:radial-gradient(600px 400px at 30% 30%, rgba(255,255,255,.12), transparent 70%);
-  opacity:.4;
-  transition:.4s;
-  z-index:-1;
+  position:fixed; inset:-50px; pointer-events:none;
+  background:radial-gradient(700px 500px at 25% 25%, rgba(255,255,255,.12), transparent 70%);
+  opacity:.35; transition:.35s;
+  transform: translateX(0);
+  z-index:-2;
 }
 
 /* INTRO */
 #intro{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  position:fixed; inset:0;
+  display:flex; align-items:center; justify-content:center; flex-direction:column;
   background:rgba(0,0,0,.75);
   z-index:10;
 }
+#intro.hide{opacity:0; pointer-events:none; transition:.6s;}
 #enterBtn{
-  padding:30px 60px;
-  font-size:30px;
-  border-radius:80px;
-  border:2px solid rgba(255,255,255,.6);
-  background:rgba(0,0,0,.4);
-  color:white;
-  cursor:pointer;
+  padding:30px 60px; font-size:30px; font-weight:900;
+  border-radius:90px; border:2px solid rgba(255,255,255,.6);
+  background:rgba(0,0,0,.4); color:white; cursor:pointer;
   animation:pulse 2.5s infinite;
 }
 @keyframes pulse{
   0%,100%{box-shadow:0 0 40px rgba(255,255,255,.3);}
   50%{box-shadow:0 0 90px rgba(255,255,255,.8);}
 }
+#introHint{margin-top:14px; opacity:.8; font-size:13px;}
 
-/* BANNER COMPLEANNO */
+/* COMPLEANNO BANNER */
 #birthdayBanner{
   display:none;
   text-align:center;
-  padding:18px;
-  font-size:28px;
+  padding:16px;
+  font-size:26px;
   font-weight:900;
   background:#ff4040;
   animation:blink 1s infinite;
@@ -86,71 +66,141 @@ body{
 
 /* MAIN */
 main{
-  max-width:900px;
-  margin:40px auto;
-  padding:20px;
+  max-width:980px;
+  margin:26px auto 40px;
+  padding:18px;
 }
 
-/* COUNTDOWN FISSO */
-#countdown{
-  background:rgba(0,0,0,.5);
-  padding:16px;
+.card{
+  background: var(--glass);
+  border:1px solid rgba(255,255,255,.18);
   border-radius:16px;
+  padding:14px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 18px 50px rgba(0,0,0,.55);
+  margin-bottom:14px;
+}
+
+.topbar{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+}
+.monthTitle{
+  font-size:18px; font-weight:900; text-transform:capitalize;
+  padding:8px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.25);
+}
+.controls{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.controls button, .controls select{
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.25);
+  background: rgba(0,0,0,.35);
+  color: white;
+  cursor: pointer;
+}
+
+#countdown{
   font-size:18px;
-  font-weight:700;
-  margin-bottom:20px;
+  font-weight:800;
 }
 
 /* CALENDARIO */
-.calendar{
+.dowRow, .calendar{
   display:grid;
   grid-template-columns:repeat(7,1fr);
   gap:8px;
 }
+.dow{
+  text-align:center;
+  padding:10px 6px;
+  border-radius:12px;
+  font-weight:900;
+  background: rgba(255,255,255,.85);
+  color:#000;
+}
 .day{
-  background:rgba(255,255,255,.85);
+  background:rgba(255,255,255,.88);
   color:#000;
   border-radius:14px;
   padding:10px;
+  position:relative;
+  min-height:54px;
 }
+.day.off{opacity:.55;}
+.day .n{font-weight:900;}
 .day.birthday{
   border:3px solid red;
   animation:blink 1s infinite;
 }
 
-/* BOTTONI */
+/* TELEFONO: caselle più quadrate */
+@media (max-width: 760px){
+  .day{ aspect-ratio: 1/1; min-height:auto; padding:8px; }
+}
+
+/* BOTTONI SEZIONI */
 .btn{
-  margin-top:12px;
+  margin-top:10px;
   padding:12px 18px;
   border-radius:20px;
-  border:1px solid rgba(255,255,255,.4);
+  border:1px solid rgba(255,255,255,.35);
   background:rgba(0,0,0,.4);
   color:white;
   cursor:pointer;
   width:100%;
+  font-weight:700;
 }
 
-/* SEZIONI */
 .section{
   display:none;
   margin-top:10px;
   padding:14px;
-  background:rgba(0,0,0,.45);
+  background:rgba(0,0,0,.35);
   border-radius:16px;
+  border:1px solid rgba(255,255,255,.14);
 }
-.section.show{display:block;}
+.section.show{display:block; animation: rise .25s ease both;}
+@keyframes rise{ from{opacity:0; transform: translateY(8px);} to{opacity:1; transform: translateY(0);} }
 
-/* FOOTER */
-footer{
-  margin:40px 0;
-  text-align:center;
-  opacity:.8;
+textarea{
+  width:100%;
+  height:120px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.22);
+  background:rgba(0,0,0,.25);
+  color: var(--text);
+  padding:10px;
+  outline:none;
+  resize:vertical;
 }
+
+/* CORIANDOLI */
+.confetti{
+  position:fixed;
+  top:-10px;
+  width:10px;
+  height:16px;
+  opacity:.9;
+  border-radius:2px;
+  pointer-events:none;
+  animation: fall linear forwards;
+  z-index:9;
+}
+@keyframes fall{
+  to{ transform: translateY(110vh) rotate(720deg); opacity:0; }
+}
+
+footer{ margin:30px 0 10px; text-align:center; opacity:.8; }
 </style>
 </head>
 
 <body>
-
 <div class="bg"></div>
 <div class="overlay"></div>
 <div class="wind" id="wind"></div>
@@ -158,116 +208,314 @@ footer{
 <!-- INTRO -->
 <div id="intro">
   <button id="enterBtn">ENTRA</button>
+  <div id="introHint">⚜️ Entra nel bosco</div>
 </div>
 
-<!-- COMPLEANNO -->
+<!-- BANNER COMPLEANNO -->
 <div id="birthdayBanner">OGGI È IL COMPLEANNO DI SIMONE 🎉🎂</div>
 
 <main>
+  <!-- COUNTDOWN FISSO -->
+  <div class="card">
+    <div id="countdown">—</div>
+  </div>
 
-<!-- COUNTDOWN FISSO -->
-<div id="countdown"></div>
+  <!-- TOPBAR mese/anno -->
+  <div class="card">
+    <div class="topbar">
+      <div class="monthTitle" id="monthTitle">—</div>
+      <div class="controls">
+        <button id="prev">⬅️</button>
+        <button id="next">➡️</button>
+        <select id="yearSel">
+          <option>2026</option>
+          <option>2027</option>
+          <option>2028</option>
+          <option>2029</option>
+        </select>
+        <button id="todayBtn">Oggi</button>
+      </div>
+    </div>
 
-<!-- CALENDARIO -->
-<div class="calendar" id="calendar"></div>
+    <div style="height:10px"></div>
+    <div class="dowRow" id="dowRow"></div>
+    <div style="height:10px"></div>
+    <div class="calendar" id="calendar"></div>
+  </div>
 
-<button class="btn" onclick="toggle('knot')">🧵 Nodo del giorno</button>
-<div class="section" id="knot"></div>
+  <!-- SEZIONI A TASTI -->
+  <button class="btn" onclick="toggle('knot')">🧵 Nodo del giorno</button>
+  <div class="section" id="knot"></div>
 
-<button class="btn" onclick="toggle('compass')">🧭 Bussola morale</button>
-<div class="section" id="compass"></div>
+  <button class="btn" onclick="toggle('compass')">🧭 Bussola morale</button>
+  <div class="section" id="compass"></div>
 
-<button class="btn" onclick="toggle('theme')">🌍 Giornata a tema</button>
-<div class="section" id="theme"></div>
+  <button class="btn" onclick="toggle('theme')">🌍 Giornata a tema</button>
+  <div class="section" id="theme"></div>
 
-<button class="btn" onclick="toggle('thoughts')">💭 Pensieri</button>
-<div class="section" id="thoughts">
-  <textarea id="journal" style="width:100%;height:120px;"></textarea>
-</div>
+  <button class="btn" onclick="toggle('thoughts')">💭 Pensieri</button>
+  <div class="section" id="thoughts">
+    <textarea id="journal" placeholder="Scrivi qui quello che ti passa per la mente..."></textarea>
+    <div style="opacity:.8;font-size:13px;margin-top:8px;" id="saveInfo"></div>
+  </div>
 
-<button class="btn" onclick="toggle('photos')">📸 Raccolta foto</button>
-<div class="section" id="photos">
-  <img src="Immagine 2026-01-21 205031.png" style="width:100%;border-radius:14px;">
-</div>
+  <button class="btn" onclick="toggle('photos')">📸 Raccolta foto</button>
+  <div class="section" id="photos">
+    <img src="Immagine 2026-01-21 205031.png" style="width:100%;border-radius:14px; border:1px solid rgba(255,255,255,.18);">
+  </div>
 
+  <footer>Site created by Mattia Spensieri</footer>
 </main>
 
-<footer>
-  Site created by Mattia Spensieri
-</footer>
-
 <script>
-/* ENTRA */
+/* ============ INTRO ============ */
 document.getElementById("enterBtn").onclick=()=>{
-  document.getElementById("intro").style.display="none";
+  document.getElementById("intro").classList.add("hide");
+  setTimeout(()=> document.getElementById("intro").style.display="none", 650);
 };
 
-/* TOGGLE */
+/* ============ TOGGLE ============ */
 function toggle(id){
   document.getElementById(id).classList.toggle("show");
 }
 
-/* CALENDARIO */
-const calendar=document.getElementById("calendar");
-const now=new Date();
-const year=now.getFullYear();
-const month=now.getMonth();
-const days=new Date(year,month+1,0).getDate();
-
-for(let d=1;d<=days;d++){
-  const cell=document.createElement("div");
-  cell.className="day";
-  cell.innerText=d;
-
-  // COMPLEANNO DI SIMONE: 22 GENNAIO
-  if(d===22 && month===0){
-    cell.classList.add("birthday");
-    if(now.getDate()===22 && now.getMonth()===0){
-      document.getElementById("birthdayBanner").style.display="block";
-    }
-  }
-  calendar.appendChild(cell);
-}
-
-/* COUNTDOWN */
-const birthday=new Date(year,0,22);
-let diff=Math.ceil((birthday-now)/(1000*60*60*24));
-const cd=document.getElementById("countdown");
-
-if(diff>0){
-  cd.innerText=`Mancano ${diff} giorni al compleanno di Simone 🎂`;
-}else if(diff===0){
-  cd.innerText=`Oggi è il compleanno di Simone 🎉`;
-}else{
-  cd.innerText=`Il compleanno di Simone è già passato`;
-}
-
-/* NODO DEL GIORNO */
-const knots=["Nodo piano","Gassa d’amante","Nodo parlato"];
-document.getElementById("knot").innerHTML=
-  "Nodo del giorno: <b>"+knots[now.getDate()%knots.length]+"</b>";
-
-/* BUSSOLA MORALE */
-const virtues=["Coraggio","Aiuto","Onestà","Lealtà","Servizio"];
-document.getElementById("compass").innerHTML=
-  "Virtù del giorno: <b>"+virtues[now.getDate()%virtues.length]+"</b>";
-
-/* GIORNATA A TEMA */
-document.getElementById("theme").innerHTML="🤗 Giornata Mondiale degli Abbracci";
-
-/* DIARIO SALVATO */
-const journal=document.getElementById("journal");
-journal.value=localStorage.getItem("thoughts")||"";
-journal.oninput=()=>localStorage.setItem("thoughts",journal.value);
-
-/* VENTO */
+/* ============ VENTO (scroll) ============ */
+let windTimer=null;
 window.addEventListener("scroll",()=>{
   const w=document.getElementById("wind");
-  w.style.opacity=.9;
-  clearTimeout(window._wind);
-  window._wind=setTimeout(()=>w.style.opacity=.4,300);
-});
-</script>
+  w.style.opacity=".85";
+  w.style.transform="translateX(18px)";
+  clearTimeout(windTimer);
+  windTimer=setTimeout(()=>{
+    w.style.opacity=".35";
+    w.style.transform="translateX(0)";
+  }, 350);
+},{passive:true});
 
+/* ============ DATE HELPERS ============ */
+const DOW = ["Lun","Mar","Mer","Gio","Ven","Sab","Dom"];
+const pad=n=>String(n).padStart(2,"0");
+const ymd=(y,m,d)=>`${y}-${pad(m)}-${pad(d)}`;
+const monthLabel=(y,m)=> new Date(y,m-1,1).toLocaleString("it-IT",{month:"long", year:"numeric"});
+const firstDayOffset=(y,m)=> (new Date(y,m-1,1).getDay()+6)%7; // lun=0
+const daysInMonth=(y,m)=> new Date(y,m,0).getDate();
+const inRange=y=> (y>=2026 && y<=2029);
+
+/* ============ COMPLEANNO SIMONE (22 GENNAIO) ============ */
+const SIMONE_BDAY = { month: 1, day: 22, name: "SIMONE" }; // mese 1=Gennaio
+
+/* ============ STATO CALENDARIO ============ */
+let stateYear=2026;
+let stateMonth=1;
+
+/* ============ RENDER DOW ============ */
+const dowRow=document.getElementById("dowRow");
+function renderDOW(){
+  dowRow.innerHTML="";
+  DOW.forEach(d=>{
+    const el=document.createElement("div");
+    el.className="dow";
+    el.textContent=d;
+    dowRow.appendChild(el);
+  });
+}
+
+/* ============ RENDER CALENDARIO ============ */
+const cal=document.getElementById("calendar");
+const monthTitle=document.getElementById("monthTitle");
+const yearSel=document.getElementById("yearSel");
+
+function renderCalendar(){
+  if(!inRange(stateYear)){ stateYear=2026; stateMonth=1; }
+  monthTitle.textContent = monthLabel(stateYear,stateMonth);
+  yearSel.value = String(stateYear);
+  cal.innerHTML="";
+
+  const today = new Date();
+  const todayKey = ymd(today.getFullYear(), today.getMonth()+1, today.getDate());
+
+  const offset = firstDayOffset(stateYear,stateMonth);
+  const dim = daysInMonth(stateYear,stateMonth);
+
+  const prevMonth = stateMonth===1 ? 12 : stateMonth-1;
+  const prevYear  = stateMonth===1 ? stateYear-1 : stateYear;
+  const nextMonth = stateMonth===12 ? 1 : stateMonth+1;
+  const nextYear  = stateMonth===12 ? stateYear+1 : stateYear;
+
+  const dimPrev = daysInMonth(prevYear, prevMonth);
+
+  // 42 celle (6 righe) per stabilità
+  let cells=0;
+
+  // giorni mese precedente (off)
+  for(let i=0;i<offset;i++){
+    const d = dimPrev - offset + 1 + i;
+    const key = ymd(prevYear, prevMonth, d);
+    cal.appendChild(makeCell(prevYear, prevMonth, d, key, true, todayKey));
+    cells++;
+  }
+
+  // giorni mese corrente
+  for(let d=1; d<=dim; d++){
+    const key = ymd(stateYear, stateMonth, d);
+    cal.appendChild(makeCell(stateYear, stateMonth, d, key, false, todayKey));
+    cells++;
+  }
+
+  // giorni mese successivo (off)
+  let nd=1;
+  while(cells<42){
+    const key = ymd(nextYear, nextMonth, nd);
+    cal.appendChild(makeCell(nextYear, nextMonth, nd, key, true, todayKey));
+    cells++; nd++;
+  }
+
+  // aggiorna banner + countdown
+  handleBirthdayEffects();
+  renderCountdown();
+}
+
+function makeCell(y,m,d,key,isOff,todayKey){
+  const cell=document.createElement("div");
+  cell.className="day"+(isOff?" off":"");
+  cell.innerHTML=`<div class="n">${d}</div>`;
+
+  // Compleanno Simone: SOLO 22 GENNAIO
+  if(m===SIMONE_BDAY.month && d===SIMONE_BDAY.day){
+    cell.classList.add("birthday");
+  }
+
+  return cell;
+}
+
+/* ============ COUNTDOWN FISSO ============ */
+const cd=document.getElementById("countdown");
+
+function daysBetween(a,b){
+  const A=new Date(a.getFullYear(),a.getMonth(),a.getDate());
+  const B=new Date(b.getFullYear(),b.getMonth(),b.getDate());
+  return Math.ceil((B-A)/(1000*60*60*24));
+}
+
+function nextSimoneBirthday(){
+  const now = new Date();
+  let y = now.getFullYear();
+  let target = new Date(y, SIMONE_BDAY.month-1, SIMONE_BDAY.day);
+  if(target < new Date(y, now.getMonth(), now.getDate())) target = new Date(y+1, SIMONE_BDAY.month-1, SIMONE_BDAY.day);
+  return target;
+}
+
+function renderCountdown(){
+  const now = new Date();
+  const target = nextSimoneBirthday();
+  const diff = daysBetween(now, target);
+
+  if(diff === 0){
+    cd.textContent = `OGGI È IL COMPLEANNO DI ${SIMONE_BDAY.name} 🎉🎂`;
+  } else if(diff === 1){
+    cd.textContent = `Manca 1 giorno al compleanno di ${SIMONE_BDAY.name} 🎂`;
+  } else {
+    cd.textContent = `Mancano ${diff} giorni al compleanno di ${SIMONE_BDAY.name} 🎂`;
+  }
+}
+
+/* ============ BANNER + CORIANDOLI ============ */
+const banner=document.getElementById("birthdayBanner");
+
+function spawnConfettiBurst(){
+  // crea 120 coriandoli
+  const colors = ["#ffd24d","#ff4040","#6dff8a","#74c9ff","#ffffff"];
+  for(let i=0;i<120;i++){
+    const c=document.createElement("div");
+    c.className="confetti";
+    c.style.left = (Math.random()*100)+"vw";
+    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+    c.style.animationDuration = (2.2 + Math.random()*1.6) + "s";
+    c.style.transform = `translateY(-20px) rotate(${Math.random()*360}deg)`;
+    document.body.appendChild(c);
+    setTimeout(()=> c.remove(), 4200);
+  }
+}
+
+function handleBirthdayEffects(){
+  const now = new Date();
+  const isBirthdayToday = (now.getMonth()+1===SIMONE_BDAY.month && now.getDate()===SIMONE_BDAY.day);
+
+  if(isBirthdayToday){
+    banner.style.display="block";
+    // coriandoli una volta quando renderizza
+    if(!window.__confettiDone){
+      window.__confettiDone=true;
+      spawnConfettiBurst();
+      // micro-burst dopo 1s
+      setTimeout(spawnConfettiBurst, 1000);
+    }
+  }else{
+    banner.style.display="none";
+    window.__confettiDone=false;
+  }
+}
+
+/* ============ NODO DEL GIORNO (a tasto) ============ */
+const knots=["Nodo piano","Gassa d’amante","Nodo parlato"];
+document.getElementById("knot").innerHTML =
+  `Nodo del giorno: <b>${knots[new Date().getDate()%knots.length]}</b><br><div style="opacity:.8;margin-top:6px;font-size:13px;">Cambia automaticamente ogni giorno.</div>`;
+
+/* ============ BUSSOLA MORALE (a tasto) ============ */
+const virtues=["Coraggio","Aiuto","Onestà","Lealtà","Servizio"];
+document.getElementById("compass").innerHTML =
+  `Virtù del giorno: <b>${virtues[new Date().getDate()%virtues.length]}</b><br><div style="opacity:.8;margin-top:6px;font-size:13px;">Segui la virtù di oggi nel tuo cammino.</div>`;
+
+/* ============ GIORNATA A TEMA (a tasto) ============ */
+document.getElementById("theme").innerHTML =
+  `🤗 <b>Giornata Mondiale degli Abbracci</b><br><div style="opacity:.8;margin-top:6px;font-size:13px;">Un gesto piccolo può cambiare la giornata.</div>`;
+
+/* ============ DIARIO SALVATO (a tasto) ============ */
+const journal=document.getElementById("journal");
+const saveInfo=document.getElementById("saveInfo");
+journal.value=localStorage.getItem("thoughts")||"";
+saveInfo.textContent = journal.value ? "✅ Testo caricato" : "✍️ Scrivi e resterà salvato";
+
+let saveTimer=null;
+journal.oninput=()=>{
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{
+    localStorage.setItem("thoughts",journal.value);
+    const t=new Date();
+    saveInfo.textContent = "💾 Salvato: " + t.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"});
+  }, 250);
+};
+
+/* ============ NAV MESE/ANNO ============ */
+document.getElementById("prev").onclick=()=>{
+  stateMonth--;
+  if(stateMonth<1){ stateMonth=12; stateYear--; }
+  if(!inRange(stateYear)){ stateYear=2026; stateMonth=1; }
+  renderCalendar();
+};
+document.getElementById("next").onclick=()=>{
+  stateMonth++;
+  if(stateMonth>12){ stateMonth=1; stateYear++; }
+  if(!inRange(stateYear)){ stateYear=2029; stateMonth=12; }
+  renderCalendar();
+};
+yearSel.onchange=()=>{
+  stateYear=parseInt(yearSel.value,10);
+  renderCalendar();
+};
+document.getElementById("todayBtn").onclick=()=>{
+  const t=new Date();
+  if(t.getFullYear()<2026 || t.getFullYear()>2029){
+    stateYear=2026; stateMonth=1;
+  } else {
+    stateYear=t.getFullYear(); stateMonth=t.getMonth()+1;
+  }
+  renderCalendar();
+};
+
+/* ============ AVVIO ============ */
+renderDOW();
+renderCalendar();
+</script>
 </body>
 </html>
