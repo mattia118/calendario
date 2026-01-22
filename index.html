@@ -31,23 +31,28 @@
 
   *{ box-sizing:border-box; }
   html, body { height:100%; }
+
+  /* ✅ evita “fondo verde” su mobile: forza bg, niente gap e copertura piena */
   body{
     margin:0;
+    min-height:100vh;
     color:var(--text);
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
     overflow-x:hidden;
-    background:#08190e;
+    background: #08190e; /* fallback */
+    -webkit-overflow-scrolling: touch;
   }
 
-  /* SFONDO */
+  /* SFONDO (fixed + cover) */
   .bg{
-    position:fixed; inset:0;
+    position:fixed; inset:-2px; /* leggero over-scan contro gap mobile */
     background-image: var(--bgUrl);
     background-size: cover;
     background-position:center;
     transform:scale(1.03);
     z-index:-6;
     animation: bgSlow 16s ease-in-out infinite alternate;
+    will-change: transform, filter;
   }
   @keyframes bgSlow{
     from{ transform: scale(1.03) translateY(0) translateX(0); filter:saturate(1); }
@@ -55,19 +60,20 @@
   }
 
   .bgOverlay{
-    position:fixed; inset:0;
+    position:fixed; inset:-2px;
     background:
       radial-gradient(1200px 800px at 20% 10%, rgba(124,255,138,.18), transparent 55%),
       radial-gradient(900px 600px at 90% 20%, rgba(255,210,77,.16), transparent 60%),
       linear-gradient(160deg, var(--overlayA), var(--overlayB));
     z-index:-5;
     animation: overlayBreath 9s ease-in-out infinite;
+    will-change: opacity;
   }
   @keyframes overlayBreath{ 0%,100%{ opacity:1; } 50%{ opacity:.92; } }
 
   /* NEBBIA/VENTO */
   .wind{
-    position:fixed; inset:-90px;
+    position:fixed; inset:-120px;
     pointer-events:none;
     background:
       radial-gradient(700px 440px at 30% 30%, rgba(255,255,255,.12), transparent 72%),
@@ -79,11 +85,9 @@
     transition: opacity .35s ease, transform .35s ease;
     z-index:-4;
     animation: fogDrift 10s ease-in-out infinite alternate;
+    will-change: transform, opacity;
   }
-  @keyframes fogDrift{
-    from{ filter: blur(18px); }
-    to{ filter: blur(22px); }
-  }
+  @keyframes fogDrift{ from{ filter: blur(18px); } to{ filter: blur(22px); } }
 
   /* FOGLIE */
   .leaves{ position:fixed; inset:0; pointer-events:none; z-index:-1; overflow:hidden; }
@@ -96,6 +100,7 @@
     animation: leafDown var(--t) linear infinite, leafSpin calc(var(--t) * .75) ease-in-out infinite;
     box-shadow: 0 6px 20px rgba(0,0,0,.18);
     transform: translateX(calc(var(--windStrength) * 8px));
+    will-change: transform, opacity;
   }
   @keyframes leafDown{
     0%{ transform: translate3d(0,-60px,0); opacity:0; }
@@ -121,7 +126,7 @@
     100%{ transform: translate(calc(var(--dx) + var(--windStrength) * 80px), var(--dy)) scale(1.25); opacity:0; }
   }
 
-  /* SCINTILLE (piccole particelle) */
+  /* SCINTILLE */
   .sparks{ position:fixed; inset:0; pointer-events:none; z-index:-1; }
   .spark{
     position:absolute;
@@ -164,10 +169,7 @@
     border:1px dashed rgba(255,210,77,.22);
     animation: ring2 6.8s linear infinite;
   }
-  @keyframes ring{
-    0%,100%{ transform: scale(1); opacity:.65; }
-    50%{ transform: scale(1.06); opacity:.95; }
-  }
+  @keyframes ring{ 0%,100%{ transform: scale(1); opacity:.65; } 50%{ transform: scale(1.06); opacity:.95; } }
   @keyframes ring2{ to{ transform: rotate(360deg); } }
 
   .enterBtn{
@@ -194,7 +196,9 @@
   }
   @keyframes shimmer{ 0%,100%{ opacity:.25; transform: translateX(-40%); } 50%{ opacity:.55; transform: translateX(40%); } }
   @keyframes pulse{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-2px); } }
-  .enterHint{ margin-top:14px; color: rgba(238,247,239,.78); font-size: 13px; text-align:center; }
+
+  /* ✅ tolta la scritta sotto al tasto ENTRA */
+  .enterHint{ display:none; }
 
   /* LAYOUT */
   .wrap{ position:relative; z-index:2; max-width:1080px; margin:22px auto 46px; padding:14px; }
@@ -263,7 +267,6 @@
     50%{ box-shadow: 0 0 28px rgba(124,255,138,.35); }
   }
 
-  /* marker */
   .marker{
     position:absolute; right:8px; bottom:8px;
     font-size:14px; opacity:.98;
@@ -276,7 +279,6 @@
     50%{ transform: translateY(-2px) rotate(-2deg); }
   }
 
-  /* aura evento */
   .eventDay::before{
     content:"";
     position:absolute; inset:-40px;
@@ -290,7 +292,6 @@
   }
   @keyframes eventAura{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-6px); } }
 
-  /* 🎂 Simone lampeggia forte */
   .simoneBlink{
     outline: 3px solid rgba(255,63,63,.88);
     outline-offset:-3px;
@@ -301,7 +302,6 @@
     50%{ filter: brightness(1.12); box-shadow: 0 0 40px rgba(255,63,63,.55); }
   }
 
-  /* highlight quando arrivi dal countdown */
   .jumpFlash{
     animation: jumpFlash 1.6s ease-in-out 0s 3;
   }
@@ -311,7 +311,6 @@
     100%{ transform: scale(1); }
   }
 
-  /* TELEFONO */
   @media (max-width: 780px){
     .content{ padding: 18px 14px 14px; }
     .grid{ gap:8px; }
@@ -346,12 +345,7 @@
   .monthEventsSub{ font-size:12px; color: var(--muted); margin-top:2px; }
 
   /* ACCORDION */
-  .accordion{
-    margin-top:14px;
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-  }
+  .accordion{ margin-top:14px; display:flex; flex-direction:column; gap:12px; }
   .accItem{
     background: var(--panel);
     border:1px solid var(--panel2);
@@ -558,7 +552,7 @@
   .timeYear{ font-weight:900; font-size:16px; margin:0; }
   .timeText{ margin:8px 0 0; color: var(--muted); font-size:13px; }
 
-  /* FOTO FINALE */
+  /* PANNELLO */
   .panel{
     margin-top:14px; background:var(--panel); border:1px solid var(--panel2);
     border-radius:var(--radius); box-shadow:var(--shadow); backdrop-filter: blur(10px);
@@ -566,27 +560,128 @@
   }
   .panel h3{ margin:0 0 10px; font-size:16px; }
 
-  .belowImg{
-    width:100%;
-    border-radius: 18px;
-    border:1px solid rgba(255,255,255,.14);
-    box-shadow: var(--shadow);
-    display:block;
-    animation: photoFloat 7.5s ease-in-out infinite;
+  /* ✅ Gallery */
+  .galleryTitle{
+    font-weight:900;
+    font-size:16px;
+    margin:0 0 10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
   }
-  @keyframes photoFloat{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-3px); } }
+  .galleryGrid{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:10px;
+  }
+  @media (max-width: 1000px){ .galleryGrid{ grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 680px){ .galleryGrid{ grid-template-columns: repeat(2, 1fr); } }
 
+  .thumb{
+    position:relative;
+    border-radius: 16px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.18);
+    box-shadow: 0 14px 30px rgba(0,0,0,.25);
+    transform: translateZ(0);
+    transition: transform .18s ease, filter .18s ease;
+  }
+  .thumb:hover{ transform: translateY(-2px) scale(1.01); filter: brightness(1.06); }
+  .thumb img, .thumb video{
+    width:100%;
+    height: 140px;
+    object-fit: cover;
+    display:block;
+  }
+  @media (max-width: 780px){
+    .thumb img, .thumb video{ height: 130px; }
+  }
+  .thumbBadge{
+    position:absolute;
+    left:10px; top:10px;
+    padding:6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 900;
+    background: rgba(0,0,0,.28);
+    border:1px solid rgba(255,255,255,.16);
+    backdrop-filter: blur(10px);
+    color: rgba(238,247,239,.92);
+  }
+
+  /* LIGHTBOX */
+  .lightbox{
+    position:fixed; inset:0;
+    background: rgba(0,0,0,.72);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding: 14px;
+    z-index: 200;
+  }
+  .lightbox.show{ display:flex; }
+  .lbBox{
+    width:min(980px, 96vw);
+    max-height: 88vh;
+    border-radius: 18px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(10,28,16,.85);
+    box-shadow: 0 30px 80px rgba(0,0,0,.6);
+    animation: lbPop .26s ease both;
+  }
+  @keyframes lbPop{ from{ transform: translateY(14px) scale(.98); opacity:0; } to{ transform: translateY(0) scale(1); opacity:1; } }
+  .lbTop{
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 10px 12px;
+    background: rgba(0,0,0,.25);
+    border-bottom: 1px solid rgba(255,255,255,.12);
+  }
+  .lbTitle{
+    font-weight:900;
+    font-size: 14px;
+    color: rgba(238,247,239,.92);
+  }
+  .lbClose{
+    border:1px solid rgba(255,255,255,.18);
+    background: rgba(0,0,0,.22);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 8px 10px;
+    cursor:pointer;
+    font-weight:900;
+  }
+  .lbMedia{
+    display:block;
+    width:100%;
+    height: min(78vh, 720px);
+    object-fit: contain;
+    background: rgba(0,0,0,.20);
+  }
+
+  /* ✅ footer più visibile ma sobrio */
   .footerWindow{
     margin-top:14px;
-    background: rgba(0,0,0,.25);
-    border: 1px solid rgba(255,255,255,.16);
     border-radius: 18px;
     padding: 14px;
     text-align:center;
     box-shadow: var(--shadow);
-    animation: footerGlow 5.2s ease-in-out infinite;
+    background: rgba(0,0,0,.34);
+    border: 1px solid rgba(255,255,255,.22);
+    backdrop-filter: blur(10px);
   }
-  @keyframes footerGlow{ 0%,100%{ filter: brightness(1); } 50%{ filter: brightness(1.07); } }
+  .footerWindow b{
+    display:inline-block;
+    font-size: 14px;
+    letter-spacing: .06em;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.16);
+    box-shadow: 0 16px 40px rgba(0,0,0,.28);
+    text-transform: uppercase;
+  }
 </style>
 </head>
 
@@ -637,7 +732,6 @@
         <div style="height:10px"></div>
         <div class="grid" id="cal"></div>
 
-        <!-- lista eventi del mese -->
         <div class="monthEvents" id="monthEvents"></div>
       </div>
     </div>
@@ -647,10 +741,7 @@
 
       <div class="accItem" id="accThoughts">
         <button class="accBtn" type="button" aria-expanded="false">
-          <div class="accLeft">
-            <div class="accIco">💭</div>
-            <div class="accTitle">Pensieri</div>
-          </div>
+          <div class="accLeft"><div class="accIco">💭</div><div class="accTitle">Pensieri</div></div>
           <div class="chev">▾</div>
         </button>
         <div class="accBody">
@@ -663,10 +754,7 @@
 
       <div class="accItem" id="accTheme">
         <button class="accBtn" type="button" aria-expanded="false">
-          <div class="accLeft">
-            <div class="accIco">🌍</div>
-            <div class="accTitle">Giornate a tema</div>
-          </div>
+          <div class="accLeft"><div class="accIco">🌍</div><div class="accTitle">Giornate a tema</div></div>
           <div class="chev">▾</div>
         </button>
         <div class="accBody">
@@ -677,10 +765,7 @@
 
       <div class="accItem" id="accCountdown">
         <button class="accBtn" type="button" aria-expanded="false">
-          <div class="accLeft">
-            <div class="accIco">⏳</div>
-            <div class="accTitle">Countdown (solo ultimi 10 giorni)</div>
-          </div>
+          <div class="accLeft"><div class="accIco">⏳</div><div class="accTitle">Countdown (solo ultimi 10 giorni)</div></div>
           <div class="chev">▾</div>
         </button>
         <div class="accBody">
@@ -691,10 +776,7 @@
 
       <div class="accItem" id="accKnot">
         <button class="accBtn" type="button" aria-expanded="false">
-          <div class="accLeft">
-            <div class="accIco">🧵</div>
-            <div class="accTitle">Nodo del giorno</div>
-          </div>
+          <div class="accLeft"><div class="accIco">🧵</div><div class="accTitle">Nodo del giorno</div></div>
           <div class="chev">▾</div>
         </button>
         <div class="accBody">
@@ -711,10 +793,7 @@
 
       <div class="accItem" id="accCompass">
         <button class="accBtn" type="button" aria-expanded="false">
-          <div class="accLeft">
-            <div class="accIco">🧭</div>
-            <div class="accTitle">Bussola morale</div>
-          </div>
+          <div class="accLeft"><div class="accIco">🧭</div><div class="accTitle">Bussola morale</div></div>
           <div class="chev">▾</div>
         </button>
         <div class="accBody">
@@ -733,45 +812,42 @@
 
       <div class="accItem" id="accTimeline">
         <button class="accBtn" type="button" aria-expanded="false">
-          <div class="accLeft">
-            <div class="accIco">🕰️</div>
-            <div class="accTitle">Linea del tempo scout</div>
-          </div>
+          <div class="accLeft"><div class="accIco">🕰️</div><div class="accTitle">Linea del tempo scout</div></div>
           <div class="chev">▾</div>
         </button>
         <div class="accBody">
           <h3 style="margin:10px 0 8px;">🕰️ Linea del tempo scout</h3>
           <div class="timeline" id="timeline">
-            <div class="timeItem">
-              <p class="timeYear">1907</p>
-              <p class="timeText">Primo campo scout sull’isola di Brownsea.</p>
-            </div>
-            <div class="timeItem">
-              <p class="timeYear">1920</p>
-              <p class="timeText">Primo Jamboree mondiale.</p>
-            </div>
-            <div class="timeItem">
-              <p class="timeYear">1950+</p>
-              <p class="timeText">Lo scoutismo cresce in tutto il mondo e diventa una grande famiglia.</p>
-            </div>
-            <div class="timeItem">
-              <p class="timeYear">Oggi</p>
-              <p class="timeText">Tu nel bosco 🌲: “lascia il posto migliore di come lo hai trovato”.</p>
-            </div>
+            <div class="timeItem"><p class="timeYear">1907</p><p class="timeText">Primo campo scout sull’isola di Brownsea.</p></div>
+            <div class="timeItem"><p class="timeYear">1920</p><p class="timeText">Primo Jamboree mondiale.</p></div>
+            <div class="timeItem"><p class="timeYear">1950+</p><p class="timeText">Lo scoutismo cresce in tutto il mondo e diventa una grande famiglia.</p></div>
+            <div class="timeItem"><p class="timeYear">Oggi</p><p class="timeText">Tu nel bosco 🌲: “lascia il posto migliore di come lo hai trovato”.</p></div>
           </div>
         </div>
       </div>
 
     </div>
 
-    <!-- FOTO FISSA ALLA FINE -->
+    <!-- ✅ FOTO CAMPO ESTIVO 2025 (gallery) -->
     <div class="panel">
-      <h3>📷 Foto</h3>
-      <img class="belowImg" src="Immagine 2026-01-21 205031.png" alt="Immagine sotto al calendario">
+      <h3 class="galleryTitle">📷 Foto campo estivo 2025</h3>
+      <div class="galleryGrid" id="galleryGrid"></div>
     </div>
 
     <div class="footerWindow">
       <b>Site created by Mattia Spensieri</b>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox">
+    <div class="lbBox">
+      <div class="lbTop">
+        <div class="lbTitle" id="lbTitle">Foto</div>
+        <button class="lbClose" id="lbClose">Chiudi ✖</button>
+      </div>
+      <img class="lbMedia" id="lbImg" alt="foto" style="display:none;">
+      <video class="lbMedia" id="lbVid" controls playsinline style="display:none;"></video>
     </div>
   </div>
 
@@ -814,6 +890,14 @@
 
   const monthEventsBox = document.getElementById("monthEvents");
 
+  // Gallery
+  const galleryGrid = document.getElementById("galleryGrid");
+  const lightbox = document.getElementById("lightbox");
+  const lbTitle = document.getElementById("lbTitle");
+  const lbClose = document.getElementById("lbClose");
+  const lbImg = document.getElementById("lbImg");
+  const lbVid = document.getElementById("lbVid");
+
   // =========================
   // STATO
   // =========================
@@ -822,10 +906,6 @@
 
   // =========================
   // EVENTI (SORGENTE UNICA)
-  // - Route + Campo estivo (fissi)
-  // - Compleanno Simone (annuale, lampeggia)
-  // - Festività nazionali (annuali, + Pasqua/Pasquetta calcolate per ogni anno)
-  // - Celebrazioni/Santi con data fissa (annuali)
   // =========================
   const SCOUT_EVENTS = [
     { kind:"fixed",  date:"2026-07-15", icon:"🔥", name:"Campo estivo", tag:"scout" },
@@ -833,7 +913,6 @@
     { kind:"annual", md:"01-23", icon:"🎂", name:"Compleanno di Simone", tag:"family", special:"simone" }
   ];
 
-  // Festività nazionali (date fisse -> annuali)
   const HOLIDAYS_FIXED = [
     { md:"01-01", icon:"🎉", name:"Capodanno", tag:"holiday" },
     { md:"01-06", icon:"🧹", name:"Epifania", tag:"holiday" },
@@ -847,7 +926,6 @@
     { md:"12-26", icon:"🎁", name:"Santo Stefano", tag:"holiday" }
   ];
 
-  // Celebrazioni / santi (date fisse -> annuali)
   const CELEBRATIONS_FIXED = [
     { md:"01-07", icon:"🇮🇹", name:"Festa del Tricolore", tag:"celebration" },
     { md:"02-14", icon:"❤️", name:"San Valentino", tag:"celebration" },
@@ -864,9 +942,7 @@
     { md:"12-07", icon:"⛪", name:"Sant’Ambrogio (Milano)", tag:"celebration" }
   ];
 
-  // Pasqua (calcolata) + Pasquetta
   function easterDate(year){
-    // Algoritmo Meeus/Jones/Butcher (gregoriano)
     const a = year % 19;
     const b = Math.floor(year / 100);
     const c = year % 100;
@@ -879,7 +955,7 @@
     const k = c % 4;
     const l = (32 + 2*e + 2*i - h - k) % 7;
     const m = Math.floor((a + 11*h + 22*l) / 451);
-    const month = Math.floor((h + l - 7*m + 114) / 31); // 3=Marzo, 4=Aprile
+    const month = Math.floor((h + l - 7*m + 114) / 31);
     const day = ((h + l - 7*m + 114) % 31) + 1;
     return new Date(year, month-1, day);
   }
@@ -887,7 +963,6 @@
   function buildEvents(){
     const out = [];
 
-    // scout
     for(const e of SCOUT_EVENTS){
       if(e.kind === "fixed"){
         out.push({ date: e.date, icon:e.icon, name:e.name, tag:e.tag, special:e.special||"", kind:e.kind });
@@ -898,45 +973,25 @@
       }
     }
 
-    // festività fisse
     for(const h of HOLIDAYS_FIXED){
       for(let y=YEAR_MIN; y<=YEAR_MAX; y++){
         out.push({ date: `${y}-${h.md}`, icon:h.icon, name:h.name, tag:h.tag, special:"", kind:"annual" });
       }
     }
 
-    // pasqua/pasquetta per ogni anno
     for(let y=YEAR_MIN; y<=YEAR_MAX; y++){
       const pasqua = easterDate(y);
       const pasquetta = new Date(pasqua.getFullYear(), pasqua.getMonth(), pasqua.getDate() + 1);
-
-      out.push({
-        date: ymd(pasqua.getFullYear(), pasqua.getMonth()+1, pasqua.getDate()),
-        icon:"✝️",
-        name:"Pasqua",
-        tag:"holiday",
-        special:"",
-        kind:"annual"
-      });
-
-      out.push({
-        date: ymd(pasquetta.getFullYear(), pasquetta.getMonth()+1, pasquetta.getDate()),
-        icon:"🐣",
-        name:"Pasquetta",
-        tag:"holiday",
-        special:"",
-        kind:"annual"
-      });
+      out.push({ date: ymd(pasqua.getFullYear(), pasqua.getMonth()+1, pasqua.getDate()), icon:"✝️", name:"Pasqua", tag:"holiday", special:"", kind:"annual" });
+      out.push({ date: ymd(pasquetta.getFullYear(), pasquetta.getMonth()+1, pasquetta.getDate()), icon:"🐣", name:"Pasquetta", tag:"holiday", special:"", kind:"annual" });
     }
 
-    // celebrazioni fisse
     for(const c of CELEBRATIONS_FIXED){
       for(let y=YEAR_MIN; y<=YEAR_MAX; y++){
         out.push({ date: `${y}-${c.md}`, icon:c.icon, name:c.name, tag:c.tag, special:"", kind:"annual" });
       }
     }
 
-    // ordina
     out.sort((a,b)=> a.date.localeCompare(b.date));
     return out;
   }
@@ -950,7 +1005,6 @@
   function markerForDate(key){
     const list = eventsForDate(key);
     if(!list.length) return [];
-    // massimo 2 icone per non fare casino
     const icons = [];
     for(const e of list){
       if(!icons.includes(e.icon)) icons.push(e.icon);
@@ -960,7 +1014,7 @@
   }
 
   // =========================
-  // GIORNATE A TEMA (restano)
+  // GIORNATE A TEMA
   // =========================
   const THEME_DAYS = [
     { date:"01-21", icon:"🤗", name:"Giornata Mondiale degli Abbracci" },
@@ -985,7 +1039,6 @@
     { name:"Gassa d’amante", art:`   ____ \n  / __ \\__\n / /  \\___)\n \\ \\__\n  \\___\\\n (____)`, desc:"Fa un cappio fisso che non scorre. Utilissima quando ti serve un anello sicuro." },
     { name:"Nodo parlato", art:`|\\      /|\n| \\____/ |\n|  ____  |\n| /    \\ |\n|/      \\|`, desc:"Ottimo per fissare una corda a un palo. È stabile e molto usato in campo." }
   ];
-
   const VIRTUES = [
     { name:"Coraggio", desc:"Fare la cosa giusta anche quando hai paura." },
     { name:"Aiuto", desc:"Dare una mano senza aspettarsi niente in cambio." },
@@ -998,8 +1051,8 @@
   // CALENDARIO - CALCOLI
   // =========================
   function firstDayOffset(y,m){
-    const js = new Date(y, m-1, 1).getDay(); // 0 dom..6 sab
-    return (js + 6) % 7; // lun=0..dom=6
+    const js = new Date(y, m-1, 1).getDay();
+    return (js + 6) % 7;
   }
   function daysInMonth(y,m){ return new Date(y, m, 0).getDate(); }
 
@@ -1110,26 +1163,21 @@
   }
 
   // =========================
-  // EVENTI DEL MESE (visibili sotto)
+  // EVENTI DEL MESE
   // =========================
   function renderMonthEventsList(){
     monthEventsBox.innerHTML = "";
     const monthKey = `${stateYear}-${pad(stateMonth)}`;
-    const list = EVENTS
-      .filter(e => e.date.startsWith(monthKey))
-      .sort((a,b)=> a.date.localeCompare(b.date));
+    const list = EVENTS.filter(e => e.date.startsWith(monthKey)).sort((a,b)=> a.date.localeCompare(b.date));
 
     if(!list.length){
-      monthEventsBox.innerHTML = `<div class="monthEventsLine">
-        <div class="monthEventsIco">🌙</div>
-        <div class="monthEventsTxt">Nessun evento in questo mese</div>
-      </div>`;
+      monthEventsBox.innerHTML = `<div class="monthEventsLine"><div class="monthEventsIco">🌙</div><div class="monthEventsTxt">Nessun evento in questo mese</div></div>`;
       return;
     }
 
     list.forEach(e=>{
-      const [y,m,d] = e.date.split("-").map(n=>parseInt(n,10));
-      const dt = new Date(y, m-1, d);
+      const [yy,mm,dd] = e.date.split("-").map(n=>parseInt(n,10));
+      const dt = new Date(yy, mm-1, dd);
       const label = dt.toLocaleDateString("it-IT",{weekday:"long", day:"2-digit", month:"long", year:"numeric"});
       const row = document.createElement("div");
       row.className = "monthEventsLine";
@@ -1163,7 +1211,7 @@
   // =========================
   // DIARIO
   // =========================
-  const JOURNAL_KEY = "scout_thoughts_v4";
+  const JOURNAL_KEY = "scout_thoughts_v5";
   function loadJournal(){
     const saved = localStorage.getItem(JOURNAL_KEY);
     if(saved !== null) journal.value = saved;
@@ -1181,7 +1229,7 @@
   journal.addEventListener("input", scheduleSave);
 
   // =========================
-  // GIORNATE A TEMA: prossime 6
+  // GIORNATE A TEMA
   // =========================
   function nextThemeDays(){
     const now = new Date();
@@ -1219,10 +1267,7 @@
   }
 
   // =========================
-  // COUNTDOWN
-  // ✅ entra SOLO negli ultimi 10 giorni (0..10)
-  // ✅ dedup: stesso nome -> prende la data più vicina
-  // ✅ clic -> va al giorno sul calendario + lampeggia
+  // COUNTDOWN (solo ultimi 10 giorni)
   // =========================
   function startOfDay(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
   function parseEventDate(e){
@@ -1237,17 +1282,15 @@
 
   function renderCountdown(){
     countCards.innerHTML = "";
-
     const now0 = startOfDay(new Date());
 
-    // lista eventi 0..10 giorni
     const list = EVENTS
       .map(e=>{
         const dateObj = parseEventDate(e);
         const diff = diffDaysFromToday(dateObj);
         return { ...e, dateObj, diff };
       })
-      .filter(e => e.dateObj >= now0 && e.diff <= 10)   // ✅ SOLO ultimi 10 giorni
+      .filter(e => e.dateObj >= now0 && e.diff <= 10)
       .sort((a,b)=> a.dateObj - b.dateObj);
 
     if(!list.length){
@@ -1260,7 +1303,6 @@
       return;
     }
 
-    // dedup per nome (es: Compleanno di Simone compare una sola volta)
     const picked = [];
     const seen = new Set();
     for(const e of list){
@@ -1294,7 +1336,6 @@
 
   function jumpToEvent(dateStr){
     const [y,m] = dateStr.split("-").map(n=>parseInt(n,10));
-
     stateYear = Math.min(Math.max(y, YEAR_MIN), YEAR_MAX);
     stateMonth = m;
     renderCalendar();
@@ -1378,7 +1419,7 @@
   }, {passive:true});
 
   // =========================
-  // EFFETTI: foglie + lucciole + scintille
+  // EFFETTI
   // =========================
   function spawnLeaves(){
     const box = document.getElementById("leaves");
@@ -1466,6 +1507,145 @@
   }, {passive:true});
 
   // =========================
+  // GALLERY (foto + video)
+  // =========================
+  const MEDIA = [
+    "1e38146e-d6d7-4fdd-bcb2-8a6b0887210e.jpg",
+    "3e799a83-3336-47db-a2eb-bc55540677ba.jpg",
+    "5aae342f-8b7f-43c5-85e9-13f6881e8f67.jpg",
+    "7e9d6930-3cb9-41a5-bae0-9e788f0abe50.jpg",
+    "8c78f8ec-652a-434f-ab06-e3e0788ecb31.jpg",
+    "8cc7054e-5881-420c-ba3a-435828560198.jpg",
+    "85ffc3dd-2321-4804-bd00-90a326a38b5f.jpg",
+    "95f82bcc-fe77-4a68-8089-a165afb315ee.jpg",
+    "338867c3-8486-4749-b364-f76e9232028a.jpg",
+    "91583127-dee0-4e25-bf9b-3ca8c7311e1c.jpg",
+    "a400cc11-4b2f-4672-8595-baeba587dacc.jpg",
+    "bdb6b79f-82a4-4800-8dec-98e9161d8f12.jpg",
+    "d24c8755-7cc8-464e-8a19-38c0e46e2dec.jpg",
+    "e08df019-6c8c-40b5-b813-802f3b8d41f7.jpg",
+    "E28F1480-5C8A-4E67-8C5D-D545474F5B32.jpg",
+    "f98df94d-5212-492c-a8a2-742e5ee1360c.jpg",
+    "daf617f6-2303-4897-9b28-955121eeacae.mp4",
+    "dbea094f-77fa-4787-b1be-5e750421b67c.mp4",
+    "e62058ee-c8e9-4616-a3fe-fa8a46110433.mp4",
+    "IMG_3210.HEIC",
+    "IMG_3211.HEIC",
+    "IMG_3214.HEIC",
+    "IMG_3215.HEIC",
+    "IMG_3216.HEIC",
+    "IMG_3217.HEIC",
+    "IMG_3218.HEIC",
+    "IMG_3219.HEIC",
+    "IMG_3220.HEIC",
+    "IMG_3221.HEIC"
+  ];
+
+  function extOf(f){
+    const m = f.toLowerCase().split(".").pop();
+    return m || "";
+  }
+  function isVideo(f){
+    const e = extOf(f);
+    return ["mp4","webm","mov"].includes(e);
+  }
+  function isHeic(f){
+    return extOf(f) === "heic";
+  }
+
+  function renderGallery(){
+    galleryGrid.innerHTML = "";
+    MEDIA.forEach((file, idx)=>{
+      const box = document.createElement("div");
+      box.className = "thumb";
+
+      const ext = extOf(file);
+      const badge = isVideo(file) ? "VIDEO" : (isHeic(file) ? "HEIC" : ext.toUpperCase());
+
+      box.innerHTML = `<div class="thumbBadge">${badge}</div>`;
+
+      // HEIC: molti browser non lo aprono -> mostriamo card informativa
+      if(isHeic(file)){
+        const placeholder = document.createElement("div");
+        placeholder.style.padding = "14px";
+        placeholder.style.color = "rgba(238,247,239,.88)";
+        placeholder.style.fontWeight = "900";
+        placeholder.style.minHeight = "140px";
+        placeholder.style.display = "flex";
+        placeholder.style.alignItems = "center";
+        placeholder.style.justifyContent = "center";
+        placeholder.style.textAlign = "center";
+        placeholder.style.lineHeight = "1.3";
+        placeholder.innerHTML = `📱 HEIC<br><span style="font-weight:600;color:rgba(238,247,239,.78);font-size:12px;">Converti in JPG per vederla nel browser</span>`;
+        box.appendChild(placeholder);
+        box.addEventListener("click", ()=> openLightbox({type:"heic", src:file, title:file}));
+        galleryGrid.appendChild(box);
+        return;
+      }
+
+      if(isVideo(file)){
+        const v = document.createElement("video");
+        v.src = file;
+        v.muted = true;
+        v.playsInline = true;
+        v.preload = "metadata";
+        v.loop = true;
+        v.autoplay = true;
+        v.controls = false;
+        box.appendChild(v);
+        box.addEventListener("click", ()=> openLightbox({type:"video", src:file, title:file}));
+      }else{
+        const img = document.createElement("img");
+        img.src = file;
+        img.alt = file;
+        img.loading = "lazy";
+        box.appendChild(img);
+        box.addEventListener("click", ()=> openLightbox({type:"img", src:file, title:file}));
+      }
+
+      galleryGrid.appendChild(box);
+    });
+  }
+
+  function openLightbox({type, src, title}){
+    lbTitle.textContent = title;
+    lbImg.style.display = "none";
+    lbVid.style.display = "none";
+    lbVid.pause();
+
+    if(type === "img"){
+      lbImg.src = src;
+      lbImg.style.display = "block";
+    }else if(type === "video"){
+      lbVid.src = src;
+      lbVid.style.display = "block";
+      lbVid.play().catch(()=>{});
+    }else{
+      // HEIC
+      lbImg.removeAttribute("src");
+      lbImg.style.display = "block";
+      lbImg.alt = "HEIC non supportato";
+      lbImg.style.objectFit = "contain";
+      lbImg.style.padding = "24px";
+      lbImg.style.background = "rgba(0,0,0,.15)";
+      lbImg.src = ""; // niente preview
+      lbTitle.textContent = "HEIC: converti in JPG/PNG";
+    }
+
+    lightbox.classList.add("show");
+  }
+
+  function closeLightbox(){
+    lightbox.classList.remove("show");
+    lbVid.pause();
+    lbVid.removeAttribute("src");
+    lbImg.removeAttribute("src");
+  }
+  lbClose.addEventListener("click", closeLightbox);
+  lightbox.addEventListener("click", (e)=>{ if(e.target === lightbox) closeLightbox(); });
+  window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeLightbox(); });
+
+  // =========================
   // INTRO
   // =========================
   enterBtn.addEventListener("click", ()=>{
@@ -1479,9 +1659,7 @@
   // =========================
   (function init(){
     renderDOW();
-    spawnLeaves();
-    spawnFireflies();
-    spawnSparks();
+    spawnLeaves(); spawnFireflies(); spawnSparks();
     setupAccordion();
 
     renderCalendar();
@@ -1491,6 +1669,8 @@
     loadJournal();
     setKnotOfDay();
     setVirtueOfDay();
+
+    renderGallery();
 
     setTheme();
     setInterval(()=>{
