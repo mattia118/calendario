@@ -203,9 +203,6 @@
   @keyframes shimmer{ 0%,100%{ opacity:.25; transform: translateX(-40%); } 50%{ opacity:.55; transform: translateX(40%); } }
   @keyframes pulse{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-2px); } }
 
-  /* ✅ tolta scritta sotto ENTRA */
-  .enterHint{ display:none; }
-
   /* LAYOUT */
   .wrap{ position:relative; z-index:2; max-width:1080px; margin:22px auto 46px; padding:14px; }
   .topbar{
@@ -272,9 +269,13 @@
   .marker{
     position:absolute; right:8px; bottom:8px;
     font-size:14px; opacity:.98;
-    display:flex; align-items:center; gap:4px;
+    display:flex; align-items:center; gap:6px;
     transform-origin: 50% 70%;
     animation: markerBounce 1.8s ease-in-out infinite;
+    padding: 4px 6px;
+    border-radius: 999px;
+    background: rgba(0,0,0,.10);
+    border: 1px solid rgba(0,0,0,.08);
   }
   .dotRed{
     width:7px; height:7px; border-radius:50%;
@@ -310,9 +311,7 @@
     50%{ filter: brightness(1.14); box-shadow: 0 0 40px rgba(255,63,63,.55); }
   }
 
-  .jumpFlash{
-    animation: jumpFlash 1.6s ease-in-out 0s 3;
-  }
+  .jumpFlash{ animation: jumpFlash 1.6s ease-in-out 0s 3; }
   @keyframes jumpFlash{
     0%{ transform: scale(1); }
     50%{ transform: scale(1.03); filter: brightness(1.14); box-shadow: 0 0 40px rgba(255,63,63,.45); }
@@ -352,7 +351,7 @@
   .monthEventsTxt{ font-size:13px; color: rgba(238,247,239,.88); }
   .monthEventsSub{ font-size:12px; color: var(--muted); margin-top:2px; }
 
-  /* ACCORDION sezioni (tutte una sotto l’altra) */
+  /* ACCORDION */
   .accordion{ margin-top:14px; display:flex; flex-direction:column; gap:12px; }
   .accItem{
     background: var(--panel);
@@ -644,12 +643,16 @@
     transition: transform .18s ease, filter .18s ease;
   }
   .thumb:hover{ transform: translateY(-2px); filter: brightness(1.06); }
-  .thumb img{
+
+  .thumb img, .thumb video{
     width:100%;
-    height: 260px;
+    height: 280px;
     object-fit: cover;
     display:block;
+    background: rgba(0,0,0,.22);
   }
+  .thumb video{ outline:none; }
+
   .thumbCap{
     padding:10px 12px;
     font-weight:900;
@@ -659,7 +662,7 @@
   }
   .thumbCap small{ display:block; font-weight:600; color: rgba(238,247,239,.72); margin-top:4px; }
 
-  /* LIGHTBOX */
+  /* LIGHTBOX (immagini + video) */
   .lightbox{
     position:fixed; inset:0;
     background: rgba(0,0,0,.72);
@@ -780,9 +783,8 @@
       </div>
     </div>
 
-    <!-- ✅ SEZIONI (tutte una sotto l’altra) -->
+    <!-- SEZIONI -->
     <div class="accordion" id="accordion">
-      <!-- Countdown -->
       <div class="accItem open" id="accCountdown">
         <button class="accBtn" type="button" data-acc="accCountdown">
           <div class="accLeft">
@@ -796,7 +798,6 @@
         </div>
       </div>
 
-      <!-- Pensieri -->
       <div class="accItem" id="accThoughts">
         <button class="accBtn" type="button" data-acc="accThoughts">
           <div class="accLeft">
@@ -812,7 +813,6 @@
         </div>
       </div>
 
-      <!-- Giornate a tema -->
       <div class="accItem" id="accTheme">
         <button class="accBtn" type="button" data-acc="accTheme">
           <div class="accLeft">
@@ -826,7 +826,6 @@
         </div>
       </div>
 
-      <!-- Nodo del giorno -->
       <div class="accItem open" id="accKnot">
         <button class="accBtn" type="button" data-acc="accKnot">
           <div class="accLeft">
@@ -846,7 +845,6 @@
         </div>
       </div>
 
-      <!-- Bussola -->
       <div class="accItem open" id="accCompass">
         <button class="accBtn" type="button" data-acc="accCompass">
           <div class="accLeft">
@@ -868,7 +866,6 @@
         </div>
       </div>
 
-      <!-- Timeline -->
       <div class="accItem open" id="accTimeline">
         <button class="accBtn" type="button" data-acc="accTimeline">
           <div class="accLeft">
@@ -900,7 +897,6 @@
         </div>
       </div>
 
-      <!-- Legge Scout -->
       <div class="accItem" id="accLaws">
         <button class="accBtn" type="button" id="lawsBtn">
           <div class="accLeft">
@@ -915,7 +911,7 @@
       </div>
     </div>
 
-    <!-- ✅ FOTO (alla fine) -->
+    <!-- FOTO (alla fine) -->
     <details class="photoWin" id="photoWin">
       <summary>
         <div class="sumLeft">
@@ -927,7 +923,7 @@
       <div class="galleryWrap">
         <div class="galleryGrid" id="galleryGrid"></div>
         <p class="muted" style="margin:10px 0 0;">
-          Nota: i file <b>.HEIC</b> a volte non si vedono nel browser. Se non si vedono, converti in JPG e funzionano subito.
+          Nota: i file <b>.HEIC</b> non sempre si vedono nel browser. I tuoi file qui sono JPG/MP4 quindi ok.
         </p>
       </div>
     </details>
@@ -960,10 +956,11 @@
   <div class="lightbox" id="lightbox">
     <div class="lbBox">
       <div class="lbTop">
-        <div class="lbTitle" id="lbTitle">Foto</div>
+        <div class="lbTitle" id="lbTitle">Media</div>
         <button class="lbClose" id="lbClose">Chiudi ✖</button>
       </div>
-      <img class="lbMedia" id="lbImg" alt="foto">
+      <!-- contenitore media dinamico -->
+      <div id="lbMediaHost"></div>
     </div>
   </div>
 
@@ -991,8 +988,6 @@
   const intro = document.getElementById("intro");
   const enterBtn = document.getElementById("enterBtn");
   const app = document.getElementById("app");
-
-  const windLayer = document.getElementById("windLayer");
 
   const dowEl = document.getElementById("dow");
   const calEl = document.getElementById("cal");
@@ -1022,7 +1017,7 @@
   const lightbox = document.getElementById("lightbox");
   const lbTitle = document.getElementById("lbTitle");
   const lbClose = document.getElementById("lbClose");
-  const lbImg = document.getElementById("lbImg");
+  const lbMediaHost = document.getElementById("lbMediaHost");
 
   // =========================
   // STATO CALENDARIO
@@ -1035,11 +1030,9 @@
   // Countdown: SOLO quando mancano <= 10 giorni
   // =========================
   const FIXED_EVENTS = [
-    // Scout / importanti
     { id:"campo", date:"2026-07-15", icon:"🔥", name:"Campo estivo", kind:"scout" },
     { id:"route", date:"2026-08-24", icon:"🧭", name:"Route", kind:"scout" },
 
-    // Festività nazionali 2026
     { id:"capodanno", date:"2026-01-01", icon:"🎆", name:"Capodanno", kind:"festivita" },
     { id:"epifania", date:"2026-01-06", icon:"🧹", name:"Epifania", kind:"festivita" },
     { id:"pasqua", date:"2026-04-05", icon:"🐣", name:"Pasqua", kind:"festivita" },
@@ -1053,13 +1046,12 @@
     { id:"natale", date:"2026-12-25", icon:"🎄", name:"Natale", kind:"festivita" },
     { id:"santostefano", date:"2026-12-26", icon:"🎁", name:"Santo Stefano", kind:"festivita" },
 
-    // Celebrazioni / Santi (2026)
     { id:"tricolore", date:"2026-01-07", icon:"🏳️", name:"Festa del Tricolore", kind:"celebrazione" },
     { id:"sanvalentino", date:"2026-02-14", icon:"💘", name:"San Valentino", kind:"celebrazione" },
     { id:"carnevale", date:"2026-02-17", icon:"🎭", name:"Carnevale", kind:"celebrazione" },
     { id:"sangiuseppe", date:"2026-03-19", icon:"👨‍👧", name:"Festa del Papà / San Giuseppe", kind:"celebrazione" },
-    { id:"sangiovanni", date:"2026-06-24", icon:"🔥", name:"San Giovanni Battista", kind:"celebrazione" },
     { id:"sanranieri", date:"2026-06-17", icon:"⛪", name:"San Ranieri", kind:"celebrazione" },
+    { id:"sangiovanni", date:"2026-06-24", icon:"🔥", name:"San Giovanni Battista", kind:"celebrazione" },
     { id:"pietropaolo", date:"2026-06-29", icon:"⛪", name:"Santi Pietro e Paolo", kind:"celebrazione" },
     { id:"santarosalia", date:"2026-07-15", icon:"🌹", name:"Santa Rosalia", kind:"celebrazione" },
     { id:"sangennaro", date:"2026-09-19", icon:"🩸", name:"San Gennaro", kind:"celebrazione" },
@@ -1069,12 +1061,10 @@
     { id:"sannicola", date:"2026-12-06", icon:"🎅", name:"San Nicola", kind:"celebrazione" },
     { id:"santambrogio", date:"2026-12-07", icon:"⛪", name:"Sant’Ambrogio", kind:"celebrazione" },
 
-    // Scout theme day
     { id:"pensiero", date:"2026-02-22", icon:"⚜️", name:"Giornata del Pensiero (Scout)", kind:"scout" },
     { id:"sangiorgio", date:"2026-04-23", icon:"🛡️", name:"San Giorgio (Scout)", kind:"scout" },
   ];
 
-  // Compleanno Simone: una sola voce nel countdown (prossima occorrenza)
   const RECURRING_EVENTS = [
     { id:"simone", month:1, day:23, icon:"🎂", name:"Compleanno di Simone", kind:"birthday" }
   ];
@@ -1094,46 +1084,13 @@
   ];
 
   // =========================
-  // NODO DEL GIORNO
+  // NODO + BUSSOLA
   // =========================
   const KNOTS = [
-    {
-      name: "Nodo piano",
-      art:
-`\\ \\     / /
- \\ \\   / /
-  \\ \\_/ /
-   / _ \\
-  / / \\ \\
- /_/   \\_\\`,
-      desc: "Serve per unire due corde dello stesso spessore. È semplice, ma deve essere fatto bene."
-    },
-    {
-      name: "Gassa d’amante",
-      art:
-`   ____ 
-  / __ \\__
- / /  \\___)
- \\ \\__
-  \\___\\
- (____)`,
-      desc: "Fa un cappio fisso che non scorre. Utilissima quando ti serve un anello sicuro."
-    },
-    {
-      name: "Nodo parlato",
-      art:
-`|\\      /|
-| \\____/ |
-|  ____  |
-| /    \\ |
-|/      \\|`,
-      desc: "Ottimo per fissare una corda a un palo. È stabile e molto usato in campo."
-    }
+    { name:"Nodo piano", art:`\\ \\     / /\n \\ \\   / /\n  \\ \\_/ /\n   / _ \\\n  / / \\ \\\n /_/   \\_\\`, desc:"Serve per unire due corde dello stesso spessore. È semplice, ma deve essere fatto bene." },
+    { name:"Gassa d’amante", art:`   ____ \n  / __ \\__\n / /  \\___)\n \\ \\__\n  \\___\\\n (____)`, desc:"Fa un cappio fisso che non scorre. Utilissima quando ti serve un anello sicuro." },
+    { name:"Nodo parlato", art:`|\\      /|\n| \\____/ |\n|  ____  |\n| /    \\ |\n|/      \\|`, desc:"Ottimo per fissare una corda a un palo. È stabile e molto usato in campo." }
   ];
-
-  // =========================
-  // BUSSOLA MORALE
-  // =========================
   const VIRTUES = [
     { name:"Coraggio", desc:"Fare la cosa giusta anche quando hai paura." },
     { name:"Aiuto", desc:"Dare una mano senza aspettarsi niente in cambio." },
@@ -1152,7 +1109,7 @@
   function daysInMonth(y,m){ return new Date(y, m, 0).getDate(); }
 
   // =========================
-  // TEMA giorno/notte + stagione
+  // TEMA giorno/notte
   // =========================
   function setTheme(){
     const m = stateMonth;
@@ -1182,12 +1139,10 @@
   }
 
   function getAllEventInstancesForYear(year){
-    // eventi fissi solo se dentro range
     const fixed = FIXED_EVENTS
       .map(e => ({...e, dateObj: dateToObj(e.date)}))
       .filter(e => e.dateObj.getFullYear() === year);
 
-    // ricorrenti: istanza per l'anno richiesto (per segnare sul calendario)
     const recur = RECURRING_EVENTS.map(r=>{
       const d = new Date(year, r.month-1, r.day);
       return { id:r.id, icon:r.icon, name:r.name, kind:r.kind, dateObj:d, date: ymd(year, r.month, r.day) };
@@ -1215,7 +1170,6 @@
   function markerForDate(key, eventMap){
     const evs = eventMap.get(key);
     if(!evs || !evs.length) return "";
-    // mostra max 2 icone per non riempire
     const icons = evs.slice(0,2).map(x=>x.icon).join("");
     return icons;
   }
@@ -1234,7 +1188,7 @@
   }
 
   // =========================
-  // RENDER CALENDARIO (con marker eventi)
+  // RENDER CALENDARIO
   // =========================
   function renderCalendar(){
     if(!inRange(stateYear)){ stateYear=YEAR_MIN; stateMonth=1; }
@@ -1256,8 +1210,8 @@
     const nextYear  = stateMonth === 12 ? stateYear + 1 : stateYear;
 
     const dimPrev = daysInMonth(prevYear, prevMonth);
-
     const eventMap = eventsByKeyForCurrentView();
+
     let cells = 0;
 
     for(let i=0;i<offset;i++){
@@ -1291,10 +1245,8 @@
     const evs = eventMap.get(key) || [];
     const marker = markerForDate(key, eventMap);
 
-    // evidenzia se ci sono eventi
     if(evs.length && !isOff) div.classList.add("eventDay");
 
-    // Simone blink su 23 gennaio dell'anno corrente in vista
     if(!isOff && m===1 && d===23 && y===stateYear) div.classList.add("simoneBlink");
 
     div.dataset.key = key;
@@ -1304,7 +1256,6 @@
       ${marker && !isOff ? `<div class="marker"><span>${marker}</span><span class="dotRed"></span></div>` : ""}
     `;
 
-    // click: se è un giorno con eventi, “salta” un flash
     if(evs.length && !isOff){
       div.style.cursor = "pointer";
       div.addEventListener("click", ()=>{
@@ -1317,19 +1268,17 @@
   }
 
   // =========================
-  // LISTA EVENTI DEL MESE (sotto calendario)
+  // LISTA EVENTI DEL MESE
   // =========================
   function renderMonthEventsList(eventMap){
     monthEventsBox.innerHTML = "";
 
-    const monthKeys = [];
     const dim = daysInMonth(stateYear, stateMonth);
-    for(let d=1; d<=dim; d++){
-      monthKeys.push(ymd(stateYear, stateMonth, d));
-    }
+    const keys = [];
+    for(let d=1; d<=dim; d++) keys.push(ymd(stateYear, stateMonth, d));
 
     const items = [];
-    monthKeys.forEach(k=>{
+    keys.forEach(k=>{
       const evs = eventMap.get(k);
       if(evs && evs.length){
         evs.forEach(e => items.push({ key:k, e }));
@@ -1345,8 +1294,8 @@
     }
 
     items.forEach(item=>{
-      const d = dateToObj(item.key);
-      const label = d.toLocaleDateString("it-IT",{day:"2-digit", month:"long"});
+      const dt = dateToObj(item.key);
+      const label = dt.toLocaleDateString("it-IT",{day:"2-digit", month:"long"});
       const line = document.createElement("div");
       line.className="monthEventsLine";
       line.innerHTML = `
@@ -1356,15 +1305,13 @@
           <div class="monthEventsSub">📅 ${label}</div>
         </div>
       `;
-      line.addEventListener("click", ()=>{
-        jumpToDate(item.key);
-      });
+      line.addEventListener("click", ()=> jumpToDate(item.key));
       monthEventsBox.appendChild(line);
     });
   }
 
   // =========================
-  // JUMP DAL COUNTDOWN AL CALENDARIO
+  // JUMP
   // =========================
   function jumpToDate(isoKey){
     const [y,m,d] = isoKey.split("-").map(n=>parseInt(n,10));
@@ -1372,7 +1319,6 @@
     stateYear = y; stateMonth = m;
     renderCalendar();
 
-    // flash sulla cella
     requestAnimationFrame(()=>{
       const cell = calEl.querySelector(`[data-key="${isoKey}"]`);
       if(cell){
@@ -1396,12 +1342,11 @@
     });
 
     const simoneNext = nextOccurrenceRecurring(RECURRING_EVENTS.find(r=>r.id==="simone"));
-
     const all = [...fixed, simoneNext];
 
     return all
       .map(e => ({...e, diff: daysBetween(now, e.dateObj)}))
-      .filter(e => e.diff >= 0 && e.diff <= 10) // ✅ solo 10 giorni prima
+      .filter(e => e.diff >= 0 && e.diff <= 10)
       .sort((a,b)=> a.diff - b.diff);
   }
 
@@ -1421,7 +1366,7 @@
       return;
     }
 
-    list.slice(0,8).forEach(e=>{
+    list.slice(0,10).forEach(e=>{
       const when = e.dateObj.toLocaleDateString("it-IT", {day:"2-digit", month:"long", year:"numeric"});
 
       let msg = `Mancano ${e.diff} giorni a ${e.name}`;
@@ -1442,7 +1387,7 @@
   }
 
   // =========================
-  // GIORNATE A TEMA: prossime 6
+  // GIORNATE A TEMA
   // =========================
   function nextThemeDays(){
     const now = new Date();
@@ -1481,10 +1426,9 @@
   }
 
   // =========================
-  // DIARIO persistente
+  // DIARIO
   // =========================
-  const JOURNAL_KEY = "scout_thoughts_v2";
-
+  const JOURNAL_KEY = "scout_thoughts_v3";
   function loadJournal(){
     const saved = localStorage.getItem(JOURNAL_KEY);
     if(saved !== null) journal.value = saved;
@@ -1502,7 +1446,7 @@
   journal.addEventListener("input", scheduleSave);
 
   // =========================
-  // NODO DEL GIORNO (deterministico)
+  // NODO + BUSSOLA
   // =========================
   function setKnotOfDay(){
     const now = new Date();
@@ -1513,10 +1457,6 @@
     knotArt.textContent = k.art;
     knotDesc.textContent = k.desc;
   }
-
-  // =========================
-  // BUSSOLA (deterministico)
-  // =========================
   function setVirtueOfDay(){
     const now = new Date();
     const seed = (now.getFullYear()*10000) + ((now.getMonth()+1)*100) + now.getDate();
@@ -1531,7 +1471,7 @@
   }
 
   // =========================
-  // ACCORDION (toggle)
+  // ACCORDION
   // =========================
   document.querySelectorAll(".accBtn[data-acc]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
@@ -1542,7 +1482,7 @@
   });
 
   // =========================
-  // MODAL LEGGI SCOUT
+  // MODAL LEGGE SCOUT
   // =========================
   lawsBtn.addEventListener("click", ()=> lawsBackdrop.classList.add("show"));
   lawsClose.addEventListener("click", ()=> lawsBackdrop.classList.remove("show"));
@@ -1650,12 +1590,10 @@
   let lastT = performance.now();
   let wind = 0;
   let calmTimer = null;
-
   function setWindStrength(v){
     wind = Math.max(0, Math.min(1, v));
     document.documentElement.style.setProperty("--windStrength", String(wind));
   }
-
   window.addEventListener("scroll", ()=>{
     const y = window.scrollY;
     const t = performance.now();
@@ -1677,22 +1615,52 @@
   }, {passive:true});
 
   // =========================
-  // FOTO: solo 2 file
+  // FOTO + VIDEO (tutti i file che hai dato)
   // =========================
   const MEDIA = [
-    "IMG_3239.HEIC",
-    "IMG_3240.HEIC"
+    "1e38146e-d6d7-4fdd-bcb2-8a6b0887210e.jpg",
+    "3e799a83-3336-47db-a2eb-bc55540677ba.jpg",
+    "5aae342f-8b7f-43c5-85e9-13f6881e8f67.jpg",
+    "7e9d6930-3cb9-41a5-bae0-9e788f0abe50.jpg",
+    "8c78f8ec-652a-434f-ab06-e3e0788ecb31.jpg",
+    "8cc7054e-5881-420c-ba3a-435828560198.jpg",
+    "85ffc3dd-2321-4804-bd00-90a326a38b5f.jpg",
+    "95f82bcc-fe77-4a68-8089-a165afb315ee.jpg",
+    "338867c3-8486-4749-b364-f76e9232028a.jpg",
+    "91583127-dee0-4e25-bf9b-3ca8c7311e1c.jpg",
+    "a400cc11-4b2f-4672-8595-baeba587dacc.jpg",
+    "bdb6b79f-82a4-4800-8dec-98e9161d8f12.jpg",
+    "d24c8755-7cc8-464e-8a19-38c0e46e2dec.jpg",
+    "e08df019-6c8c-40b5-b813-802f3b8d41f7.jpg",
+    "E28F1480-5C8A-4E67-8C5D-D545474F5B32.jpg",
+    "f98df94d-5212-492c-a8a2-742e5ee1360c.jpg",
+    "5f08d156-ad8b-420c-8b9a-6662ce952cd5.mp4",
+    "dbea094f-77fa-4787-b1be-5e750421b67c.mp4",
+    "e62058ee-c8e9-4616-a3fe-fa8a46110433.mp4"
   ];
+
+  function isVideo(file){
+    return file.toLowerCase().endsWith(".mp4");
+  }
 
   function renderGallery(){
     galleryGrid.innerHTML = "";
     MEDIA.forEach(file=>{
       const box = document.createElement("div");
       box.className = "thumb";
-      box.innerHTML = `
-        <img src="${file}" alt="${file}" loading="lazy">
-        <div class="thumbCap">${file}<small>Tocca per aprire</small></div>
-      `;
+
+      if(isVideo(file)){
+        box.innerHTML = `
+          <video src="${file}" muted playsinline preload="metadata"></video>
+          <div class="thumbCap">🎬 ${file}<small>Tocca per aprire</small></div>
+        `;
+      } else {
+        box.innerHTML = `
+          <img src="${file}" alt="${file}" loading="lazy">
+          <div class="thumbCap">📷 ${file}<small>Tocca per aprire</small></div>
+        `;
+      }
+
       box.addEventListener("click", ()=> openLightbox(file));
       galleryGrid.appendChild(box);
     });
@@ -1700,13 +1668,34 @@
 
   function openLightbox(file){
     lbTitle.textContent = file;
-    lbImg.src = file;
+    lbMediaHost.innerHTML = "";
+
+    if(isVideo(file)){
+      const v = document.createElement("video");
+      v.className = "lbMedia";
+      v.src = file;
+      v.controls = true;
+      v.autoplay = true;
+      v.playsInline = true;
+      v.style.objectFit = "contain";
+      lbMediaHost.appendChild(v);
+    } else {
+      const img = document.createElement("img");
+      img.className = "lbMedia";
+      img.src = file;
+      img.alt = file;
+      img.style.objectFit = "contain";
+      lbMediaHost.appendChild(img);
+    }
+
     lightbox.classList.add("show");
   }
+
   function closeLightbox(){
     lightbox.classList.remove("show");
-    lbImg.removeAttribute("src");
+    lbMediaHost.innerHTML = "";
   }
+
   lbClose.addEventListener("click", closeLightbox);
   lightbox.addEventListener("click",(e)=>{ if(e.target===lightbox) closeLightbox(); });
   window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeLightbox(); });
