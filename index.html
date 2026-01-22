@@ -216,20 +216,88 @@
     .monthTitle{ font-size:16px; }
   }
 
-  /* PANNELLI SOTTO */
+  /* PANNELLO BASE */
   .panel{
     margin-top:14px; background:var(--panel); border:1px solid var(--panel2);
     border-radius:var(--radius); box-shadow:var(--shadow); backdrop-filter: blur(10px);
     padding:14px;
   }
   .panel h3{ margin:0 0 10px; font-size:16px; }
-  .actionsRow{ display:flex; gap:10px; flex-wrap:wrap; }
-  .actionsRow button{ border-radius:999px; padding:10px 14px; }
 
-  .collapsible{ display:none; margin-top:12px; }
-  .collapsible.show{ display:block; animation: rise .28s ease both; }
+  /* ✅ ACCORDION (tasti evidenti uno sotto l'altro, senza “riquadro sezioni”) */
+  .accordion{
+    margin-top:14px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .accItem{
+    background: var(--panel);
+    border:1px solid var(--panel2);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+    overflow:hidden;
+  }
+
+  .accBtn{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:14px 14px;
+    border:0;
+    background: transparent;
+    cursor:pointer;
+    color: var(--text);
+    border-radius: 0;
+    transform:none !important;
+  }
+
+  .accLeft{
+    display:flex; align-items:center; gap:10px;
+    font-weight: 900;
+    letter-spacing: .01em;
+  }
+
+  .accIco{
+    width:34px; height:34px;
+    display:grid; place-items:center;
+    border-radius: 12px;
+    background: rgba(0,0,0,.18);
+    border: 1px solid rgba(255,255,255,.14);
+    box-shadow: 0 10px 26px rgba(0,0,0,.22);
+  }
+
+  .accMeta{
+    display:flex; flex-direction:column; gap:2px;
+  }
+  .accTitle{ font-size:15px; margin:0; }
+  .accSub{ font-size:12px; color: var(--muted); font-weight:600; }
+
+  .chev{
+    width:40px; height:40px;
+    display:grid; place-items:center;
+    border-radius: 14px;
+    background: rgba(0,0,0,.14);
+    border:1px solid rgba(255,255,255,.14);
+    transition: transform .25s ease;
+  }
+  .accItem.open .chev{ transform: rotate(180deg); }
+
+  .accBody{
+    display:none;
+    padding: 0 14px 14px;
+  }
+  .accItem.open .accBody{
+    display:block;
+    animation: rise .28s ease both;
+  }
   @keyframes rise{ from{ opacity:0; transform: translateY(8px);} to{ opacity:1; transform: translateY(0);} }
 
+  /* CARDS */
   .cards{ display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
   @media (max-width: 900px){ .cards{ grid-template-columns: 1fr; } }
 
@@ -336,48 +404,8 @@
   .timeYear{ font-weight:900; font-size:16px; margin:0; }
   .timeText{ margin:8px 0 0; color: var(--muted); font-size:13px; }
 
-  /* IMMAGINE SOTTO */
-  .belowImg{
-    width:100%;
-    border-radius: 18px;
-    border:1px solid rgba(255,255,255,.14);
-    box-shadow: var(--shadow);
-    display:block;
-  }
-
-  /* MODAL LEGGI SCOUT */
-  .modalBackdrop{
-    position:fixed; inset:0;
-    background: rgba(0,0,0,.60);
-    display:none;
-    align-items:center; justify-content:center;
-    padding: 18px;
-    z-index:99;
-  }
-  .modalBackdrop.show{ display:flex; }
-  .modal{
-    width:min(680px, 96vw);
-    background: rgba(14,44,25,.92);
-    border:1px solid rgba(255,255,255,.14);
-    border-radius: 22px;
-    box-shadow: var(--shadow);
-    padding: 16px;
-    transform: translateY(18px) scale(.95);
-    opacity:0;
-    animation: pop .32s ease forwards;
-    overflow:hidden;
-  }
-  @keyframes pop{ to{ transform: translateY(0) scale(1); opacity:1; } }
-  .modalHeader{ display:flex; justify-content:space-between; gap:12px; align-items:flex-start; padding:6px 6px 10px; }
-  .modalTitle{ font-weight:900; font-size:18px; margin:0; }
-  .modalBody{
-    background: rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.12);
-    border-radius: 18px;
-    padding: 12px;
-    margin: 6px;
-  }
-  .line{
+  /* LEGGI SCOUT (ora dentro accordion) */
+  .lawLine{
     display:flex; gap:10px; align-items:flex-start;
     padding:10px; border-radius:14px;
     background: rgba(0,0,0,.20);
@@ -386,8 +414,17 @@
     animation: slideIn .35s ease both;
   }
   @keyframes slideIn{ from{ transform: translateX(-12px); opacity:0; } to{ transform: translateX(0); opacity:1; } }
-  .ico{ font-size: 22px; line-height:1; }
-  .sub{ color: rgba(238,247,239,.85); font-size: 13px; margin:2px 0 0; }
+  .lawIco{ font-size: 22px; line-height:1; }
+  .lawSub{ color: rgba(238,247,239,.85); font-size: 13px; margin:2px 0 0; }
+
+  /* IMMAGINE SOTTO */
+  .belowImg{
+    width:100%;
+    border-radius: 18px;
+    border:1px solid rgba(255,255,255,.14);
+    box-shadow: var(--shadow);
+    display:block;
+  }
 
   /* FINESTRA FINALE */
   .footerWindow{
@@ -422,7 +459,7 @@
         <div style="font-size:22px;">🌲</div>
         <div>
           <div style="font-size:16px;font-weight:900;">Calendario Scout nel Bosco</div>
-          <div class="muted">2026 → 2029 • nodo del giorno • bussola morale • timeline</div>
+          <div class="muted">2026 → 2029 • sezioni a scomparsa (tasti) • nodo • bussola • timeline</div>
         </div>
       </div>
 
@@ -451,117 +488,201 @@
       </div>
     </div>
 
-    <!-- BOTTONI PER APRIRE SEZIONI -->
-    <div class="panel">
-      <h3>📌 Apri sezioni</h3>
-      <div class="actionsRow">
-        <button id="btnThoughts">💭 Pensieri</button>
-        <button id="btnTheme">🌍 Giornata a tema</button>
-        <button id="btnCountdown">🧭 Countdown</button>
-        <button id="lawsBtn">📜 Leggi Scout</button>
-      </div>
+    <!-- ✅ SEZIONI EVIDENTI: TASTI UNO SOTTO L'ALTRO (accordion) -->
+    <div class="accordion">
 
       <!-- PENSIERI -->
-      <div class="collapsible" id="thoughtsBox">
-        <h3 style="margin-top:14px;">💭 Cosa ti passa per la mente?</h3>
-        <p class="muted" style="margin:0 0 10px;">Scrivi qui. Rimane salvato anche se ricarichi il sito.</p>
-        <textarea id="journal" class="journalBox" placeholder="Scrivi qui quello che ti passa per la mente..."></textarea>
-        <div class="muted" id="journalStatus" style="margin-top:8px;"></div>
+      <div class="accItem" id="accThoughts">
+        <button class="accBtn" type="button" data-target="thoughtsBox" aria-expanded="false">
+          <div class="accLeft">
+            <div class="accIco">💭</div>
+            <div class="accMeta">
+              <div class="accTitle">Pensieri</div>
+              <div class="accSub">Scrivi e resta salvato sul dispositivo</div>
+            </div>
+          </div>
+          <div class="chev">▾</div>
+        </button>
+        <div class="accBody" id="thoughtsBox">
+          <h3 style="margin:10px 0 8px;">💭 Cosa ti passa per la mente?</h3>
+          <p class="muted" style="margin:0 0 10px;">Scrivi qui. Rimane salvato anche se ricarichi il sito.</p>
+          <textarea id="journal" class="journalBox" placeholder="Scrivi qui quello che ti passa per la mente..."></textarea>
+          <div class="muted" id="journalStatus" style="margin-top:8px;"></div>
+        </div>
       </div>
 
       <!-- GIORNATE A TEMA -->
-      <div class="collapsible" id="themeBox">
-        <h3 style="margin-top:14px;">🌍 Giornate a tema</h3>
-        <p class="muted" style="margin:0 0 10px;">Mostra le prossime giornate speciali (vere) con simboli.</p>
-        <div class="cards" id="themeCards"></div>
+      <div class="accItem" id="accTheme">
+        <button class="accBtn" type="button" data-target="themeBox" aria-expanded="false">
+          <div class="accLeft">
+            <div class="accIco">🌍</div>
+            <div class="accMeta">
+              <div class="accTitle">Giornate a tema</div>
+              <div class="accSub">Le prossime giornate speciali (vere) + scout</div>
+            </div>
+          </div>
+          <div class="chev">▾</div>
+        </button>
+        <div class="accBody" id="themeBox">
+          <h3 style="margin:10px 0 8px;">🌍 Giornate a tema</h3>
+          <p class="muted" style="margin:0 0 10px;">Mostra le prossime giornate speciali (vere) con simboli.</p>
+          <div class="cards" id="themeCards"></div>
+        </div>
       </div>
 
       <!-- COUNTDOWN -->
-      <div class="collapsible" id="countBox">
-        <h3 style="margin-top:14px;">🧭 Countdown agli eventi importanti</h3>
-        <p class="muted" style="margin:0 0 10px;">Appare solo se gli eventi esistono davvero (impostati nel codice).</p>
-        <div class="cards" id="countCards"></div>
-      </div>
-    </div>
-
-    <!-- NODO DEL GIORNO -->
-    <div class="panel">
-      <h3>🧵 Nodo del giorno</h3>
-      <div class="knotBox">
-        <div class="knotArt" id="knotArt"></div>
-        <div class="knotText">
-          <p class="knotName" id="knotName">—</p>
-          <p class="knotDesc" id="knotDesc">—</p>
+      <div class="accItem" id="accCountdown">
+        <button class="accBtn" type="button" data-target="countBox" aria-expanded="false">
+          <div class="accLeft">
+            <div class="accIco">🧭</div>
+            <div class="accMeta">
+              <div class="accTitle">Countdown</div>
+              <div class="accSub">Solo eventi reali impostati nel codice</div>
+            </div>
+          </div>
+          <div class="chev">▾</div>
+        </button>
+        <div class="accBody" id="countBox">
+          <h3 style="margin:10px 0 8px;">🧭 Countdown agli eventi importanti</h3>
+          <p class="muted" style="margin:0 0 10px;">Appare solo se gli eventi esistono davvero (IMPORTANT_EVENTS).</p>
+          <div class="cards" id="countCards"></div>
         </div>
       </div>
-    </div>
 
-    <!-- BUSSOLA MORALE -->
-    <div class="panel">
-      <h3>🧭 Bussola morale</h3>
-      <div class="compassWrap">
-        <div class="compass" aria-label="Bussola morale">
-          <div class="needle" id="needle"></div>
-        </div>
-        <div class="virtueCard">
-          <p class="virtueName" id="virtueName">—</p>
-          <p class="virtueDesc" id="virtueDesc">—</p>
+      <!-- NODO DEL GIORNO -->
+      <div class="accItem" id="accKnot">
+        <button class="accBtn" type="button" data-target="knotBox" aria-expanded="false">
+          <div class="accLeft">
+            <div class="accIco">🧵</div>
+            <div class="accMeta">
+              <div class="accTitle">Nodo del giorno</div>
+              <div class="accSub">Cambia ogni giorno (deterministico)</div>
+            </div>
+          </div>
+          <div class="chev">▾</div>
+        </button>
+        <div class="accBody" id="knotBox">
+          <h3 style="margin:10px 0 8px;">🧵 Nodo del giorno</h3>
+          <div class="knotBox">
+            <div class="knotArt" id="knotArt"></div>
+            <div class="knotText">
+              <p class="knotName" id="knotName">—</p>
+              <p class="knotDesc" id="knotDesc">—</p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- TIMELINE -->
-    <div class="panel">
-      <h3>🕰️ Linea del tempo scout</h3>
-      <div class="timeline" id="timeline">
-        <div class="timeItem">
-          <p class="timeYear">1907</p>
-          <p class="timeText">Primo campo scout sull’isola di Brownsea.</p>
-        </div>
-        <div class="timeItem">
-          <p class="timeYear">1920</p>
-          <p class="timeText">Primo Jamboree mondiale.</p>
-        </div>
-        <div class="timeItem">
-          <p class="timeYear">1950+</p>
-          <p class="timeText">Lo scoutismo cresce in tutto il mondo e diventa una grande famiglia.</p>
-        </div>
-        <div class="timeItem">
-          <p class="timeYear">Oggi</p>
-          <p class="timeText">Tu nel bosco 🌲: “lascia il posto migliore di come lo hai trovato”.</p>
+      <!-- BUSSOLA MORALE -->
+      <div class="accItem" id="accCompass">
+        <button class="accBtn" type="button" data-target="compassBox" aria-expanded="false">
+          <div class="accLeft">
+            <div class="accIco">🧭</div>
+            <div class="accMeta">
+              <div class="accTitle">Bussola morale</div>
+              <div class="accSub">Virtù del giorno + freccia che ruota</div>
+            </div>
+          </div>
+          <div class="chev">▾</div>
+        </button>
+        <div class="accBody" id="compassBox">
+          <h3 style="margin:10px 0 8px;">🧭 Bussola morale</h3>
+          <div class="compassWrap">
+            <div class="compass" aria-label="Bussola morale">
+              <div class="needle" id="needle"></div>
+            </div>
+            <div class="virtueCard">
+              <p class="virtueName" id="virtueName">—</p>
+              <p class="virtueDesc" id="virtueDesc">—</p>
+            </div>
+          </div>
         </div>
       </div>
-      <p class="muted" style="margin:10px 0 0;">Scorri la timeline a destra/sinistra 👉</p>
-    </div>
 
-    <!-- FOTO SOTTO -->
-    <div class="panel">
-      <h3>📷 Foto</h3>
-      <img class="belowImg" src="Immagine 2026-01-21 205031.png" alt="Immagine sotto al calendario">
+      <!-- TIMELINE -->
+      <div class="accItem" id="accTimeline">
+        <button class="accBtn" type="button" data-target="timelineBox" aria-expanded="false">
+          <div class="accLeft">
+            <div class="accIco">🕰️</div>
+            <div class="accMeta">
+              <div class="accTitle">Linea del tempo scout</div>
+              <div class="accSub">Scorri a destra/sinistra</div>
+            </div>
+          </div>
+          <div class="chev">▾</div>
+        </button>
+        <div class="accBody" id="timelineBox">
+          <h3 style="margin:10px 0 8px;">🕰️ Linea del tempo scout</h3>
+          <div class="timeline" id="timeline">
+            <div class="timeItem">
+              <p class="timeYear">1907</p>
+              <p class="timeText">Primo campo scout sull’isola di Brownsea.</p>
+            </div>
+            <div class="timeItem">
+              <p class="timeYear">1920</p>
+              <p class="timeText">Primo Jamboree mondiale.</p>
+            </div>
+            <div class="timeItem">
+              <p class="timeYear">1950+</p>
+              <p class="timeText">Lo scoutismo cresce in tutto il mondo e diventa una grande famiglia.</p>
+            </div>
+            <div class="timeItem">
+              <p class="timeYear">Oggi</p>
+              <p class="timeText">Tu nel bosco 🌲: “lascia il posto migliore di come lo hai trovato”.</p>
+            </div>
+          </div>
+          <p class="muted" style="margin:10px 0 0;">Scorri la timeline a destra/sinistra 👉</p>
+        </div>
+      </div>
+
+      <!-- LEGGI SCOUT (senza modal, sempre “a scomparsa”) -->
+      <div class="accItem" id="accLaws">
+        <button class="accBtn" type="button" data-target="lawsBox" aria-expanded="false">
+          <div class="accLeft">
+            <div class="accIco">📜</div>
+            <div class="accMeta">
+              <div class="accTitle">Leggi Scout</div>
+              <div class="accSub">Apri e leggi le 7 leggi</div>
+            </div>
+          </div>
+          <div class="chev">▾</div>
+        </button>
+        <div class="accBody" id="lawsBox">
+          <h3 style="margin:10px 0 8px;">📜 Legge Scout</h3>
+
+          <div class="lawLine"><div class="lawIco">1️⃣</div><div><b>Lo scout è leale.</b><div class="lawSub">Dice la verità e mantiene la parola data.</div></div></div>
+          <div class="lawLine"><div class="lawIco">2️⃣</div><div><b>Lo scout è amico di tutti e fratello di ogni altro scout.</b><div class="lawSub">Aiuta senza guardare chi sei.</div></div></div>
+          <div class="lawLine"><div class="lawIco">3️⃣</div><div><b>Lo scout è cortese.</b><div class="lawSub">Rispetta gli altri e si comporta bene.</div></div></div>
+          <div class="lawLine"><div class="lawIco">4️⃣</div><div><b>Lo scout ama e rispetta la natura.</b><div class="lawSub">Protegge il bosco, gli animali e l’ambiente.</div></div></div>
+          <div class="lawLine"><div class="lawIco">5️⃣</div><div><b>Lo scout sorride e canta anche nelle difficoltà.</b><div class="lawSub">Non si arrende e porta buon umore.</div></div></div>
+          <div class="lawLine"><div class="lawIco">6️⃣</div><div><b>Lo scout è laborioso ed economo.</b><div class="lawSub">Usa bene le cose e non spreca.</div></div></div>
+          <div class="lawLine"><div class="lawIco">7️⃣</div><div><b>Lo scout è puro nei pensieri, parole e azioni.</b><div class="lawSub">Fa scelte giuste e rispettose.</div></div></div>
+        </div>
+      </div>
+
+      <!-- FOTO -->
+      <div class="accItem" id="accPhoto">
+        <button class="accBtn" type="button" data-target="photoBox" aria-expanded="false">
+          <div class="accLeft">
+            <div class="accIco">📷</div>
+            <div class="accMeta">
+              <div class="accTitle">Foto</div>
+              <div class="accSub">Immagine sotto al calendario</div>
+            </div>
+          </div>
+          <div class="chev">▾</div>
+        </button>
+        <div class="accBody" id="photoBox">
+          <h3 style="margin:10px 0 8px;">📷 Foto</h3>
+          <img class="belowImg" src="Immagine 2026-01-21 205031.png" alt="Immagine sotto al calendario">
+        </div>
+      </div>
+
     </div>
 
     <!-- FINESTRA FINALE -->
     <div class="footerWindow">
       <b>Site created by Mattia Spensieri</b>
-    </div>
-  </div>
-
-  <!-- MODAL LEGGI SCOUT -->
-  <div class="modalBackdrop" id="lawsBackdrop">
-    <div class="modal">
-      <div class="modalHeader">
-        <h3 class="modalTitle">📜 Legge Scout</h3>
-        <button id="lawsClose">Chiudi ✖</button>
-      </div>
-      <div class="modalBody">
-        <div class="line"><div class="ico">1️⃣</div><div><b>Lo scout è leale.</b><div class="sub">Dice la verità e mantiene la parola data.</div></div></div>
-        <div class="line"><div class="ico">2️⃣</div><div><b>Lo scout è amico di tutti e fratello di ogni altro scout.</b><div class="sub">Aiuta senza guardare chi sei.</div></div></div>
-        <div class="line"><div class="ico">3️⃣</div><div><b>Lo scout è cortese.</b><div class="sub">Rispetta gli altri e si comporta bene.</div></div></div>
-        <div class="line"><div class="ico">4️⃣</div><div><b>Lo scout ama e rispetta la natura.</b><div class="sub">Protegge il bosco, gli animali e l’ambiente.</div></div></div>
-        <div class="line"><div class="ico">5️⃣</div><div><b>Lo scout sorride e canta anche nelle difficoltà.</b><div class="sub">Non si arrende e porta buon umore.</div></div></div>
-        <div class="line"><div class="ico">6️⃣</div><div><b>Lo scout è laborioso ed economo.</b><div class="sub">Usa bene le cose e non spreca.</div></div></div>
-        <div class="line"><div class="ico">7️⃣</div><div><b>Lo scout è puro nei pensieri, parole e azioni.</b><div class="sub">Fa scelte giuste e rispettose.</div></div></div>
-      </div>
     </div>
   </div>
 
@@ -582,30 +703,16 @@
   const enterBtn = document.getElementById("enterBtn");
   const app = document.getElementById("app");
 
-  const windLayer = document.getElementById("windLayer");
-
   const dowEl = document.getElementById("dow");
   const calEl = document.getElementById("cal");
   const monthTitleEl = document.getElementById("monthTitle");
   const yearSel = document.getElementById("yearSel");
 
-  const btnThoughts = document.getElementById("btnThoughts");
-  const btnTheme = document.getElementById("btnTheme");
-  const btnCountdown = document.getElementById("btnCountdown");
-
-  const thoughtsBox = document.getElementById("thoughtsBox");
-  const themeBox = document.getElementById("themeBox");
-  const countBox = document.getElementById("countBox");
+  const journal = document.getElementById("journal");
+  const journalStatus = document.getElementById("journalStatus");
 
   const themeCards = document.getElementById("themeCards");
   const countCards = document.getElementById("countCards");
-
-  const lawsBtn = document.getElementById("lawsBtn");
-  const lawsBackdrop = document.getElementById("lawsBackdrop");
-  const lawsClose = document.getElementById("lawsClose");
-
-  const journal = document.getElementById("journal");
-  const journalStatus = document.getElementById("journalStatus");
 
   const knotArt = document.getElementById("knotArt");
   const knotName = document.getElementById("knotName");
@@ -622,7 +729,7 @@
   let stateMonth = 1;
 
   // =========================
-  // EVENTI IMPORTANTI (qui stanno LE DATE REALI per marker + countdown)
+  // EVENTI IMPORTANTI (date reali per marker + countdown)
   // Se non vuoi countdown, lascia [].
   // =========================
   const IMPORTANT_EVENTS = [
@@ -799,22 +906,27 @@
   }
 
   // =========================
-  // COLLAPSIBLES
+  // ✅ ACCORDION: tasti uno sotto l'altro
   // =========================
-  function toggleBox(el){
-    el.classList.toggle("show");
-  }
-  btnThoughts.addEventListener("click", ()=> toggleBox(thoughtsBox));
-  btnTheme.addEventListener("click", ()=> toggleBox(themeBox));
-  btnCountdown.addEventListener("click", ()=> toggleBox(countBox));
+  function setupAccordion(){
+    document.querySelectorAll(".accBtn").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const targetId = btn.getAttribute("data-target");
+        const item = btn.closest(".accItem");
+        const isOpen = item.classList.contains("open");
 
-  // =========================
-  // MODAL LEGGI SCOUT
-  // =========================
-  lawsBtn.addEventListener("click", ()=> lawsBackdrop.classList.add("show"));
-  lawsClose.addEventListener("click", ()=> lawsBackdrop.classList.remove("show"));
-  lawsBackdrop.addEventListener("click", (e)=>{ if(e.target===lawsBackdrop) lawsBackdrop.classList.remove("show"); });
-  window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") lawsBackdrop.classList.remove("show"); });
+        item.classList.toggle("open", !isOpen);
+        btn.setAttribute("aria-expanded", String(!isOpen));
+
+        // scroll dolce verso la sezione quando si apre (utile su mobile)
+        if(!isOpen){
+          setTimeout(()=>{
+            item.scrollIntoView({behavior:"smooth", block:"start"});
+          }, 60);
+        }
+      });
+    });
+  }
 
   // =========================
   // DIARIO persistente (localStorage)
@@ -1086,7 +1198,6 @@
   // =========================
   enterBtn.addEventListener("click", ()=>{
     intro.classList.add("hide");
-    // fai apparire l’app con animazione
     app.style.opacity = "1";
     app.style.transform = "translateY(0)";
   });
@@ -1099,6 +1210,8 @@
     spawnLeaves();
     spawnFireflies();
     renderCalendar();
+
+    setupAccordion();
 
     renderThemeDays();
     renderCountdown();
