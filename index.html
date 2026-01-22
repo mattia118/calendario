@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Calendario Scout nel Bosco (2026–2029) — Compleanni</title>
 
+<!-- ✅ PWA + Notifiche -->
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#08190e">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
 <style>
   :root{
     --text:#eef7ef; --muted: rgba(238,247,239,.78);
@@ -882,14 +889,14 @@
         <button class="accBtn" type="button" data-acc="accCountdown">
           <div class="accLeft">
             <div class="accIco">🔔</div>
-            <p class="accTitle">Avvisi compleanni (solo 10 giorni prima)</p>
+            <p class="accTitle">Avvisi compleanni (alle 09:00: -10, -5, 0 giorni)</p>
           </div>
           <div class="chev">▾</div>
         </button>
         <div class="accBody">
           <div class="cards" id="countCards"></div>
           <p class="muted" style="margin:10px 0 0;">
-            Nota: le notifiche “fuori dal sito” compaiono solo se dai il permesso al browser dopo aver cliccato ENTRA.
+            Nota: le notifiche del telefono (push) funzionano bene solo se hai installato il sito come App e hai dato il permesso.
           </p>
         </div>
       </div>
@@ -1033,13 +1040,19 @@
   <div class="toastWrap" id="toastWrap"></div>
 
 <script>
+  // ✅ registra il Service Worker (necessario per PWA + notifiche push)
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js").catch(console.error);
+    });
+  }
+
   // =========================
   // UTIL
   // =========================
   const pad = n => String(n).padStart(2,"0");
   const ymd = (y,m,d) => `${y}-${pad(m)}-${pad(d)}`;
   const itMonth = (y,m) => new Date(y, m-1, 1).toLocaleString("it-IT",{month:"long", year:"numeric"});
-  const itDateLong = (d) => d.toLocaleDateString("it-IT",{weekday:"long", day:"2-digit", month:"long", year:"numeric"});
   const DOW = ["Lun","Mar","Mer","Gio","Ven","Sab","Dom"];
   const YEAR_MIN = 2026, YEAR_MAX = 2029;
   const inRange = y => (y>=YEAR_MIN && y<=YEAR_MAX);
@@ -1102,7 +1115,7 @@
 
   // =========================
   // COMPLEANNI (SOLO QUESTI NEL CALENDARIO)
-  // ✅ Simone NON ESISTE PIÙ
+  // ✅ Simone NON ESISTE
   // =========================
   const BIRTHDAYS = [
     { id:"mariateresa", name:"Mariateresa", day:7,  month:1,  icon:"🎂" },
@@ -1152,14 +1165,9 @@
   ];
 
   // =========================
-  // TIMELINE (dal primo Jamboree al Jamboree dell'anno prossimo)
+  // TIMELINE (dal primo Jamboree al prossimo)
   // =========================
   function buildTimeline(){
-    // anno prossimo rispetto ad oggi reale
-    const ny = new Date().getFullYear() + 1;
-
-    // qui lo mettiamo “fino al Jamboree 2027” (anno prossimo nel tuo progetto)
-    // e comunque funziona anche se l'anno cambia
     const items = [
       { year:"1920", text:"1° World Scout Jamboree — Olympia, Londra (30 luglio–8 agosto)." },
       { year:"1947", text:"Jamboree della Pace — ripartenza dopo la guerra (Francia)." },
@@ -1207,7 +1215,7 @@
   }
 
   // =========================
-  // EVENTI (mappa compleanni) — SOLO COMPLEANNI
+  // EVENTI (mappa compleanni)
   // =========================
   function birthdaysByKeyForCurrentView(){
     const list = getAllBirthdaysForYear(stateYear);
@@ -1223,7 +1231,6 @@
   function markerForDate(key, eventMap){
     const evs = eventMap.get(key);
     if(!evs || !evs.length) return "";
-    // se più di uno, mostra 🎂🎂 (max 2)
     const icons = evs.slice(0,2).map(x=>x.icon).join("");
     return icons;
   }
@@ -1310,12 +1317,9 @@
     if(evs.length && !isOff){
       div.style.cursor = "pointer";
       div.addEventListener("click", ()=>{
-        // animazione cella
         div.classList.remove("jumpFlash");
         void div.offsetWidth;
         div.classList.add("jumpFlash");
-
-        // confetti
         spawnConfettiBurst();
       });
     }
@@ -1323,7 +1327,7 @@
   }
 
   // =========================
-  // LISTA COMPLEANNI DEL MESE (sotto calendario)
+  // LISTA COMPLEANNI DEL MESE
   // =========================
   function renderMonthEventsList(eventMap){
     monthEventsBox.innerHTML = "";
@@ -1369,7 +1373,7 @@
   // JUMP
   // =========================
   function jumpToDate(isoKey){
-    const [y,m,d] = isoKey.split("-").map(n=>parseInt(n,10));
+    const [y,m] = isoKey.split("-").map(n=>parseInt(n,10));
     if(!inRange(y)) return;
     stateYear = y; stateMonth = m;
     renderCalendar();
@@ -1386,11 +1390,10 @@
   }
 
   // =========================
-  // COUNTDOWN: solo compleanni entro 10 giorni
+  // COUNTDOWN: compleanni entro 10 giorni
   // =========================
   function buildUpcomingBirthdayList(){
     const now = new Date();
-    // prendo anno corrente + prossimo, così funziona a fine anno
     const y = now.getFullYear();
     const all = [...getAllBirthdaysForYear(y), ...getAllBirthdaysForYear(y+1)];
 
@@ -1418,10 +1421,9 @@
 
     list.slice(0,10).forEach(e=>{
       const when = e.dateObj.toLocaleDateString("it-IT", {day:"2-digit", month:"long", year:"numeric"});
-
-      let msg = `Tra meno di 10 giorni è il compleanno di ${e.name}: mancano ${e.diff} giorni`;
-      if(e.diff === 0) msg = `🎉 È oggi il compleanno di ${e.name}!`;
-      if(e.diff === 1) msg = `⏳ Manca meno di un giorno al compleanno di ${e.name}`;
+      const msg = (e.diff===0)
+        ? `🎉 È oggi il compleanno di ${e.name}!`
+        : `Tra ${e.diff} giorni è il compleanno di ${e.name} (${when}).`;
 
       const card = document.createElement("div");
       card.className="card";
@@ -1466,7 +1468,7 @@
   }
 
   // =========================
-  // NOTIFICHE BROWSER (se autorizzate)
+  // NOTIFICHE BROWSER (quando l'app è aperta)
   // =========================
   function canNotify(){ return ("Notification" in window); }
 
@@ -1485,10 +1487,14 @@
   }
 
   // =========================
-  // NOTIFICHE COMPLEANNI: da 10 giorni prima fino al giorno (ogni giorno)
-  // Evita duplicati: una volta al giorno per ogni compleanno
+  // ✅ LOGICA AVVISI: alle 09:00 manda solo:
+  // - 10 giorni prima
+  // - 5 giorni prima
+  // - giorno del compleanno
+  // (con dedupe per non ripeterla più volte lo stesso giorno)
   // =========================
-  const NOTIF_KEY = "birthday_notifs_v1";
+  const NOTIF_KEY = "birthday_notifs_9am_v1";
+  const ALERT_DAYS = new Set([10, 5, 0]); // -10, -5, 0
 
   function loadNotifState(){
     try{ return JSON.parse(localStorage.getItem(NOTIF_KEY) || "{}"); }
@@ -1497,41 +1503,49 @@
   function saveNotifState(state){
     localStorage.setItem(NOTIF_KEY, JSON.stringify(state));
   }
-  function todayKeyLocal(){
+
+  function todayIso(){
     const now = new Date();
     return ymd(now.getFullYear(), now.getMonth()+1, now.getDate());
   }
 
-  function runBirthdayNotificationsOncePerDay(){
+  function isAroundNineAM(now){
+    // finestra: 09:00 -> 09:15 (così non si perde se apri alle 09:05)
+    const h = now.getHours();
+    const min = now.getMinutes();
+    return (h === 9 && min <= 15);
+  }
+
+  function checkBirthdayAlertsAt9(){
+    const now = new Date();
+    if(!isAroundNineAM(now)) return;
+
     const state = loadNotifState();
-    const today = todayKeyLocal();
-    const list = buildUpcomingBirthdayList();
+    const today = todayIso();
+
+    const y = now.getFullYear();
+    const all = [...getAllBirthdaysForYear(y), ...getAllBirthdaysForYear(y+1)];
+    const list = all
+      .map(e => ({...e, diff: daysBetween(now, e.dateObj)}))
+      .filter(e => e.diff >= 0 && e.diff <= 10)
+      .filter(e => ALERT_DAYS.has(e.diff));
 
     list.forEach(e=>{
-      const dedupeKey = `${e.id}_${today}`;
+      // dedupe: per ogni compleanno + diff + data di oggi
+      const dedupeKey = `${e.id}_${e.diff}_${today}`;
       if(state[dedupeKey]) return;
 
       const when = e.dateObj.toLocaleDateString("it-IT", {day:"2-digit", month:"long", year:"numeric"});
 
       let title = "🎂 Compleanno in arrivo";
-      let msg = `Tra meno di 10 giorni è il compleanno di ${e.name}: mancano ${e.diff} giorni (${when}).`;
+      let msg = `Tra ${e.diff} giorni è il compleanno di ${e.name} (${when}).`;
 
-      if(e.diff === 0){
-        title = "🎉 È oggi!";
-        msg = `${e.name}. Auguri! (${when})`;
-      } else if(e.diff === 1){
-        msg = `Manca meno di un giorno al compleanno di ${e.name} (${when}).`;
-      }
+      if(e.diff === 10) msg = `⏳ Tra meno di 10 giorni è il compleanno di ${e.name} (${when}).`;
+      if(e.diff === 5)  msg = `⚠️ Tra 5 giorni è il compleanno di ${e.name} (${when}).`;
+      if(e.diff === 0){ title = "🎉 È oggi!"; msg = `Auguri ${e.name}! (${when})`; }
 
-      // toast sempre
-      showToast({
-        icon: "🎂",
-        title,
-        message: msg,
-        onClick: ()=> jumpToDate(e.date)
-      });
-
-      // notifica browser se permesso
+      // toast + notifica browser
+      showToast({ icon:"🎂", title, message: msg, onClick: ()=> jumpToDate(e.date) });
       pushWebNotification(title, msg);
 
       state[dedupeKey] = true;
@@ -1749,7 +1763,6 @@
   // PARALLAX mouse/touch (aurora)
   // =========================
   function setParallax(x,y){
-    // normalizzo -0.5..0.5
     const nx = (x / window.innerWidth) - 0.5;
     const ny = (y / window.innerHeight) - 0.5;
     document.documentElement.style.setProperty("--mx", String(nx));
@@ -1876,11 +1889,10 @@
     app.style.opacity = "1";
     app.style.transform = "translateY(0)";
 
-    // permesso notifiche (facoltativo)
     await ensureNotificationPermission();
 
-    // appena entri: controlla subito
-    runBirthdayNotificationsOncePerDay();
+    // controlla subito (se sono le 09:xx)
+    checkBirthdayAlertsAt9();
   });
 
   // =========================
@@ -1904,16 +1916,16 @@
     setTheme();
     renderGallery();
 
-    // controllo notifiche anche al load (toast)
-    runBirthdayNotificationsOncePerDay();
+    // ✅ controlla sempre (ma invia solo tra 09:00 e 09:15)
+    checkBirthdayAlertsAt9();
 
-    // ogni minuto aggiorna (ma senza spam: dedupe giornaliero)
+    // ogni minuto aggiorna
     setInterval(()=>{
       setTheme();
       renderCountdown();
       setKnotOfDay();
       setVirtueOfDay();
-      runBirthdayNotificationsOncePerDay();
+      checkBirthdayAlertsAt9();
     }, 60000);
   })();
 </script>
