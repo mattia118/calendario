@@ -3,149 +3,152 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Calendario Compleanni Scout (2026–2029) – SUPER ANIMATO</title>
+<title>Calendario Scout nel Bosco (2026–2029)</title>
 
 <style>
   :root{
-    --text:#eef7ef;
-    --muted: rgba(238,247,239,.75);
+    --text:#eef7ef; --muted: rgba(238,247,239,.78);
+    --danger:#ff3f3f; --gold:#ffd24d;
+
+    --overlayA: rgba(8,25,14,.58);
+    --overlayB: rgba(8,25,14,.26);
 
     --panel: rgba(255,255,255,.10);
-    --panel2: rgba(255,255,255,.16);
-    --shadow: 0 18px 55px rgba(0,0,0,.55);
+    --panel2: rgba(255,255,255,.14);
+
+    --btn: rgba(0,0,0,.22);
+    --btnBorder: rgba(255,255,255,.18);
+
+    --shadow: 0 18px 50px rgba(0,0,0,.55);
     --radius: 18px;
 
-    /* ✅ SFONDO (metti qui il tuo file) */
+    /* ✅ SFONDO */
     --bgUrl: url("ChatGPT Image 19 gen 2026, 21_00_05.png");
 
-    /* Animazioni globali */
-    --wind: 0;     /* 0..1 */
-    --glow: 1;     /* 0.9..1.2 */
-    --hue: 0deg;   /* rotazione colori */
+    --fliesOpacity: .75;
+    --windStrength: 0;
   }
 
   *{ box-sizing:border-box; }
-  html,body{ height:100%; }
+  html, body { height:100%; }
   body{
     margin:0;
     min-height:100vh;
     color:var(--text);
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
     overflow-x:hidden;
+    background-color:#08190e;
 
-    background:#06150c;
     background-image: var(--bgUrl);
     background-size: cover;
     background-position:center;
     background-repeat:no-repeat;
   }
 
-  /* =========================
-     SFONDO “VIVO”
-  ========================= */
+  /* ✅ SFONDO fisso */
   .bg{
-    position:fixed; inset:0;
+    position:fixed; top:0; left:0;
+    width:100vw;
+    height:100vh;
+    height:100dvh;
     background-image: var(--bgUrl);
     background-size: cover;
     background-position:center;
-    transform: scale(1.06);
-    z-index:-10;
+    transform:scale(1.03);
+    z-index:-7;
+    animation: bgSlow 16s ease-in-out infinite alternate;
     will-change: transform, filter;
-    animation: bgFloat 14s ease-in-out infinite alternate;
-    filter: saturate(1.08) contrast(1.05) hue-rotate(var(--hue));
   }
-  @keyframes bgFloat{
-    from{ transform: scale(1.06) translate3d(0,0,0); }
-    to  { transform: scale(1.11) translate3d(6px,-14px,0); }
+  @keyframes bgSlow{
+    from{ transform: scale(1.03) translateY(0) translateX(0); filter:saturate(1); }
+    to  { transform: scale(1.07) translateY(-12px) translateX(6px); filter:saturate(1.14); }
   }
 
-  .overlay{
-    position:fixed; inset:0;
-    z-index:-9;
+  .bgOverlay{
+    position:fixed; top:0; left:0;
+    width:100vw;
+    height:100vh;
+    height:100dvh;
     background:
-      radial-gradient(1200px 900px at 15% 10%, rgba(124,255,138,.18), transparent 60%),
-      radial-gradient(900px 700px at 90% 15%, rgba(255,210,77,.16), transparent 62%),
-      radial-gradient(1000px 800px at 60% 90%, rgba(114,195,255,.10), transparent 62%),
-      linear-gradient(160deg, rgba(0,0,0,.66), rgba(0,0,0,.30));
+      radial-gradient(1200px 800px at 20% 10%, rgba(124,255,138,.18), transparent 55%),
+      radial-gradient(900px 600px at 90% 20%, rgba(255,210,77,.16), transparent 60%),
+      linear-gradient(160deg, var(--overlayA), var(--overlayB));
+    z-index:-6;
     animation: overlayBreath 9s ease-in-out infinite;
   }
-  @keyframes overlayBreath{ 0%,100%{ opacity:1; } 50%{ opacity:.93; } }
+  @keyframes overlayBreath{ 0%,100%{ opacity:1; } 50%{ opacity:.92; } }
 
-  .fog{
-    position:fixed; inset:-140px;
+  /* NEBBIA + VENTO */
+  .wind{
+    position:fixed; inset:-120px;
     pointer-events:none;
-    z-index:-8;
     background:
-      radial-gradient(820px 520px at 30% 30%, rgba(255,255,255,.11), transparent 72%),
-      radial-gradient(920px 620px at 75% 45%, rgba(255,255,255,.09), transparent 74%),
-      radial-gradient(740px 520px at 40% 85%, rgba(255,255,255,.07), transparent 72%);
-    filter: blur(22px);
-    opacity: calc(0.40 + (var(--wind) * 0.35));
-    transform: translate3d(calc(var(--wind) * 26px), calc(var(--wind) * -12px), 0)
-              scale(calc(1.02 + var(--wind) * 0.05));
+      radial-gradient(700px 440px at 30% 30%, rgba(255,255,255,.12), transparent 72%),
+      radial-gradient(900px 600px at 70% 45%, rgba(255,255,255,.09), transparent 74%),
+      radial-gradient(720px 480px at 40% 80%, rgba(255,255,255,.08), transparent 72%);
+    filter: blur(18px);
+    opacity: calc(0.55 + (var(--windStrength) * 0.25));
+    transform: translate3d(calc(var(--windStrength) * 18px), calc(var(--windStrength) * -8px), 0) scale(calc(1.02 + var(--windStrength) * 0.02));
     transition: opacity .35s ease, transform .35s ease;
+    z-index:-5;
     animation: fogDrift 10s ease-in-out infinite alternate;
   }
-  @keyframes fogDrift{ from{ filter: blur(20px);} to{ filter: blur(26px);} }
+  @keyframes fogDrift{ from{ filter: blur(18px);} to{ filter: blur(22px);} }
 
-  /* Lucciole */
-  .fireflies{ position:fixed; inset:0; pointer-events:none; z-index:-2; }
+  /* FOGLIE */
+  .leaves{ position:fixed; inset:0; pointer-events:none; z-index:-1; overflow:hidden; }
+  .leafFall{
+    position:absolute; top:-80px;
+    width:28px; height:28px;
+    background: radial-gradient(circle at 30% 30%, rgba(255,210,77,.9), rgba(18,58,32,.25));
+    border-radius: 6px 18px 6px 18px;
+    opacity:0;
+    animation: leafDown var(--t) linear infinite, leafSpin calc(var(--t) * .75) ease-in-out infinite;
+    box-shadow: 0 6px 20px rgba(0,0,0,.18);
+    transform: translateX(calc(var(--windStrength) * 8px));
+  }
+  @keyframes leafDown{
+    0%{ transform: translate3d(0,-60px,0); opacity:0; }
+    8%{ opacity:.85; }
+    50%{ opacity:.55; }
+    100%{ transform: translate3d(calc(var(--dx) + var(--windStrength) * 140px), 110vh, 0); opacity:0; }
+  }
+  @keyframes leafSpin{ 0%{ rotate:0deg; } 50%{ rotate:140deg; } 100%{ rotate:300deg; } }
+
+  /* LUCCIOLE */
+  .fireflies{ position:fixed; inset:0; pointer-events:none; z-index:-1; opacity:var(--fliesOpacity); }
   .firefly{
     position:absolute; width:6px; height:6px; border-radius:50%;
     background: rgba(255,210,77,.95);
-    box-shadow: 0 0 20px rgba(255,210,77,.85);
+    box-shadow: 0 0 18px rgba(255,210,77,.85);
     opacity:0;
     animation: fly var(--t) linear infinite;
-    filter: brightness(calc(1 + (var(--glow) - 1)));
   }
   @keyframes fly{
-    0%{ transform: translate(0,0) scale(.85); opacity:0; }
+    0%{ transform: translate(0,0) scale(.8); opacity:0; }
     12%{ opacity:.95; }
-    55%{ opacity:.35; }
-    100%{ transform: translate(calc(var(--dx) + var(--wind) * 90px), var(--dy)) scale(1.25); opacity:0; }
+    50%{ opacity:.35; }
+    100%{ transform: translate(calc(var(--dx) + var(--windStrength) * 80px), var(--dy)) scale(1.25); opacity:0; }
   }
 
-  /* Foglie */
-  .leaves{ position:fixed; inset:0; pointer-events:none; z-index:-2; overflow:hidden; }
-  .leaf{
-    position:absolute; top:-90px;
-    width:30px; height:30px;
-    border-radius: 7px 20px 7px 20px;
-    background: radial-gradient(circle at 30% 30%, rgba(255,210,77,.9), rgba(18,58,32,.22));
-    box-shadow: 0 10px 22px rgba(0,0,0,.18);
-    opacity:0;
-    animation: leafDown var(--t) linear infinite, leafSpin calc(var(--t) * .75) ease-in-out infinite;
-  }
-  @keyframes leafDown{
-    0%{ transform: translate3d(0,-70px,0); opacity:0; }
-    8%{ opacity:.85; }
-    55%{ opacity:.50; }
-    100%{
-      transform: translate3d(calc(var(--dx) + var(--wind) * 160px), 110vh, 0);
-      opacity:0;
-    }
-  }
-  @keyframes leafSpin{ 0%{ rotate:0deg; } 50%{ rotate:160deg; } 100%{ rotate:320deg; } }
-
-  /* Scintille */
-  .sparks{ position:fixed; inset:0; pointer-events:none; z-index:-2; }
+  /* SCINTILLE */
+  .sparks{ position:fixed; inset:0; pointer-events:none; z-index:-1; }
   .spark{
-    position:absolute; width:3px; height:3px; border-radius:50%;
-    background: rgba(255,255,255,.86);
-    box-shadow: 0 0 18px rgba(255,255,255,.30);
+    position:absolute;
+    width:3px; height:3px; border-radius:50%;
+    background: rgba(255,255,255,.85);
+    box-shadow: 0 0 16px rgba(255,255,255,.32);
     opacity:0;
     animation: sparkFloat var(--t) ease-in-out infinite;
   }
   @keyframes sparkFloat{
-    0%{ transform: translate3d(0,22px,0) scale(.8); opacity:0; }
-    18%{ opacity:.55; }
-    65%{ opacity:.22; }
-    100%{ transform: translate3d(calc(var(--dx) + var(--wind) * 70px), calc(-170px - var(--dy)), 0) scale(1.2); opacity:0; }
+    0%{ transform: translate3d(0,20px,0) scale(.8); opacity:0; }
+    15%{ opacity:.55; }
+    60%{ opacity:.25; }
+    100%{ transform: translate3d(var(--dx), calc(-140px - var(--dy)), 0) scale(1.2); opacity:0; }
   }
 
-  /* =========================
-     INTRO
-  ========================= */
+  /* INTRO */
   .intro{
     position:fixed; inset:0;
     display:flex; align-items:center; justify-content:center;
@@ -158,170 +161,98 @@
 
   .introRing{
     position:absolute;
-    width:290px; height:290px;
+    width:280px; height:280px;
     border-radius:50%;
     border:1px solid rgba(255,255,255,.22);
-    box-shadow: 0 0 70px rgba(255,255,255,.12);
-    animation: ring 3.0s ease-in-out infinite;
+    box-shadow: 0 0 60px rgba(255,255,255,.10);
+    animation: ring 3.2s ease-in-out infinite;
   }
   .introRing::after{
     content:"";
     position:absolute; inset:-18px;
     border-radius:50%;
     border:1px dashed rgba(255,210,77,.22);
-    animation: ring2 6.4s linear infinite;
+    animation: ring2 6.8s linear infinite;
   }
-  @keyframes ring{ 0%,100%{ transform: scale(1); opacity:.65; } 50%{ transform: scale(1.07); opacity:.95; } }
+  @keyframes ring{ 0%,100%{ transform: scale(1); opacity:.65; } 50%{ transform: scale(1.06); opacity:.95; } }
   @keyframes ring2{ to{ transform: rotate(360deg); } }
 
   .enterBtn{
     position:relative;
-    padding: 22px 48px;
+    padding: 22px 46px;
     font-size: 26px;
-    font-weight: 1000;
+    font-weight: 900;
     letter-spacing: .06em;
     border-radius: 999px;
-    border: 2px solid rgba(255,255,255,.50);
+    border: 2px solid rgba(255,255,255,.48);
     background: rgba(0,0,0,.30);
     color: var(--text);
     cursor:pointer;
-    box-shadow: 0 24px 70px rgba(0,0,0,.55), 0 0 46px rgba(255,255,255,.18);
+    box-shadow: 0 22px 60px rgba(0,0,0,.55), 0 0 40px rgba(255,255,255,.18);
+    animation: pulse 2.2s ease-in-out infinite;
     overflow:hidden;
-    animation: pulse 2.1s ease-in-out infinite;
-    transform-origin: 50% 60%;
-  }
-  .enterBtn::before{
-    content:"";
-    position:absolute; inset:-80px;
-    background: radial-gradient(360px 260px at 30% 30%, rgba(255,255,255,.15), transparent 62%);
-    transform: translateX(-45%);
-    animation: shimmer 2.5s ease-in-out infinite;
   }
   .enterBtn::after{
     content:"";
-    position:absolute; inset:0;
-    background: radial-gradient(240px 140px at 50% 50%, rgba(124,255,138,.16), transparent 70%);
-    opacity:.55;
-    animation: btnGlow 2.8s ease-in-out infinite;
-    pointer-events:none;
+    position:absolute; inset:-70px;
+    background: radial-gradient(320px 220px at 30% 30%, rgba(255,255,255,.14), transparent 60%);
+    transform: translateX(-40%);
+    animation: shimmer 2.6s ease-in-out infinite;
   }
-  @keyframes shimmer{ 0%,100%{ opacity:.22; transform: translateX(-45%);} 50%{ opacity:.55; transform: translateX(45%);} }
-  @keyframes pulse{ 0%,100%{ transform: translateY(0) scale(1); } 50%{ transform: translateY(-2px) scale(1.01); } }
-  @keyframes btnGlow{ 0%,100%{ filter: blur(0px); } 50%{ filter: blur(1px); } }
+  @keyframes shimmer{ 0%,100%{ opacity:.25; transform: translateX(-40%); } 50%{ opacity:.55; transform: translateX(40%); } }
+  @keyframes pulse{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-2px); } }
 
-  /* =========================
-     LAYOUT
-  ========================= */
-  .wrap{
-    position:relative; z-index:2;
-    max-width:1080px;
-    margin:22px auto 46px;
-    padding:14px;
-    opacity:0;
-    transform: translateY(10px);
-    transition: opacity .55s ease, transform .55s ease;
-  }
-
+  /* LAYOUT */
+  .wrap{ position:relative; z-index:2; max-width:1080px; margin:22px auto 46px; padding:14px; }
   .topbar{
     display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
-    padding:14px;
-    background:var(--panel);
-    border:1px solid var(--panel2);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    backdrop-filter: blur(12px);
+    padding:14px; background:var(--panel); border:1px solid var(--panel2);
+    border-radius:var(--radius); box-shadow:var(--shadow); backdrop-filter: blur(10px);
     animation: floatPanel 7s ease-in-out infinite;
   }
   @keyframes floatPanel{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-2px); } }
-
-  .title{ display:flex; gap:10px; align-items:center; font-weight:1000; }
+  .title{ display:flex; gap:10px; align-items:center; font-weight:900; }
   .controls{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-
   button, select{
-    border:1px solid rgba(255,255,255,.18);
-    background: rgba(0,0,0,.22);
-    color: var(--text);
-    padding:10px 12px;
-    border-radius:14px;
-    cursor:pointer;
-    outline:none;
-    font-family:inherit;
+    border:1px solid var(--btnBorder); background: var(--btn); color: var(--text);
+    padding:10px 12px; border-radius:14px; cursor:pointer; outline:none; font-family:inherit;
     transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
   }
-  button:hover, select:hover{
-    transform: translateY(-1px) scale(1.01);
-    filter: brightness(1.10);
-    box-shadow: 0 16px 32px rgba(0,0,0,.22);
-  }
+  button:hover, select:hover{ transform: translateY(-1px) scale(1.01); filter: brightness(1.08); box-shadow: 0 14px 28px rgba(0,0,0,.22); }
   button:active{ transform: translateY(0) scale(.99); }
 
-  .monthTitle{ font-size:18px; font-weight:1000; text-transform:capitalize; }
+  .monthTitle{ font-size:18px; font-weight:900; text-transform:capitalize; }
   .muted{ color: var(--muted); font-size:13px; }
 
   .stage{
-    margin-top:14px;
-    position:relative;
-    border-radius:22px;
-    overflow:hidden;
-    box-shadow:var(--shadow);
-    border:1px solid rgba(255,255,255,.14);
+    margin-top:14px; position:relative; border-radius:22px; overflow:hidden;
+    box-shadow:var(--shadow); border:1px solid rgba(255,255,255,.14);
     background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(10px);
   }
-
-  .frame{
-    position:absolute; inset:0;
-    pointer-events:none;
-    z-index:1;
-    opacity:.86;
-    background:
-      radial-gradient(600px 280px at 10% 20%, rgba(255,210,77,.10), transparent 60%),
-      radial-gradient(700px 320px at 90% 20%, rgba(124,255,138,.12), transparent 60%),
-      linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
-    animation: frameShift 10s ease-in-out infinite alternate;
-  }
-  @keyframes frameShift{
-    from{ filter: blur(0px); transform: translateY(0); }
-    to{ filter: blur(.2px); transform: translateY(-6px); }
-  }
-
-  .content{ position:relative; z-index:2; padding:28px 22px 18px; }
+  .frame{ position:absolute; inset:0; background:url("frame.jpg") center/cover no-repeat; opacity:.96; pointer-events:none; z-index:1; }
+  .content{ position:relative; z-index:2; padding:34px 26px 18px; }
 
   .grid{ display:grid; grid-template-columns:repeat(7, 1fr); gap:10px; }
-
   .dow{
-    text-align:center;
-    font-weight:1000;
-    font-size:13px;
-    color: rgba(0,0,0,.82);
-    background: rgba(255,255,255,.86);
-    border-radius:12px;
-    padding:10px 6px;
-    border:1px solid rgba(0,0,0,.08);
-    animation: popIn .55s ease both;
+    text-align:center; font-weight:900; font-size:13px; color: rgba(0,0,0,.80);
+    background: rgba(255,255,255,.84); border-radius:12px; padding:10px 6px; border:1px solid rgba(0,0,0,.08);
+    animation: popIn .5s ease both;
   }
   @keyframes popIn{ from{ transform: translateY(6px); opacity:0; } to{ transform: translateY(0); opacity:1; } }
 
   .day{
-    border-radius:16px;
-    padding:10px;
-    background: rgba(255,255,255,.92);
-    border:1px solid rgba(0,0,0,.08);
-    color: rgba(0,0,0,.88);
-    position:relative;
-    overflow:hidden;
-    display:flex;
-    align-items:flex-start;
-    justify-content:flex-start;
+    border-radius:16px; padding:10px; background: rgba(255,255,255,.90);
+    border:1px solid rgba(0,0,0,.08); color: rgba(0,0,0,.88);
+    position:relative; overflow:hidden; display:flex; align-items:flex-start; justify-content:flex-start;
     transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
-    isolation:isolate;
   }
   .day:hover{
     transform: translateY(-2px) scale(1.01);
     filter: brightness(1.03);
     box-shadow: 0 16px 30px rgba(0,0,0,.18);
   }
-  .day .n{ font-weight:1000; font-size:16px; }
+  .day .n{ font-weight:900; font-size:16px; }
   .off{ opacity:.55; }
 
   .today{
@@ -334,63 +265,68 @@
     50%{ box-shadow: 0 0 28px rgba(124,255,138,.35); }
   }
 
-  .bday::before{
-    content:"";
-    position:absolute; inset:-50px;
-    z-index:-1;
-    background:
-      radial-gradient(240px 180px at 25% 25%, rgba(255,63,63,.14), transparent 62%),
-      radial-gradient(260px 200px at 80% 40%, rgba(255,210,77,.18), transparent 62%),
-      radial-gradient(300px 220px at 40% 85%, rgba(124,255,138,.14), transparent 62%);
-    filter: blur(12px);
-    opacity:.95;
-    animation: aura 3.2s ease-in-out infinite;
-  }
-  @keyframes aura{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-7px); } }
-
-  .bday::after{
-    content:"";
-    position:absolute; inset:-40px;
-    z-index:-1;
-    background: linear-gradient(120deg, rgba(255,255,255,.0), rgba(255,255,255,.20), rgba(255,255,255,.0));
-    transform: translateX(-60%) rotate(12deg);
-    animation: shine 2.8s ease-in-out infinite;
-    opacity:.55;
-  }
-  @keyframes shine{
-    0%,100%{ transform: translateX(-60%) rotate(12deg); opacity:.25; }
-    50%{ transform: translateX(60%) rotate(12deg); opacity:.55; }
-  }
-
   .marker{
     position:absolute; right:8px; bottom:8px;
-    font-size:14px;
+    font-size:14px; opacity:.98;
     display:flex; align-items:center; gap:6px;
-    padding: 4px 7px;
+    transform-origin: 50% 70%;
+    animation: markerBounce 1.8s ease-in-out infinite;
+    padding: 4px 6px;
     border-radius: 999px;
     background: rgba(0,0,0,.10);
     border: 1px solid rgba(0,0,0,.08);
-    transform-origin: 50% 70%;
-    animation: markerBounce 1.8s ease-in-out infinite;
+  }
+  .dotRed{
+    width:7px; height:7px; border-radius:50%;
+    background: rgba(255,63,63,.95);
+    box-shadow: 0 0 16px rgba(255,63,63,.45);
   }
   @keyframes markerBounce{
     0%,100%{ transform: translateY(0) rotate(0deg); }
     50%{ transform: translateY(-2px) rotate(-2deg); }
   }
-  .dot{
-    width:7px; height:7px; border-radius:50%;
-    background: rgba(255,63,63,.95);
-    box-shadow: 0 0 16px rgba(255,63,63,.45);
+
+  /* aura compleanni */
+  .eventDay::before{
+    content:"";
+    position:absolute; inset:-40px;
+    background:
+      radial-gradient(240px 180px at 25% 25%, rgba(255,63,63,.14), transparent 62%),
+      radial-gradient(260px 200px at 80% 40%, rgba(255,210,77,.16), transparent 62%);
+    opacity:.9;
+    filter: blur(12px);
+    pointer-events:none;
+    animation: eventAura 3.4s ease-in-out infinite;
+  }
+  @keyframes eventAura{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-6px); } }
+
+  /* ✅ 23 gennaio (Simone) lampeggia */
+  .simoneBlink{
+    outline: 3px solid rgba(255,63,63,.90);
+    outline-offset:-3px;
+    animation: blink 1.0s ease-in-out infinite;
+  }
+  @keyframes blink{
+    0%,100%{ filter: brightness(1); box-shadow: 0 0 0 rgba(255,63,63,0); }
+    50%{ filter: brightness(1.14); box-shadow: 0 0 40px rgba(255,63,63,.55); }
   }
 
-  .jumpFlash{ animation: jumpFlash 1.6s ease-in-out 0s 2; }
+  .jumpFlash{ animation: jumpFlash 1.6s ease-in-out 0s 3; }
   @keyframes jumpFlash{
     0%{ transform: scale(1); }
-    50%{ transform: scale(1.03); filter: brightness(1.14); box-shadow: 0 0 44px rgba(255,63,63,.45); }
+    50%{ transform: scale(1.03); filter: brightness(1.14); box-shadow: 0 0 40px rgba(255,63,63,.45); }
     100%{ transform: scale(1); }
   }
 
-  /* Riga eventi (compleanni) del mese */
+  @media (max-width: 780px){
+    .content{ padding: 18px 14px 14px; }
+    .grid{ gap:8px; }
+    .day{ aspect-ratio: 1/1; padding:8px; }
+    .day .n{ font-size:14px; }
+    .monthTitle{ font-size:16px; }
+  }
+
+  /* Riga eventi del mese sotto calendario */
   .monthEvents{
     margin-top: 10px;
     padding: 10px 12px;
@@ -403,31 +339,19 @@
   }
   .monthEventsLine{
     display:flex; gap:10px; align-items:flex-start;
-    padding:9px 10px;
+    padding:8px 10px;
     border-radius:14px;
     background: rgba(255,255,255,.06);
     border:1px solid rgba(255,255,255,.10);
     transition: transform .18s ease, filter .18s ease;
     cursor:pointer;
-    position:relative;
-    overflow:hidden;
   }
-  .monthEventsLine::after{
-    content:"";
-    position:absolute; inset:-40px;
-    background: radial-gradient(300px 220px at 20% 30%, rgba(255,255,255,.10), transparent 60%);
-    opacity:0;
-    transition: opacity .22s ease;
-  }
-  .monthEventsLine:hover{ transform: translateY(-1px); filter: brightness(1.08); }
-  .monthEventsLine:hover::after{ opacity:.70; }
+  .monthEventsLine:hover{ transform: translateY(-1px) scale(1.01); filter: brightness(1.08); }
   .monthEventsIco{ font-size:18px; line-height:1; }
-  .monthEventsTxt{ font-size:13px; color: rgba(238,247,239,.90); }
+  .monthEventsTxt{ font-size:13px; color: rgba(238,247,239,.88); }
   .monthEventsSub{ font-size:12px; color: var(--muted); margin-top:2px; }
 
-  /* =========================
-     ACCORDION (come nel tuo primo codice)
-  ========================= */
+  /* ACCORDION */
   .accordion{ margin-top:14px; display:flex; flex-direction:column; gap:12px; }
   .accItem{
     background: var(--panel);
@@ -461,9 +385,9 @@
     opacity:0;
     transition: opacity .22s ease;
   }
-  .accItem:hover .accBtn::after{ opacity:.65; }
+  .accItem:hover .accBtn::after{ opacity:.7; }
 
-  .accLeft{ display:flex; align-items:center; gap:10px; font-weight:1000; }
+  .accLeft{ display:flex; align-items:center; gap:10px; font-weight:900; }
   .accIco{
     width:34px; height:34px;
     display:grid; place-items:center;
@@ -497,8 +421,10 @@
     background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
     border-radius: 16px; padding:12px; position:relative; overflow:hidden;
     transition: transform .18s ease, filter .18s ease;
+    animation: cardIn .55s ease both;
   }
-  .card:hover{ transform: translateY(-2px); filter: brightness(1.06); }
+  @keyframes cardIn{ from{ opacity:0; transform: translateY(10px);} to{ opacity:1; transform: translateY(0);} }
+  .card:hover{ transform: translateY(-2px) scale(1.01); filter: brightness(1.06); }
   .card::before{
     content:""; position:absolute; inset:-80px;
     background:
@@ -508,13 +434,15 @@
     animation: cardGlow 6s ease-in-out infinite;
   }
   @keyframes cardGlow{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-10px); } }
+
   .card > *{ position:relative; z-index:1; }
   .kicker{ font-size:12px; color: var(--muted); margin-bottom:6px; }
-  .big{ font-size:15px; font-weight:1000; margin:0; }
+  .big{ font-size:15px; font-weight:900; margin:0; }
   .small{ margin:6px 0 0; color: var(--muted); font-size:13px; }
+
   .redNote{
     margin:8px 0 0;
-    font-weight:1000;
+    font-weight:900;
     color: rgba(255,63,63,.95);
     letter-spacing: .02em;
     text-shadow: 0 10px 26px rgba(0,0,0,.35);
@@ -522,7 +450,7 @@
   }
   @keyframes redPulse{ 0%,100%{ opacity:.78; } 50%{ opacity:1; } }
 
-  /* Diario */
+  /* DIARIO */
   .journalBox{
     width:100%;
     border:1px solid rgba(255,255,255,.18);
@@ -538,7 +466,7 @@
   }
   .journalBox:focus{ box-shadow: 0 0 0 3px rgba(124,255,138,.22); filter: brightness(1.05); }
 
-  /* Nodo */
+  /* NODO */
   .knotBox{ display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start; }
   .knotArt{
     flex: 0 0 220px;
@@ -553,10 +481,10 @@
   }
   @keyframes knotFloat{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-3px); } }
   .knotText{ flex: 1 1 260px; }
-  .knotName{ font-weight:1000; font-size:16px; margin:0; }
+  .knotName{ font-weight:900; font-size:16px; margin:0; }
   .knotDesc{ margin:8px 0 0; color: var(--muted); }
 
-  /* Bussola */
+  /* BUSSOLA */
   .compassWrap{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
   .compass{
     width:140px; height:140px;
@@ -594,59 +522,69 @@
     background: rgba(255,255,255,.75);
     box-shadow: 0 0 18px rgba(255,255,255,.25);
   }
-  .virtueName{ margin:0; font-weight:1000; font-size:16px; }
+  .virtueName{ margin:0; font-weight:900; font-size:16px; }
   .virtueDesc{ margin:8px 0 0; color: var(--muted); }
 
-  /* Timeline */
+  /* TIMELINE (più animata) */
   .timeline{
     display:flex; gap:12px;
     overflow-x:auto;
     scroll-snap-type: x mandatory;
-    padding-bottom: 6px;
+    padding-bottom: 8px;
   }
   .timeItem{
-    min-width: 220px;
+    min-width: 240px;
     scroll-snap-align: start;
     background: rgba(0,0,0,.18);
     border:1px solid rgba(255,255,255,.14);
     border-radius: 16px;
     padding: 12px;
     transition: transform .18s ease, filter .18s ease;
+    position:relative;
+    overflow:hidden;
+    animation: timeIn .5s ease both;
   }
-  .timeItem:hover{ transform: translateY(-2px); filter: brightness(1.08); }
-  .timeYear{ font-weight:1000; font-size:16px; margin:0; }
-  .timeText{ margin:8px 0 0; color: var(--muted); font-size:13px; }
+  @keyframes timeIn{ from{ opacity:0; transform: translateY(10px);} to{ opacity:1; transform: translateY(0);} }
+  .timeItem::before{
+    content:""; position:absolute; inset:-80px;
+    background:
+      radial-gradient(260px 180px at 25% 25%, rgba(255,210,77,.16), transparent 60%),
+      radial-gradient(260px 180px at 80% 40%, rgba(124,255,138,.18), transparent 60%);
+    filter: blur(12px);
+    opacity:.85;
+    animation: timeGlow 5.2s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes timeGlow{ 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-10px);} }
+  .timeItem:hover{ transform: translateY(-2px) scale(1.02); filter: brightness(1.10); }
+  .timeYear{ position:relative; font-weight:900; font-size:16px; margin:0; }
+  .timeText{ position:relative; margin:8px 0 0; color: var(--muted); font-size:13px; }
 
-  /* Modal */
+  /* MODAL LEGGE SCOUT */
   .modalBackdrop{
     position:fixed; inset:0;
-    background: rgba(0,0,0,.62);
+    background: rgba(0,0,0,.60);
     display:none;
     align-items:center; justify-content:center;
     padding: 18px;
     z-index:99;
   }
   .modalBackdrop.show{ display:flex; }
-
   .modal{
-    width:min(700px, 96vw);
+    width:min(680px, 96vw);
     background: rgba(14,44,25,.92);
     border:1px solid rgba(255,255,255,.14);
     border-radius: 22px;
     box-shadow: var(--shadow);
     padding: 16px;
-    overflow:hidden;
-    transform: translateY(18px) scale(.96);
+    transform: translateY(18px) scale(.95);
     opacity:0;
     animation: pop .32s ease forwards;
+    overflow:hidden;
   }
   @keyframes pop{ to{ transform: translateY(0) scale(1); opacity:1; } }
-
-  .modalHeader{
-    display:flex; justify-content:space-between; gap:12px; align-items:flex-start;
-    padding:6px 6px 10px;
-  }
-  .modalTitle{ font-weight:1000; font-size:18px; margin:0; }
+  .modalHeader{ display:flex; justify-content:space-between; gap:12px; align-items:flex-start; padding:6px 6px 10px; }
+  .modalTitle{ font-weight:900; font-size:18px; margin:0; }
   .modalBody{
     background: rgba(255,255,255,.08);
     border:1px solid rgba(255,255,255,.12);
@@ -656,8 +594,7 @@
   }
   .line{
     display:flex; gap:10px; align-items:flex-start;
-    padding:10px;
-    border-radius:14px;
+    padding:10px; border-radius:14px;
     background: rgba(0,0,0,.20);
     border:1px solid rgba(255,255,255,.10);
     margin-bottom: 10px;
@@ -665,9 +602,142 @@
   }
   @keyframes slideIn{ from{ transform: translateX(-12px); opacity:0; } to{ transform: translateX(0); opacity:1; } }
   .ico{ font-size: 22px; line-height:1; }
-  .sub{ color: rgba(238,247,239,.86); font-size: 13px; margin:2px 0 0; }
+  .sub{ color: rgba(238,247,239,.85); font-size: 13px; margin:2px 0 0; }
 
-  /* Footer */
+  /* FOTO (finestra apribile) */
+  details.photoWin{
+    margin-top:14px;
+    background: var(--panel);
+    border:1px solid var(--panel2);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+    overflow:hidden;
+  }
+  details.photoWin > summary{
+    list-style:none;
+    cursor:pointer;
+    padding:14px 14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    font-weight:900;
+  }
+  details.photoWin > summary::-webkit-details-marker{ display:none; }
+  .sumLeft{ display:flex; gap:10px; align-items:center; }
+  .sumIco{
+    width:34px; height:34px; display:grid; place-items:center;
+    border-radius:12px;
+    background: rgba(0,0,0,.18);
+    border: 1px solid rgba(255,255,255,.14);
+    box-shadow: 0 10px 26px rgba(0,0,0,.22);
+    animation: icoFloat 4.2s ease-in-out infinite;
+  }
+  .sumChev{
+    width:40px; height:40px; display:grid; place-items:center;
+    border-radius: 14px;
+    background: rgba(0,0,0,.14);
+    border:1px solid rgba(255,255,255,.14);
+    transition: transform .25s ease;
+  }
+  details[open] .sumChev{ transform: rotate(180deg); }
+
+  .galleryWrap{ padding: 0 14px 14px; }
+  .galleryGrid{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:10px;
+  }
+  @media (max-width: 860px){ .galleryGrid{ grid-template-columns: 1fr; } }
+
+  .thumb{
+    border-radius: 16px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.18);
+    box-shadow: 0 14px 30px rgba(0,0,0,.25);
+    cursor:pointer;
+    transition: transform .18s ease, filter .18s ease;
+    position:relative;
+  }
+  .thumb::after{
+    content:"";
+    position:absolute; inset:-90px;
+    background: radial-gradient(280px 200px at 25% 25%, rgba(255,210,77,.16), transparent 60%);
+    filter: blur(14px);
+    opacity:0;
+    transition: opacity .25s ease;
+    pointer-events:none;
+  }
+  .thumb:hover::after{ opacity:.9; }
+  .thumb:hover{ transform: translateY(-2px) scale(1.01); filter: brightness(1.06); }
+
+  .thumb img, .thumb video{
+    width:100%;
+    height: 280px;
+    object-fit: cover;
+    display:block;
+    background: rgba(0,0,0,.22);
+  }
+  .thumb video{ outline:none; }
+
+  .thumbCap{
+    padding:10px 12px;
+    font-weight:900;
+    color: rgba(238,247,239,.92);
+    border-top:1px solid rgba(255,255,255,.10);
+    background: rgba(0,0,0,.14);
+  }
+  .thumbCap small{ display:block; font-weight:600; color: rgba(238,247,239,.72); margin-top:4px; }
+
+  /* LIGHTBOX */
+  .lightbox{
+    position:fixed; inset:0;
+    background: rgba(0,0,0,.72);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding: 14px;
+    z-index: 200;
+  }
+  .lightbox.show{ display:flex; }
+  .lbBox{
+    width:min(980px, 96vw);
+    max-height: 88vh;
+    border-radius: 18px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(10,28,16,.85);
+    box-shadow: 0 30px 80px rgba(0,0,0,.6);
+    animation: lbPop .26s ease both;
+  }
+  @keyframes lbPop{ from{ transform: translateY(14px) scale(.98); opacity:0; } to{ transform: translateY(0) scale(1); opacity:1; } }
+  .lbTop{
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 10px 12px;
+    background: rgba(0,0,0,.25);
+    border-bottom: 1px solid rgba(255,255,255,.12);
+  }
+  .lbTitle{ font-weight:900; font-size: 14px; color: rgba(238,247,239,.92); }
+  .lbClose{
+    border:1px solid rgba(255,255,255,.18);
+    background: rgba(0,0,0,.22);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 8px 10px;
+    cursor:pointer;
+    font-weight:900;
+  }
+  .lbMedia{
+    display:block;
+    width:100%;
+    height: min(78vh, 720px);
+    object-fit: contain;
+    background: rgba(0,0,0,.20);
+  }
+
+  /* FOOTER */
   .footerWindow{
     margin-top:14px;
     border-radius: 18px;
@@ -689,32 +759,16 @@
     box-shadow: 0 18px 44px rgba(0,0,0,.30);
     text-transform: uppercase;
   }
-
-  /* Confetti */
-  canvas#confetti{
-    position:fixed; inset:0;
-    pointer-events:none;
-    z-index:120;
-  }
-
-  @media (max-width: 780px){
-    .content{ padding: 18px 14px 14px; }
-    .grid{ gap:8px; }
-    .day{ aspect-ratio: 1/1; padding:8px; }
-    .day .n{ font-size:14px; }
-    .monthTitle{ font-size:16px; }
-  }
 </style>
 </head>
 
 <body>
   <div class="bg"></div>
-  <div class="overlay"></div>
-  <div class="fog" id="fog"></div>
+  <div class="bgOverlay"></div>
+  <div class="wind" id="windLayer"></div>
   <div class="leaves" id="leaves"></div>
   <div class="fireflies" id="fireflies"></div>
   <div class="sparks" id="sparks"></div>
-  <canvas id="confetti"></canvas>
 
   <!-- INTRO -->
   <div class="intro" id="intro">
@@ -722,13 +776,13 @@
     <button class="enterBtn" id="enterBtn">ENTRA</button>
   </div>
 
-  <div class="wrap" id="app">
+  <div class="wrap" id="app" style="opacity:0; transform: translateY(8px); transition: opacity .5s ease, transform .5s ease;">
     <div class="topbar">
       <div class="title">
-        <div style="font-size:22px;">🎂</div>
+        <div style="font-size:22px;">🌲</div>
         <div>
-          <div style="font-size:16px;font-weight:1000;">Calendario Compleanni Scout</div>
-          <div class="muted">2026 → 2029 (solo compleanni)</div>
+          <div style="font-size:16px;font-weight:900;">Calendario Scout nel Bosco</div>
+          <div class="muted">2026 → 2029</div>
         </div>
       </div>
 
@@ -758,12 +812,12 @@
       </div>
     </div>
 
-    <!-- ✅ SEZIONI COME PRIMA -->
+    <!-- SEZIONI -->
     <div class="accordion" id="accordion">
       <div class="accItem open" id="accCountdown">
         <button class="accBtn" type="button" data-acc="accCountdown">
           <div class="accLeft">
-            <div class="accIco">⏳</div>
+            <div class="accIco">🎂</div>
             <p class="accTitle">Countdown compleanni (solo 10 giorni prima)</p>
           </div>
           <div class="chev">▾</div>
@@ -832,29 +886,12 @@
         <button class="accBtn" type="button" data-acc="accTimeline">
           <div class="accLeft">
             <div class="accIco">🕰️</div>
-            <p class="accTitle">Linea del tempo scout</p>
+            <p class="accTitle">Linea del tempo scout (Jamboree)</p>
           </div>
           <div class="chev">▾</div>
         </button>
         <div class="accBody">
-          <div class="timeline" id="timeline">
-            <div class="timeItem">
-              <p class="timeYear">1907</p>
-              <p class="timeText">Primo campo scout sull’isola di Brownsea.</p>
-            </div>
-            <div class="timeItem">
-              <p class="timeYear">1920</p>
-              <p class="timeText">Primo Jamboree mondiale.</p>
-            </div>
-            <div class="timeItem">
-              <p class="timeYear">1950+</p>
-              <p class="timeText">Lo scoutismo cresce in tutto il mondo e diventa una grande famiglia.</p>
-            </div>
-            <div class="timeItem">
-              <p class="timeYear">Oggi</p>
-              <p class="timeText">Tu nel bosco 🌲: “lascia il posto migliore di come lo hai trovato”.</p>
-            </div>
-          </div>
+          <div class="timeline" id="timeline"></div>
           <p class="muted" style="margin:10px 0 0;">Scorri a destra/sinistra 👉</p>
         </div>
       </div>
@@ -873,23 +910,29 @@
       </div>
     </div>
 
+    <!-- FOTO (alla fine) -->
+    <details class="photoWin" id="photoWin">
+      <summary>
+        <div class="sumLeft">
+          <div class="sumIco">📷</div>
+          <div>Foto campo estivo 2025</div>
+        </div>
+        <div class="sumChev">▾</div>
+      </summary>
+      <div class="galleryWrap">
+        <div class="galleryGrid" id="galleryGrid"></div>
+        <p class="muted" style="margin:10px 0 0;">
+          Nota: i file <b>.HEIC</b> non sempre si vedono nel browser. Qui hai JPG/MP4 quindi ok.
+        </p>
+      </div>
+    </details>
+
     <div class="footerWindow">
       <b>Site created by Mattia Spensieri</b>
     </div>
   </div>
 
-  <!-- MODAL COMPLEANNO (click sul giorno) -->
-  <div class="modalBackdrop" id="bdayBackdrop" aria-hidden="true">
-    <div class="modal">
-      <div class="modalHeader">
-        <h3 class="modalTitle" id="bdayTitle">🎂 Compleanno</h3>
-        <button id="bdayClose">Chiudi ✖</button>
-      </div>
-      <div class="modalBody" id="bdayBody"></div>
-    </div>
-  </div>
-
-  <!-- MODAL LEGGE SCOUT -->
+  <!-- MODAL LEGGI SCOUT -->
   <div class="modalBackdrop" id="lawsBackdrop">
     <div class="modal">
       <div class="modalHeader">
@@ -908,6 +951,17 @@
     </div>
   </div>
 
+  <!-- LIGHTBOX FOTO -->
+  <div class="lightbox" id="lightbox">
+    <div class="lbBox">
+      <div class="lbTop">
+        <div class="lbTitle" id="lbTitle">Media</div>
+        <button class="lbClose" id="lbClose">Chiudi ✖</button>
+      </div>
+      <div id="lbMediaHost"></div>
+    </div>
+  </div>
+
 <script>
   // =========================
   // UTIL
@@ -915,25 +969,20 @@
   const pad = n => String(n).padStart(2,"0");
   const ymd = (y,m,d) => `${y}-${pad(m)}-${pad(d)}`;
   const itMonth = (y,m) => new Date(y, m-1, 1).toLocaleString("it-IT",{month:"long", year:"numeric"});
-  const dateToObj = (iso) => {
-    const [Y,M,D] = iso.split("-").map(x=>parseInt(x,10));
-    return new Date(Y, M-1, D);
-  };
   const itDateLong = (d) => d.toLocaleDateString("it-IT",{weekday:"long", day:"2-digit", month:"long", year:"numeric"});
   const DOW = ["Lun","Mar","Mer","Gio","Ven","Sab","Dom"];
   const YEAR_MIN = 2026, YEAR_MAX = 2029;
   const inRange = y => (y>=YEAR_MIN && y<=YEAR_MAX);
 
-  function firstDayOffset(y,m){
-    const js = new Date(y, m-1, 1).getDay(); // 0 dom..6 sab
-    return (js + 6) % 7; // lun=0..dom=6
-  }
-  function daysInMonth(y,m){ return new Date(y, m, 0).getDate(); }
-
   function daysBetween(a,b){
     const A = new Date(a.getFullYear(), a.getMonth(), a.getDate());
     const B = new Date(b.getFullYear(), b.getMonth(), b.getDate());
     return Math.round((B - A) / (1000*60*60*24));
+  }
+
+  function dateToObj(iso){
+    const [y,m,d] = iso.split("-").map(n=>parseInt(n,10));
+    return new Date(y, m-1, d);
   }
 
   // =========================
@@ -948,16 +997,12 @@
   const monthTitleEl = document.getElementById("monthTitle");
   const yearSel = document.getElementById("yearSel");
   const monthEventsBox = document.getElementById("monthEvents");
-  const stage = document.getElementById("stage");
 
-  // Cards countdown
   const countCards = document.getElementById("countCards");
 
-  // Diario
   const journal = document.getElementById("journal");
   const journalStatus = document.getElementById("journalStatus");
 
-  // Nodo + Bussola
   const knotArt = document.getElementById("knotArt");
   const knotName = document.getElementById("knotName");
   const knotDesc = document.getElementById("knotDesc");
@@ -966,16 +1011,17 @@
   const virtueName = document.getElementById("virtueName");
   const virtueDesc = document.getElementById("virtueDesc");
 
-  // Modal compleanni
-  const bdayBackdrop = document.getElementById("bdayBackdrop");
-  const bdayClose = document.getElementById("bdayClose");
-  const bdayTitle = document.getElementById("bdayTitle");
-  const bdayBody  = document.getElementById("bdayBody");
-
-  // Modal legge scout
   const lawsBtn = document.getElementById("lawsBtn");
   const lawsBackdrop = document.getElementById("lawsBackdrop");
   const lawsClose = document.getElementById("lawsClose");
+
+  const timelineEl = document.getElementById("timeline");
+
+  const galleryGrid = document.getElementById("galleryGrid");
+  const lightbox = document.getElementById("lightbox");
+  const lbTitle = document.getElementById("lbTitle");
+  const lbClose = document.getElementById("lbClose");
+  const lbMediaHost = document.getElementById("lbMediaHost");
 
   // =========================
   // STATO CALENDARIO
@@ -984,43 +1030,102 @@
   let stateMonth = 1;
 
   // =========================
-  // ✅ SOLO COMPLEANNI (ricorrenti ogni anno)
+  // ✅ COMPLEANNI (SOLO COMPLEANNI)
   // =========================
   const BIRTHDAYS = [
-    { id:"mariateresa", month:1,  day:7,  icon:"🎂", name:"Mariateresa" },
-    { id:"cristian",    month:1,  day:28, icon:"🎂", name:"Cristian" },
+    { id:"simone", name:"Simone", day:23, month:1, year:null },
 
-    { id:"ambra",       month:2,  day:28, icon:"🎂", name:"Ambra" },
+    { id:"mariateresa", name:"Mariateresa", day:7, month:1, year:1990 },
+    { id:"cristian", name:"Cristian", day:28, month:1, year:2011 },
 
-    { id:"arta",        month:3,  day:22, icon:"🎂", name:"Arta" },
-    { id:"ginevra",     month:3,  day:22, icon:"🎂", name:"Ginevra Di Buono" },
-    { id:"greta",       month:3,  day:28, icon:"🎂", name:"Greta Iorio" },
+    { id:"ambra", name:"Ambra", day:28, month:2, year:null },
 
-    { id:"eliana",      month:4,  day:30, icon:"🎂", name:"Eliana Alfieri" },
+    { id:"arta", name:"Arta", day:22, month:3, year:null },
+    { id:"ginevra", name:"Ginevra Di Buono", day:22, month:3, year:2012 },
+    { id:"greta", name:"Greta Iorio", day:28, month:3, year:2014 },
 
-    { id:"rudi",        month:5,  day:11, icon:"🎂", name:"Rudi" },
+    { id:"eliana", name:"Eliana Alfieri", day:30, month:4, year:2012 },
 
-    { id:"lorenzo",     month:6,  day:18, icon:"🎂", name:"Lorenzo" },
-    { id:"paolo",       month:6,  day:20, icon:"🎂", name:"Paolo Iannetta" },
+    { id:"rudi", name:"Rudi", day:11, month:5, year:null },
 
-    { id:"loris",       month:7,  day:16, icon:"🎂", name:"Loris" },
+    { id:"lorenzo", name:"Lorenzo", day:18, month:6, year:2014 },
+    { id:"paolo", name:"Paolo Iannetta", day:20, month:6, year:2014 },
 
-    { id:"giuseppe",    month:11, day:18, icon:"🎂", name:"Giuseppe" },
+    { id:"loris", name:"Loris", day:16, month:7, year:null },
 
-    { id:"chiara",      month:12, day:22, icon:"🎂", name:"Chiara" },
+    { id:"giuseppe", name:"Giuseppe", day:18, month:11, year:null },
+
+    { id:"chiara", name:"Chiara", day:22, month:12, year:2012 },
   ];
 
-  function getBirthdaysForYear(year){
-    return BIRTHDAYS.map(b => ({
-      ...b,
-      kind:"birthday",
-      date: ymd(year, b.month, b.day),
-      dateObj: new Date(year, b.month-1, b.day)
-    }));
+  function birthdayInstanceForYear(b, year){
+    const d = new Date(year, b.month-1, b.day);
+    const age = (b.year && year >= b.year) ? (year - b.year) : null;
+    return {
+      id: b.id,
+      icon: "🎂",
+      name: `Compleanno di ${b.name}`,
+      person: b.name,
+      kind: "birthday",
+      yearBorn: b.year,
+      age,
+      dateObj: d,
+      date: ymd(year, b.month, b.day)
+    };
   }
 
+  function getAllBirthdaysForYear(year){
+    return BIRTHDAYS.map(b => birthdayInstanceForYear(b, year));
+  }
+
+  // =========================
+  // NODO + BUSSOLA
+  // =========================
+  const KNOTS = [
+    { name:"Nodo piano", art:`\\ \\     / /\n \\ \\   / /\n  \\ \\_/ /\n   / _ \\\n  / / \\ \\\n /_/   \\_\\`, desc:"Serve per unire due corde dello stesso spessore. È semplice, ma deve essere fatto bene." },
+    { name:"Gassa d’amante", art:`   ____ \n  / __ \\__\n / /  \\___)\n \\ \\__\n  \\___\\\n (____)`, desc:"Fa un cappio fisso che non scorre. Utilissima quando ti serve un anello sicuro." },
+    { name:"Nodo parlato", art:`|\\      /|\n| \\____/ |\n|  ____  |\n| /    \\ |\n|/      \\|`, desc:"Ottimo per fissare una corda a un palo. È stabile e molto usato in campo." }
+  ];
+  const VIRTUES = [
+    { name:"Coraggio", desc:"Fare la cosa giusta anche quando hai paura." },
+    { name:"Aiuto", desc:"Dare una mano senza aspettarsi niente in cambio." },
+    { name:"Onestà", desc:"Dire la verità e rispettare la parola data." },
+    { name:"Lealtà", desc:"Essere affidabile con gli altri e con te stesso." },
+    { name:"Servizio", desc:"Mettere il bene comune davanti alla comodità personale." }
+  ];
+
+  // =========================
+  // CALENDARIO - CALCOLI
+  // =========================
+  function firstDayOffset(y,m){
+    const js = new Date(y, m-1, 1).getDay(); // 0 dom..6 sab
+    return (js + 6) % 7; // lun=0..dom=6
+  }
+  function daysInMonth(y,m){ return new Date(y, m, 0).getDate(); }
+
+  // =========================
+  // TEMA giorno/notte
+  // =========================
+  function setTheme(){
+    const m = stateMonth;
+    const hour = new Date().getHours();
+    const night = (hour >= 20 || hour < 7);
+
+    let overlayA = "rgba(8,25,14,.58)", overlayB = "rgba(8,25,14,.26)";
+    if([12,1,2].includes(m)) { overlayA="rgba(8,16,32,.64)"; overlayB="rgba(8,16,32,.30)"; }
+    if([6,7,8].includes(m)) { overlayA="rgba(40,22,6,.58)"; overlayB="rgba(15,35,18,.22)"; }
+    if([9,10,11].includes(m)) { overlayA="rgba(22,12,6,.62)"; overlayB="rgba(15,30,16,.24)"; }
+
+    document.documentElement.style.setProperty("--overlayA", night ? "rgba(0,0,0,.72)" : overlayA);
+    document.documentElement.style.setProperty("--overlayB", night ? "rgba(0,0,0,.32)" : overlayB);
+    document.documentElement.style.setProperty("--fliesOpacity", night ? ".95" : ".55");
+  }
+
+  // =========================
+  // EVENTI: mappa compleanni per mese/anno in vista
+  // =========================
   function eventsByKeyForCurrentView(){
-    const list = getBirthdaysForYear(stateYear);
+    const list = getAllBirthdaysForYear(stateYear);
     const map = new Map();
     list.forEach(e=>{
       const key = e.date;
@@ -1033,8 +1138,7 @@
   function markerForDate(key, eventMap){
     const evs = eventMap.get(key);
     if(!evs || !evs.length) return "";
-    if(evs.length > 1) return `🎂×${evs.length}`;
-    return evs[0].icon;
+    return evs.length >= 2 ? "🎂🎂" : "🎂";
   }
 
   // =========================
@@ -1055,6 +1159,7 @@
   // =========================
   function renderCalendar(){
     if(!inRange(stateYear)){ stateYear=YEAR_MIN; stateMonth=1; }
+    setTheme();
 
     monthTitleEl.textContent = itMonth(stateYear, stateMonth);
     yearSel.value = String(stateYear);
@@ -1097,7 +1202,7 @@
       nextDay++;
     }
 
-    renderMonthBirthdaysList(eventMap);
+    renderMonthEventsList(eventMap);
   }
 
   function makeDayCell(y,m,d,key,isOff,todayKey,eventMap){
@@ -1107,12 +1212,14 @@
     const evs = eventMap.get(key) || [];
     const marker = markerForDate(key, eventMap);
 
-    if(evs.length && !isOff) div.classList.add("bday");
+    if(evs.length && !isOff) div.classList.add("eventDay");
+    if(!isOff && m===1 && d===23) div.classList.add("simoneBlink");
 
     div.dataset.key = key;
+
     div.innerHTML = `
       <div class="n">${d}</div>
-      ${marker && !isOff ? `<div class="marker"><span>${marker}</span><span class="dot"></span></div>` : ""}
+      ${marker && !isOff ? `<div class="marker"><span>${marker}</span><span class="dotRed"></span></div>` : ""}
     `;
 
     if(evs.length && !isOff){
@@ -1121,9 +1228,6 @@
         div.classList.remove("jumpFlash");
         void div.offsetWidth;
         div.classList.add("jumpFlash");
-
-        burstConfettiFromElement(div);
-        openBirthdayModal(key, evs);
       });
     }
     return div;
@@ -1132,7 +1236,7 @@
   // =========================
   // LISTA COMPLEANNI DEL MESE
   // =========================
-  function renderMonthBirthdaysList(eventMap){
+  function renderMonthEventsList(eventMap){
     monthEventsBox.innerHTML = "";
 
     const dim = daysInMonth(stateYear, stateMonth);
@@ -1158,12 +1262,13 @@
     items.forEach(item=>{
       const dt = dateToObj(item.key);
       const label = dt.toLocaleDateString("it-IT",{day:"2-digit", month:"long"});
+      const ageTxt = (item.e.age !== null) ? ` • ${item.e.age} anni` : "";
       const line = document.createElement("div");
       line.className="monthEventsLine";
       line.innerHTML = `
         <div class="monthEventsIco">🎂</div>
         <div class="monthEventsTxt">
-          <b>${item.e.name}</b>
+          <b>${item.e.name}${ageTxt}</b>
           <div class="monthEventsSub">📅 ${label}</div>
         </div>
       `;
@@ -1193,40 +1298,131 @@
   }
 
   // =========================
-  // MODAL COMPLEANNI
+  // COUNTDOWN: solo compleanni entro 10 giorni
   // =========================
-  function openBirthdayModal(key, evs){
-    const dt = dateToObj(key);
-    const label = itDateLong(dt);
+  function buildUpcomingCountdownList(){
+    const now = new Date();
+    const y = now.getFullYear();
 
-    bdayTitle.textContent = "🎂 Compleanno";
-    bdayBody.innerHTML = evs.map(e => `
-      <div class="line">
-        <div class="ico">🎉</div>
-        <div>
-          <b>${e.name}</b>
-          <div class="sub">📅 ${label}</div>
-        </div>
-      </div>
-    `).join("") + `
-      <div class="line">
-        <div class="ico">✨</div>
-        <div>
-          <b>Idea veloce:</b>
-          <div class="sub">Scrivi un messaggio breve e sincero + una foto del reparto 😉</div>
-        </div>
-      </div>
-    `;
+    // generiamo compleanni per anno corrente e prossimo (per gestire dicembre->gennaio)
+    const list = [
+      ...getAllBirthdaysForYear(y),
+      ...getAllBirthdaysForYear(y+1)
+    ];
 
-    bdayBackdrop.classList.add("show");
-    bdayBackdrop.setAttribute("aria-hidden","false");
+    return list
+      .map(e => ({...e, diff: daysBetween(now, e.dateObj)}))
+      .filter(e => e.diff >= 0 && e.diff <= 10)
+      .sort((a,b)=> a.diff - b.diff);
   }
-  function closeBirthdayModal(){
-    bdayBackdrop.classList.remove("show");
-    bdayBackdrop.setAttribute("aria-hidden","true");
+
+  function renderCountdown(){
+    countCards.innerHTML = "";
+    const list = buildUpcomingCountdownList();
+
+    if(list.length === 0){
+      const card = document.createElement("div");
+      card.className="card";
+      card.innerHTML = `
+        <div class="kicker">🎂 Countdown</div>
+        <p class="big">Nessun compleanno nei prossimi 10 giorni</p>
+        <p class="small">Scorri il calendario per vedere tutti i compleanni segnati.</p>
+      `;
+      countCards.appendChild(card);
+      return;
+    }
+
+    list.slice(0,10).forEach(e=>{
+      const when = e.dateObj.toLocaleDateString("it-IT", {day:"2-digit", month:"long", year:"numeric"});
+      const ageTxt = (e.age !== null) ? ` (${e.age} anni)` : "";
+
+      let msg = `Mancano ${e.diff} giorni a ${e.name}${ageTxt}`;
+      if(e.diff === 0) msg = `È oggi: ${e.name}${ageTxt}!`;
+      if(e.diff === 1) msg = `Manca meno di un giorno a ${e.name}${ageTxt}`;
+
+      const card = document.createElement("div");
+      card.className="card";
+      card.innerHTML = `
+        <div class="kicker">🎂 Countdown</div>
+        <p class="big">${msg}</p>
+        <p class="small">📅 ${when}</p>
+        <div class="redNote">🔴 Segnato sul calendario</div>
+      `;
+      card.addEventListener("click", ()=> jumpToDate(e.date));
+      countCards.appendChild(card);
+    });
   }
-  bdayClose.addEventListener("click", closeBirthdayModal);
-  bdayBackdrop.addEventListener("click",(e)=>{ if(e.target===bdayBackdrop) closeBirthdayModal(); });
+
+  // =========================
+  // DIARIO
+  // =========================
+  const JOURNAL_KEY = "scout_thoughts_v3";
+  function loadJournal(){
+    const saved = localStorage.getItem(JOURNAL_KEY);
+    if(saved !== null) journal.value = saved;
+    journalStatus.textContent = saved ? "✅ Testo caricato (salvato sul tuo dispositivo)" : "✍️ Inizia a scrivere…";
+  }
+  let saveTimer = null;
+  function scheduleSave(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(()=>{
+      localStorage.setItem(JOURNAL_KEY, journal.value);
+      const t = new Date();
+      journalStatus.textContent = "💾 Salvato: " + t.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"});
+    }, 220);
+  }
+  journal.addEventListener("input", scheduleSave);
+
+  // =========================
+  // NODO + BUSSOLA
+  // =========================
+  function setKnotOfDay(){
+    const now = new Date();
+    const seed = (now.getFullYear()*10000) + ((now.getMonth()+1)*100) + now.getDate();
+    const idx = seed % KNOTS.length;
+    const k = KNOTS[idx];
+    knotName.textContent = k.name;
+    knotArt.textContent = k.art;
+    knotDesc.textContent = k.desc;
+  }
+  function setVirtueOfDay(){
+    const now = new Date();
+    const seed = (now.getFullYear()*10000) + ((now.getMonth()+1)*100) + now.getDate();
+    const idx = seed % VIRTUES.length;
+    const v = VIRTUES[idx];
+
+    virtueName.textContent = `Virtù del giorno: ${v.name}`;
+    virtueDesc.textContent = v.desc;
+
+    const angle = idx * 72;
+    needle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+  }
+
+  // =========================
+  // LINEA DEL TEMPO (JAMBOREE)
+  // 1920 -> 2027 (prossimo anno rispetto a oggi)
+  // =========================
+  const TIMELINE_ITEMS = [
+    { year:"1920", text:"Primo World Scout Jamboree a Londra (Olympia): nasce la grande fraternità mondiale." },
+    { year:"1924", text:"Secondo Jamboree a Copenaghen: lo spirito internazionale cresce velocemente." },
+    { year:"1957+", text:"Nel dopoguerra i Jamboree diventano sempre più grandi, tra attività, cultura e servizio." },
+    { year:"Oggi", text:"Lo scoutismo è una famiglia globale: amicizie, natura, responsabilità e avventura." },
+    { year:"2027", text:"Prossimo World Scout Jamboree: 30 luglio–8 agosto 2027, Gdańsk (Polonia)." }
+  ];
+
+  function renderTimeline(){
+    timelineEl.innerHTML = "";
+    TIMELINE_ITEMS.forEach((x,i)=>{
+      const div = document.createElement("div");
+      div.className = "timeItem";
+      div.style.animationDelay = (i*0.05) + "s";
+      div.innerHTML = `
+        <p class="timeYear">${x.year}</p>
+        <p class="timeText">${x.text}</p>
+      `;
+      timelineEl.appendChild(div);
+    });
+  }
 
   // =========================
   // ACCORDION
@@ -1234,7 +1430,8 @@
   document.querySelectorAll(".accBtn[data-acc]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const id = btn.getAttribute("data-acc");
-      document.getElementById(id).classList.toggle("open");
+      const item = document.getElementById(id);
+      item.classList.toggle("open");
     });
   });
 
@@ -1243,14 +1440,8 @@
   // =========================
   lawsBtn.addEventListener("click", ()=> lawsBackdrop.classList.add("show"));
   lawsClose.addEventListener("click", ()=> lawsBackdrop.classList.remove("show"));
-  lawsBackdrop.addEventListener("click",(e)=>{ if(e.target===lawsBackdrop) lawsBackdrop.classList.remove("show"); });
-
-  window.addEventListener("keydown",(e)=>{
-    if(e.key==="Escape"){
-      lawsBackdrop.classList.remove("show");
-      closeBirthdayModal();
-    }
-  });
+  lawsBackdrop.addEventListener("click", (e)=>{ if(e.target===lawsBackdrop) lawsBackdrop.classList.remove("show"); });
+  window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") lawsBackdrop.classList.remove("show"); });
 
   // =========================
   // NAV CALENDARIO
@@ -1278,7 +1469,8 @@
     renderCalendar();
   });
 
-  // Swipe mese su mobile
+  // Swipe mese su mobile (sul calendario)
+  const stage = document.getElementById("stage");
   let touchStartX = null;
   stage.addEventListener("touchstart",(e)=>{ touchStartX = e.touches[0].clientX; }, {passive:true});
   stage.addEventListener("touchend",(e)=>{
@@ -1292,189 +1484,58 @@
   }, {passive:true});
 
   // =========================
-  // COUNTDOWN (solo compleanni entro 10 giorni)
+  // EFFETTI: foglie + lucciole + scintille
   // =========================
-  function buildUpcomingBirthdays(){
-    const now = new Date();
-    const yearNow = now.getFullYear();
-
-    // costruiamo una lista di "prossima occorrenza" per ogni compleanno
-    const list = BIRTHDAYS.map(b=>{
-      let d = new Date(yearNow, b.month-1, b.day);
-      const today0 = new Date(yearNow, now.getMonth(), now.getDate());
-      if(d < today0) d = new Date(yearNow+1, b.month-1, b.day);
-      return {
-        ...b,
-        dateObj: d,
-        date: ymd(d.getFullYear(), d.getMonth()+1, d.getDate()),
-        diff: daysBetween(now, d)
-      };
-    });
-
-    return list
-      .filter(x => x.diff >= 0 && x.diff <= 10)
-      .sort((a,b)=> a.diff - b.diff);
-  }
-
-  function renderCountdown(){
-    countCards.innerHTML = "";
-    const list = buildUpcomingBirthdays();
-
-    if(list.length === 0){
-      const card = document.createElement("div");
-      card.className="card";
-      card.innerHTML = `
-        <div class="kicker">⏳ Countdown</div>
-        <p class="big">Nessun compleanno nei prossimi 10 giorni</p>
-        <p class="small">Scorri il calendario per vedere tutti i compleanni.</p>
-      `;
-      countCards.appendChild(card);
-      return;
+  function spawnLeaves(){
+    const box = document.getElementById("leaves");
+    box.innerHTML = "";
+    const n = 30;
+    for(let i=0;i<n;i++){
+      const l = document.createElement("div");
+      l.className = "leafFall";
+      l.style.left = (Math.random()*100) + "%";
+      l.style.setProperty("--t", (7 + Math.random()*11) + "s");
+      l.style.setProperty("--dx", ((Math.random()*260)-130) + "px");
+      l.style.animationDelay = (Math.random()*6) + "s";
+      const s = 0.65 + Math.random()*1.15;
+      l.style.width = (28*s) + "px";
+      l.style.height = (28*s) + "px";
+      box.appendChild(l);
     }
-
-    list.slice(0,9).forEach(e=>{
-      const when = itDateLong(e.dateObj);
-      let msg = `Mancano ${e.diff} giorni al compleanno di ${e.name}`;
-      if(e.diff === 0) msg = `È oggi: compleanno di ${e.name}!`;
-      if(e.diff === 1) msg = `Manca meno di un giorno al compleanno di ${e.name}`;
-
-      const card = document.createElement("div");
-      card.className="card";
-      card.innerHTML = `
-        <div class="kicker">🎂 Countdown</div>
-        <p class="big">${msg}</p>
-        <p class="small">📅 ${when}</p>
-        <div class="redNote">🔴 Segnato sul calendario</div>
-      `;
-      card.addEventListener("click", ()=>{
-        // se l’anno non è nel range 2026-2029 lo portiamo su 2026
-        const [Y,M,D] = e.date.split("-").map(n=>parseInt(n,10));
-        const targetYear = (Y<YEAR_MIN || Y>YEAR_MAX) ? YEAR_MIN : Y;
-        jumpToDate(ymd(targetYear, M, D));
-      });
-      countCards.appendChild(card);
-    });
   }
-
-  // =========================
-  // DIARIO (localStorage)
-  // =========================
-  const JOURNAL_KEY = "scout_thoughts_v4";
-  function loadJournal(){
-    const saved = localStorage.getItem(JOURNAL_KEY);
-    if(saved !== null) journal.value = saved;
-    journalStatus.textContent = saved ? "✅ Testo caricato (salvato sul tuo dispositivo)" : "✍️ Inizia a scrivere…";
-  }
-  let saveTimer = null;
-  function scheduleSave(){
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(()=>{
-      localStorage.setItem(JOURNAL_KEY, journal.value);
-      const t = new Date();
-      journalStatus.textContent = "💾 Salvato: " + t.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"});
-    }, 220);
-  }
-  journal.addEventListener("input", scheduleSave);
-
-  // =========================
-  // NODO + BUSSOLA
-  // =========================
-  const KNOTS = [
-    { name:"Nodo piano", art:`\\ \\     / /\n \\ \\   / /\n  \\ \\_/ /\n   / _ \\\n  / / \\ \\\n /_/   \\_\\`, desc:"Serve per unire due corde dello stesso spessore. Semplice, ma va fatto bene." },
-    { name:"Gassa d’amante", art:`   ____ \n  / __ \\__\n / /  \\___)\n \\ \\__\n  \\___\\\n (____)`, desc:"Fa un cappio fisso che non scorre. Utilissima quando ti serve un anello sicuro." },
-    { name:"Nodo parlato", art:`|\\      /|\n| \\____/ |\n|  ____  |\n| /    \\ |\n|/      \\|`, desc:"Ottimo per fissare una corda a un palo. Stabile e molto usato in campo." }
-  ];
-
-  const VIRTUES = [
-    { name:"Coraggio", desc:"Fare la cosa giusta anche quando hai paura." },
-    { name:"Aiuto", desc:"Dare una mano senza aspettarsi niente in cambio." },
-    { name:"Onestà", desc:"Dire la verità e rispettare la parola data." },
-    { name:"Lealtà", desc:"Essere affidabile con gli altri e con te stesso." },
-    { name:"Servizio", desc:"Mettere il bene comune davanti alla comodità personale." }
-  ];
-
-  function setKnotOfDay(){
-    const now = new Date();
-    const seed = (now.getFullYear()*10000) + ((now.getMonth()+1)*100) + now.getDate();
-    const idx = seed % KNOTS.length;
-    const k = KNOTS[idx];
-    knotName.textContent = k.name;
-    knotArt.textContent = k.art;
-    knotDesc.textContent = k.desc;
-  }
-
-  function setVirtueOfDay(){
-    const now = new Date();
-    const seed = (now.getFullYear()*10000) + ((now.getMonth()+1)*100) + now.getDate();
-    const idx = seed % VIRTUES.length;
-    const v = VIRTUES[idx];
-    virtueName.textContent = `Virtù del giorno: ${v.name}`;
-    virtueDesc.textContent = v.desc;
-    const angle = idx * 72;
-    needle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
-  }
-
-  // =========================
-  // EFFETTI: lucciole + foglie + scintille
-  // =========================
   function spawnFireflies(){
     const box = document.getElementById("fireflies");
     box.innerHTML = "";
-    const n = 22;
+    const n = 18;
     for(let i=0;i<n;i++){
       const f = document.createElement("div");
       f.className = "firefly";
       f.style.left = (Math.random()*100) + "%";
       f.style.top  = (Math.random()*100) + "%";
       f.style.setProperty("--t", (6 + Math.random()*9) + "s");
-      f.style.setProperty("--dx", ((Math.random()*280)-140) + "px");
-      f.style.setProperty("--dy", ((Math.random()*260)-180) + "px");
+      f.style.setProperty("--dx", ((Math.random()*260)-130) + "px");
+      f.style.setProperty("--dy", ((Math.random()*240)-170) + "px");
       f.style.animationDelay = (Math.random()*3) + "s";
       box.appendChild(f);
     }
   }
-
-  function spawnLeaves(){
-    const box = document.getElementById("leaves");
-    box.innerHTML = "";
-    const n = 34;
-    for(let i=0;i<n;i++){
-      const l = document.createElement("div");
-      l.className = "leaf";
-      l.style.left = (Math.random()*100) + "%";
-      l.style.setProperty("--t", (7 + Math.random()*11) + "s");
-      l.style.setProperty("--dx", ((Math.random()*300)-150) + "px");
-      l.style.animationDelay = (Math.random()*6) + "s";
-      const s = 0.65 + Math.random()*1.25;
-      l.style.width = (30*s) + "px";
-      l.style.height = (30*s) + "px";
-      box.appendChild(l);
-    }
-  }
-
   function spawnSparks(){
     const box = document.getElementById("sparks");
     box.innerHTML = "";
-    const n = 26;
+    const n = 22;
     for(let i=0;i<n;i++){
       const s = document.createElement("div");
       s.className = "spark";
       s.style.left = (Math.random()*100) + "%";
       s.style.top  = (55 + Math.random()*50) + "%";
       s.style.setProperty("--t", (4 + Math.random()*6) + "s");
-      s.style.setProperty("--dx", ((Math.random()*200)-100) + "px");
-      s.style.setProperty("--dy", (Math.random()*110) + "px");
+      s.style.setProperty("--dx", ((Math.random()*180)-90) + "px");
+      s.style.setProperty("--dy", (Math.random()*90) + "px");
       s.style.animationDelay = (Math.random()*4) + "s";
       box.appendChild(s);
     }
   }
-
-  window.addEventListener("resize", ()=>{
-    spawnFireflies();
-    spawnLeaves();
-    spawnSparks();
-    resizeConfetti();
-  });
+  window.addEventListener("resize", ()=>{ spawnLeaves(); spawnFireflies(); spawnSparks(); });
 
   // =========================
   // VENTO: reagisce allo scroll
@@ -1483,12 +1544,10 @@
   let lastT = performance.now();
   let wind = 0;
   let calmTimer = null;
-
-  function setWind(v){
+  function setWindStrength(v){
     wind = Math.max(0, Math.min(1, v));
-    document.documentElement.style.setProperty("--wind", String(wind));
+    document.documentElement.style.setProperty("--windStrength", String(wind));
   }
-
   window.addEventListener("scroll", ()=>{
     const y = window.scrollY;
     const t = performance.now();
@@ -1496,99 +1555,102 @@
     const dt = Math.max(16, (t - lastT));
     const speed = dy / dt;
 
-    const boost = Math.max(0, Math.min(1, speed * 3.6));
-    setWind(Math.max(wind, boost));
+    const boost = Math.max(0, Math.min(1, speed * 3.2));
+    setWindStrength(Math.max(wind, boost));
 
     lastY = y; lastT = t;
 
     clearTimeout(calmTimer);
-    calmTimer = setTimeout(()=> setWind(wind * 0.45), 160);
-    setTimeout(()=> setWind(wind * 0.30), 360);
-    setTimeout(()=> setWind(wind * 0.18), 720);
-    setTimeout(()=> setWind(0), 1300);
+    calmTimer = setTimeout(()=> setWindStrength(wind * 0.45), 180);
+    setTimeout(()=> setWindStrength(wind * 0.35), 380);
+    setTimeout(()=> setWindStrength(wind * 0.25), 680);
+    setTimeout(()=> setWindStrength(wind * 0.15), 980);
+    setTimeout(()=> setWindStrength(0), 1400);
   }, {passive:true});
 
   // =========================
-  // Hue shift leggero
+  // FOTO + VIDEO (campo estivo 2025)
   // =========================
-  let hue = 0;
-  setInterval(()=>{
-    hue = (hue + 2) % 360;
-    document.documentElement.style.setProperty("--hue", hue + "deg");
-    const glow = 0.95 + (Math.sin(Date.now()/1800) * 0.08);
-    document.documentElement.style.setProperty("--glow", String(glow));
-  }, 240);
+  const MEDIA = [
+    "1e38146e-d6d7-4fdd-bcb2-8a6b0887210e.jpg",
+    "3e799a83-3336-47db-a2eb-bc55540677ba.jpg",
+    "5aae342f-8b7f-43c5-85e9-13f6881e8f67.jpg",
+    "7e9d6930-3cb9-41a5-bae0-9e788f0abe50.jpg",
+    "8c78f8ec-652a-434f-ab06-e3e0788ecb31.jpg",
+    "8cc7054e-5881-420c-ba3a-435828560198.jpg",
+    "85ffc3dd-2321-4804-bd00-90a326a38b5f.jpg",
+    "95f82bcc-fe77-4a68-8089-a165afb315ee.jpg",
+    "338867c3-8486-4749-b364-f76e9232028a.jpg",
+    "91583127-dee0-4e25-bf9b-3ca8c7311e1c.jpg",
+    "a400cc11-4b2f-4672-8595-baeba587dacc.jpg",
+    "bdb6b79f-82a4-4800-8dec-98e9161d8f12.jpg",
+    "d24c8755-7cc8-464e-8a19-38c0e46e2dec.jpg",
+    "e08df019-6c8c-40b5-b813-802f3b8d41f7.jpg",
+    "E28F1480-5C8A-4E67-8C5D-D545474F5B32.jpg",
+    "f98df94d-5212-492c-a8a2-742e5ee1360c.jpg",
+    "5f08d156-ad8b-420c-8b9a-6662ce952cd5.mp4",
+    "dbea094f-77fa-4787-b1be-5e750421b67c.mp4",
+    "e62058ee-c8e9-4616-a3fe-fa8a46110433.mp4"
+  ];
 
-  // =========================
-  // CONFETTI (canvas)
-  // =========================
-  const confettiCanvas = document.getElementById("confetti");
-  const ctx = confettiCanvas.getContext("2d");
-  let W = 0, H = 0;
-  const confetti = [];
-  function resizeConfetti(){
-    W = confettiCanvas.width  = Math.floor(window.innerWidth * devicePixelRatio);
-    H = confettiCanvas.height = Math.floor(window.innerHeight * devicePixelRatio);
-    confettiCanvas.style.width = "100%";
-    confettiCanvas.style.height = "100%";
-    ctx.setTransform(1,0,0,1,0,0);
-  }
-  function rand(min,max){ return min + Math.random()*(max-min); }
+  function isVideo(file){ return file.toLowerCase().endsWith(".mp4"); }
 
-  function burst(x,y,amount=90){
-    for(let i=0;i<amount;i++){
-      confetti.push({
-        x, y,
-        vx: rand(-7,7),
-        vy: rand(-11,-3),
-        g:  rand(0.18, 0.35),
-        r:  rand(3, 6),
-        rot: rand(0, Math.PI*2),
-        vr: rand(-0.18, 0.18),
-        life: rand(50, 90),
-        t: 0
-      });
-    }
-  }
+  function renderGallery(){
+    galleryGrid.innerHTML = "";
+    MEDIA.forEach(file=>{
+      const box = document.createElement("div");
+      box.className = "thumb";
 
-  function burstConfettiFromElement(el){
-    const rect = el.getBoundingClientRect();
-    const x = (rect.left + rect.width*0.62) * devicePixelRatio;
-    const y = (rect.top  + rect.height*0.45) * devicePixelRatio;
-    burst(x,y,110);
-  }
-
-  function tickConfetti(){
-    ctx.clearRect(0,0,W,H);
-    for(let i=confetti.length-1;i>=0;i--){
-      const p = confetti[i];
-      p.t++;
-      p.vy += p.g;
-      p.x  += p.vx;
-      p.y  += p.vy;
-      p.rot += p.vr;
-
-      const fade = Math.max(0, 1 - (p.t / p.life));
-      ctx.globalAlpha = fade;
-
-      const hh = (hue + (p.x/30)) % 360;
-      ctx.fillStyle = `hsla(${hh}, 90%, 60%, 1)`;
-
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rot);
-      ctx.beginPath();
-      ctx.rect(-p.r, -p.r*0.6, p.r*2, p.r*1.2);
-      ctx.fill();
-      ctx.restore();
-
-      if(p.t >= p.life || p.y > H + 40){
-        confetti.splice(i,1);
+      if(isVideo(file)){
+        box.innerHTML = `
+          <video src="${file}" muted playsinline preload="metadata"></video>
+          <div class="thumbCap">🎬 ${file}<small>Tocca per aprire</small></div>
+        `;
+      } else {
+        box.innerHTML = `
+          <img src="${file}" alt="${file}" loading="lazy">
+          <div class="thumbCap">📷 ${file}<small>Tocca per aprire</small></div>
+        `;
       }
-    }
-    ctx.globalAlpha = 1;
-    requestAnimationFrame(tickConfetti);
+
+      box.addEventListener("click", ()=> openLightbox(file));
+      galleryGrid.appendChild(box);
+    });
   }
+
+  function openLightbox(file){
+    lbTitle.textContent = file;
+    lbMediaHost.innerHTML = "";
+
+    if(isVideo(file)){
+      const v = document.createElement("video");
+      v.className = "lbMedia";
+      v.src = file;
+      v.controls = true;
+      v.autoplay = true;
+      v.playsInline = true;
+      v.style.objectFit = "contain";
+      lbMediaHost.appendChild(v);
+    } else {
+      const img = document.createElement("img");
+      img.className = "lbMedia";
+      img.src = file;
+      img.alt = file;
+      img.style.objectFit = "contain";
+      lbMediaHost.appendChild(img);
+    }
+
+    lightbox.classList.add("show");
+  }
+
+  function closeLightbox(){
+    lightbox.classList.remove("show");
+    lbMediaHost.innerHTML = "";
+  }
+
+  lbClose.addEventListener("click", closeLightbox);
+  lightbox.addEventListener("click",(e)=>{ if(e.target===lightbox) closeLightbox(); });
+  window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeLightbox(); });
 
   // =========================
   // INTRO -> ENTRA
@@ -1597,7 +1659,6 @@
     intro.classList.add("hide");
     app.style.opacity = "1";
     app.style.transform = "translateY(0)";
-    burst(window.innerWidth*0.5*devicePixelRatio, window.innerHeight*0.35*devicePixelRatio, 140);
   });
 
   // =========================
@@ -1605,22 +1666,23 @@
   // =========================
   (function init(){
     renderDOW();
+    spawnLeaves();
+    spawnFireflies();
+    spawnSparks();
+
     renderCalendar();
     renderCountdown();
-
-    spawnFireflies();
-    spawnLeaves();
-    spawnSparks();
+    renderTimeline();
 
     loadJournal();
     setKnotOfDay();
     setVirtueOfDay();
 
-    resizeConfetti();
-    tickConfetti();
+    setTheme();
+    renderGallery();
 
-    // refresh “giorno” e countdown ogni minuto
     setInterval(()=>{
+      setTheme();
       renderCountdown();
       setKnotOfDay();
       setVirtueOfDay();
