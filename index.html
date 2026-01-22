@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Calendario Scout nel Bosco (2026–2029)</title>
+<title>Calendario Scout nel Bosco (2026–2029) — Compleanni</title>
 
 <style>
   :root{
@@ -27,6 +27,10 @@
 
     --fliesOpacity: .75;
     --windStrength: 0;
+
+    /* parallax mouse */
+    --mx: 0;
+    --my: 0;
   }
 
   *{ box-sizing:border-box; }
@@ -39,13 +43,14 @@
     overflow-x:hidden;
     background-color:#08190e;
 
+    /* ✅ anti “verde sotto” su mobile */
     background-image: var(--bgUrl);
     background-size: cover;
     background-position:center;
     background-repeat:no-repeat;
   }
 
-  /* ✅ SFONDO fisso */
+  /* ✅ SFONDO fisso (con altezza dinamica per iOS) */
   .bg{
     position:fixed; top:0; left:0;
     width:100vw;
@@ -55,13 +60,13 @@
     background-size: cover;
     background-position:center;
     transform:scale(1.03);
-    z-index:-7;
+    z-index:-10;
     animation: bgSlow 16s ease-in-out infinite alternate;
     will-change: transform, filter;
   }
   @keyframes bgSlow{
     from{ transform: scale(1.03) translateY(0) translateX(0); filter:saturate(1); }
-    to  { transform: scale(1.07) translateY(-12px) translateX(6px); filter:saturate(1.14); }
+    to  { transform: scale(1.07) translateY(-12px) translateX(6px); filter:saturate(1.16); }
   }
 
   .bgOverlay{
@@ -73,10 +78,30 @@
       radial-gradient(1200px 800px at 20% 10%, rgba(124,255,138,.18), transparent 55%),
       radial-gradient(900px 600px at 90% 20%, rgba(255,210,77,.16), transparent 60%),
       linear-gradient(160deg, var(--overlayA), var(--overlayB));
-    z-index:-6;
+    z-index:-9;
     animation: overlayBreath 9s ease-in-out infinite;
   }
   @keyframes overlayBreath{ 0%,100%{ opacity:1; } 50%{ opacity:.92; } }
+
+  /* AURORA layer */
+  .aurora{
+    position: fixed; inset:-80px;
+    pointer-events:none;
+    z-index:-8;
+    background:
+      radial-gradient(520px 360px at 20% 30%, rgba(124,255,138,.18), transparent 64%),
+      radial-gradient(520px 360px at 80% 40%, rgba(255,210,77,.14), transparent 64%),
+      radial-gradient(620px 420px at 50% 80%, rgba(180,255,205,.10), transparent 70%);
+    filter: blur(18px);
+    opacity:.65;
+    transform: translate3d(calc(var(--mx) * 12px), calc(var(--my) * 10px), 0);
+    transition: transform .18s ease;
+    animation: auroraDrift 10s ease-in-out infinite alternate;
+  }
+  @keyframes auroraDrift{
+    from{ opacity:.55; filter: blur(18px); }
+    to{ opacity:.78; filter: blur(22px); }
+  }
 
   /* NEBBIA + VENTO */
   .wind{
@@ -90,7 +115,7 @@
     opacity: calc(0.55 + (var(--windStrength) * 0.25));
     transform: translate3d(calc(var(--windStrength) * 18px), calc(var(--windStrength) * -8px), 0) scale(calc(1.02 + var(--windStrength) * 0.02));
     transition: opacity .35s ease, transform .35s ease;
-    z-index:-5;
+    z-index:-7;
     animation: fogDrift 10s ease-in-out infinite alternate;
   }
   @keyframes fogDrift{ from{ filter: blur(18px);} to{ filter: blur(22px);} }
@@ -146,6 +171,41 @@
     15%{ opacity:.55; }
     60%{ opacity:.25; }
     100%{ transform: translate3d(var(--dx), calc(-140px - var(--dy)), 0) scale(1.2); opacity:0; }
+  }
+
+  /* SHOOTING STARS */
+  .stars{ position:fixed; inset:0; pointer-events:none; z-index:-2; overflow:hidden; }
+  .star{
+    position:absolute;
+    width:2px; height:2px;
+    background: rgba(255,255,255,.9);
+    border-radius:50%;
+    box-shadow: 0 0 18px rgba(255,255,255,.35);
+    opacity:0;
+    transform: translate3d(0,0,0);
+    animation: shoot var(--t) linear infinite;
+  }
+  @keyframes shoot{
+    0%{ opacity:0; transform: translate3d(0,0,0) scale(.8); }
+    10%{ opacity:.8; }
+    100%{ opacity:0; transform: translate3d(var(--dx), var(--dy), 0) scale(1.1); }
+  }
+
+  /* CONFETTI (compleanni) */
+  .confetti{ position:fixed; inset:0; pointer-events:none; z-index:400; overflow:hidden; }
+  .conf{
+    position:absolute; top:-10px;
+    width:10px; height:14px;
+    border-radius: 4px;
+    opacity:0;
+    background: rgba(255,210,77,.9);
+    box-shadow: 0 10px 26px rgba(0,0,0,.25);
+    animation: confFall var(--t) linear forwards;
+  }
+  @keyframes confFall{
+    0%{ transform: translate3d(0,-20px,0) rotate(0deg); opacity:0; }
+    10%{ opacity:.9; }
+    100%{ transform: translate3d(var(--dx), 110vh, 0) rotate(680deg); opacity:0; }
   }
 
   /* INTRO */
@@ -286,30 +346,19 @@
     50%{ transform: translateY(-2px) rotate(-2deg); }
   }
 
-  /* aura compleanni */
+  /* Aura giorno compleanno */
   .eventDay::before{
     content:"";
     position:absolute; inset:-40px;
     background:
-      radial-gradient(240px 180px at 25% 25%, rgba(255,63,63,.14), transparent 62%),
-      radial-gradient(260px 200px at 80% 40%, rgba(255,210,77,.16), transparent 62%);
+      radial-gradient(240px 180px at 25% 25%, rgba(255,63,63,.12), transparent 62%),
+      radial-gradient(260px 200px at 80% 40%, rgba(255,210,77,.14), transparent 62%);
     opacity:.9;
     filter: blur(12px);
     pointer-events:none;
     animation: eventAura 3.4s ease-in-out infinite;
   }
   @keyframes eventAura{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-6px); } }
-
-  /* ✅ 23 gennaio (Simone) lampeggia */
-  .simoneBlink{
-    outline: 3px solid rgba(255,63,63,.90);
-    outline-offset:-3px;
-    animation: blink 1.0s ease-in-out infinite;
-  }
-  @keyframes blink{
-    0%,100%{ filter: brightness(1); box-shadow: 0 0 0 rgba(255,63,63,0); }
-    50%{ filter: brightness(1.14); box-shadow: 0 0 40px rgba(255,63,63,.55); }
-  }
 
   .jumpFlash{ animation: jumpFlash 1.6s ease-in-out 0s 3; }
   @keyframes jumpFlash{
@@ -346,7 +395,7 @@
     transition: transform .18s ease, filter .18s ease;
     cursor:pointer;
   }
-  .monthEventsLine:hover{ transform: translateY(-1px) scale(1.01); filter: brightness(1.08); }
+  .monthEventsLine:hover{ transform: translateY(-1px); filter: brightness(1.06); }
   .monthEventsIco{ font-size:18px; line-height:1; }
   .monthEventsTxt{ font-size:13px; color: rgba(238,247,239,.88); }
   .monthEventsSub{ font-size:12px; color: var(--muted); margin-top:2px; }
@@ -385,7 +434,7 @@
     opacity:0;
     transition: opacity .22s ease;
   }
-  .accItem:hover .accBtn::after{ opacity:.7; }
+  .accItem:hover .accBtn::after{ opacity:.65; }
 
   .accLeft{ display:flex; align-items:center; gap:10px; font-weight:900; }
   .accIco{
@@ -421,10 +470,8 @@
     background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
     border-radius: 16px; padding:12px; position:relative; overflow:hidden;
     transition: transform .18s ease, filter .18s ease;
-    animation: cardIn .55s ease both;
   }
-  @keyframes cardIn{ from{ opacity:0; transform: translateY(10px);} to{ opacity:1; transform: translateY(0);} }
-  .card:hover{ transform: translateY(-2px) scale(1.01); filter: brightness(1.06); }
+  .card:hover{ transform: translateY(-2px); filter: brightness(1.06); }
   .card::before{
     content:""; position:absolute; inset:-80px;
     background:
@@ -525,12 +572,12 @@
   .virtueName{ margin:0; font-weight:900; font-size:16px; }
   .virtueDesc{ margin:8px 0 0; color: var(--muted); }
 
-  /* TIMELINE (più animata) */
+  /* TIMELINE */
   .timeline{
     display:flex; gap:12px;
     overflow-x:auto;
     scroll-snap-type: x mandatory;
-    padding-bottom: 8px;
+    padding-bottom: 6px;
   }
   .timeItem{
     min-width: 240px;
@@ -540,25 +587,10 @@
     border-radius: 16px;
     padding: 12px;
     transition: transform .18s ease, filter .18s ease;
-    position:relative;
-    overflow:hidden;
-    animation: timeIn .5s ease both;
   }
-  @keyframes timeIn{ from{ opacity:0; transform: translateY(10px);} to{ opacity:1; transform: translateY(0);} }
-  .timeItem::before{
-    content:""; position:absolute; inset:-80px;
-    background:
-      radial-gradient(260px 180px at 25% 25%, rgba(255,210,77,.16), transparent 60%),
-      radial-gradient(260px 180px at 80% 40%, rgba(124,255,138,.18), transparent 60%);
-    filter: blur(12px);
-    opacity:.85;
-    animation: timeGlow 5.2s ease-in-out infinite;
-    pointer-events:none;
-  }
-  @keyframes timeGlow{ 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-10px);} }
-  .timeItem:hover{ transform: translateY(-2px) scale(1.02); filter: brightness(1.10); }
-  .timeYear{ position:relative; font-weight:900; font-size:16px; margin:0; }
-  .timeText{ position:relative; margin:8px 0 0; color: var(--muted); font-size:13px; }
+  .timeItem:hover{ transform: translateY(-2px); filter: brightness(1.08); }
+  .timeYear{ font-weight:900; font-size:16px; margin:0; }
+  .timeText{ margin:8px 0 0; color: var(--muted); font-size:13px; }
 
   /* MODAL LEGGE SCOUT */
   .modalBackdrop{
@@ -632,7 +664,6 @@
     background: rgba(0,0,0,.18);
     border: 1px solid rgba(255,255,255,.14);
     box-shadow: 0 10px 26px rgba(0,0,0,.22);
-    animation: icoFloat 4.2s ease-in-out infinite;
   }
   .sumChev{
     width:40px; height:40px; display:grid; place-items:center;
@@ -659,19 +690,8 @@
     box-shadow: 0 14px 30px rgba(0,0,0,.25);
     cursor:pointer;
     transition: transform .18s ease, filter .18s ease;
-    position:relative;
   }
-  .thumb::after{
-    content:"";
-    position:absolute; inset:-90px;
-    background: radial-gradient(280px 200px at 25% 25%, rgba(255,210,77,.16), transparent 60%);
-    filter: blur(14px);
-    opacity:0;
-    transition: opacity .25s ease;
-    pointer-events:none;
-  }
-  .thumb:hover::after{ opacity:.9; }
-  .thumb:hover{ transform: translateY(-2px) scale(1.01); filter: brightness(1.06); }
+  .thumb:hover{ transform: translateY(-2px); filter: brightness(1.06); }
 
   .thumb img, .thumb video{
     width:100%;
@@ -759,16 +779,60 @@
     box-shadow: 0 18px 44px rgba(0,0,0,.30);
     text-transform: uppercase;
   }
+
+  /* ✅ TOAST NOTIFICA (sempre visibile nel sito) */
+  .toastWrap{
+    position: fixed;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    z-index: 500;
+    display: grid;
+    gap: 10px;
+    width: min(720px, 94vw);
+    pointer-events: none;
+  }
+  .toast{
+    pointer-events: auto;
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    padding: 12px 14px;
+    border-radius: 18px;
+    background: rgba(0,0,0,.50);
+    border: 1px solid rgba(255,255,255,.18);
+    box-shadow: 0 18px 50px rgba(0,0,0,.55);
+    backdrop-filter: blur(10px);
+    animation: toastIn .28s ease both;
+  }
+  @keyframes toastIn{ from{ opacity:0; transform: translateY(10px) scale(.98);} to{ opacity:1; transform: translateY(0) scale(1);} }
+  .toast .tIco{ font-size:20px; line-height:1; }
+  .toast .tTxt{ flex:1; }
+  .toast .tTxt b{ display:block; font-size:14px; }
+  .toast .tTxt small{ display:block; color: rgba(238,247,239,.75); margin-top:4px; }
+  .toast .tClose{
+    border:1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.08);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 6px 10px;
+    cursor:pointer;
+    font-weight:900;
+  }
 </style>
 </head>
 
 <body>
   <div class="bg"></div>
   <div class="bgOverlay"></div>
+  <div class="aurora"></div>
   <div class="wind" id="windLayer"></div>
+  <div class="stars" id="stars"></div>
   <div class="leaves" id="leaves"></div>
   <div class="fireflies" id="fireflies"></div>
   <div class="sparks" id="sparks"></div>
+
+  <div class="confetti" id="confetti"></div>
 
   <!-- INTRO -->
   <div class="intro" id="intro">
@@ -782,7 +846,7 @@
         <div style="font-size:22px;">🌲</div>
         <div>
           <div style="font-size:16px;font-weight:900;">Calendario Scout nel Bosco</div>
-          <div class="muted">2026 → 2029</div>
+          <div class="muted">2026 → 2029 · <b>Solo compleanni</b> 🎂</div>
         </div>
       </div>
 
@@ -817,13 +881,16 @@
       <div class="accItem open" id="accCountdown">
         <button class="accBtn" type="button" data-acc="accCountdown">
           <div class="accLeft">
-            <div class="accIco">🎂</div>
-            <p class="accTitle">Countdown compleanni (solo 10 giorni prima)</p>
+            <div class="accIco">🔔</div>
+            <p class="accTitle">Avvisi compleanni (solo 10 giorni prima)</p>
           </div>
           <div class="chev">▾</div>
         </button>
         <div class="accBody">
           <div class="cards" id="countCards"></div>
+          <p class="muted" style="margin:10px 0 0;">
+            Nota: le notifiche “fuori dal sito” compaiono solo se dai il permesso al browser dopo aver cliccato ENTRA.
+          </p>
         </div>
       </div>
 
@@ -910,7 +977,7 @@
       </div>
     </div>
 
-    <!-- FOTO (alla fine) -->
+    <!-- FOTO -->
     <details class="photoWin" id="photoWin">
       <summary>
         <div class="sumLeft">
@@ -922,7 +989,7 @@
       <div class="galleryWrap">
         <div class="galleryGrid" id="galleryGrid"></div>
         <p class="muted" style="margin:10px 0 0;">
-          Nota: i file <b>.HEIC</b> non sempre si vedono nel browser. Qui hai JPG/MP4 quindi ok.
+          Nota: i file <b>.HEIC</b> non sempre si vedono nel browser. Qui ci sono JPG/MP4 quindi ok.
         </p>
       </div>
     </details>
@@ -962,6 +1029,9 @@
     </div>
   </div>
 
+  <!-- TOAST (notifiche nel sito) -->
+  <div class="toastWrap" id="toastWrap"></div>
+
 <script>
   // =========================
   // UTIL
@@ -997,7 +1067,6 @@
   const monthTitleEl = document.getElementById("monthTitle");
   const yearSel = document.getElementById("yearSel");
   const monthEventsBox = document.getElementById("monthEvents");
-
   const countCards = document.getElementById("countCards");
 
   const journal = document.getElementById("journal");
@@ -1015,13 +1084,15 @@
   const lawsBackdrop = document.getElementById("lawsBackdrop");
   const lawsClose = document.getElementById("lawsClose");
 
-  const timelineEl = document.getElementById("timeline");
-
   const galleryGrid = document.getElementById("galleryGrid");
   const lightbox = document.getElementById("lightbox");
   const lbTitle = document.getElementById("lbTitle");
   const lbClose = document.getElementById("lbClose");
   const lbMediaHost = document.getElementById("lbMediaHost");
+
+  const toastWrap = document.getElementById("toastWrap");
+  const confettiBox = document.getElementById("confetti");
+  const timelineEl = document.getElementById("timeline");
 
   // =========================
   // STATO CALENDARIO
@@ -1030,61 +1101,47 @@
   let stateMonth = 1;
 
   // =========================
-  // ✅ COMPLEANNI (SOLO COMPLEANNI)
+  // COMPLEANNI (SOLO QUESTI NEL CALENDARIO)
+  // ✅ Simone NON ESISTE PIÙ
   // =========================
   const BIRTHDAYS = [
-    { id:"simone", name:"Simone", day:23, month:1, year:null },
-
-    { id:"mariateresa", name:"Mariateresa", day:7, month:1, year:1990 },
-    { id:"cristian", name:"Cristian", day:28, month:1, year:2011 },
-
-    { id:"ambra", name:"Ambra", day:28, month:2, year:null },
-
-    { id:"arta", name:"Arta", day:22, month:3, year:null },
-    { id:"ginevra", name:"Ginevra Di Buono", day:22, month:3, year:2012 },
-    { id:"greta", name:"Greta Iorio", day:28, month:3, year:2014 },
-
-    { id:"eliana", name:"Eliana Alfieri", day:30, month:4, year:2012 },
-
-    { id:"rudi", name:"Rudi", day:11, month:5, year:null },
-
-    { id:"lorenzo", name:"Lorenzo", day:18, month:6, year:2014 },
-    { id:"paolo", name:"Paolo Iannetta", day:20, month:6, year:2014 },
-
-    { id:"loris", name:"Loris", day:16, month:7, year:null },
-
-    { id:"giuseppe", name:"Giuseppe", day:18, month:11, year:null },
-
-    { id:"chiara", name:"Chiara", day:22, month:12, year:2012 },
+    { id:"mariateresa", name:"Mariateresa", day:7,  month:1,  icon:"🎂" },
+    { id:"cristian",    name:"Cristian",    day:28, month:1,  icon:"🎂" },
+    { id:"ambra",       name:"Ambra",       day:28, month:2,  icon:"🎂" },
+    { id:"arta",        name:"Arta",        day:22, month:3,  icon:"🎂" },
+    { id:"ginevra",     name:"Ginevra Di Buono", day:22, month:3, icon:"🎂" },
+    { id:"greta",       name:"Greta Iorio", day:28, month:3,  icon:"🎂" },
+    { id:"eliana",      name:"Eliana Alfieri", day:30, month:4, icon:"🎂" },
+    { id:"rudi",        name:"Rudi",        day:11, month:5,  icon:"🎂" },
+    { id:"lorenzo",     name:"Lorenzo",     day:18, month:6,  icon:"🎂" },
+    { id:"paolo",       name:"Paolo Iannetta", day:20, month:6, icon:"🎂" },
+    { id:"loris",       name:"Loris",       day:16, month:7,  icon:"🎂" },
+    { id:"giuseppe",    name:"Giuseppe",    day:18, month:11, icon:"🎂" },
+    { id:"chiara",      name:"Chiara",      day:22, month:12, icon:"🎂" }
   ];
 
-  function birthdayInstanceForYear(b, year){
-    const d = new Date(year, b.month-1, b.day);
-    const age = (b.year && year >= b.year) ? (year - b.year) : null;
-    return {
-      id: b.id,
-      icon: "🎂",
-      name: `Compleanno di ${b.name}`,
-      person: b.name,
-      kind: "birthday",
-      yearBorn: b.year,
-      age,
-      dateObj: d,
-      date: ymd(year, b.month, b.day)
-    };
-  }
-
   function getAllBirthdaysForYear(year){
-    return BIRTHDAYS.map(b => birthdayInstanceForYear(b, year));
+    return BIRTHDAYS.map(b=>{
+      const d = new Date(year, b.month-1, b.day);
+      return {
+        id: b.id,
+        icon: b.icon,
+        name: b.name,
+        kind: "birthday",
+        dateObj: d,
+        date: ymd(year, b.month, b.day)
+      };
+    });
   }
 
   // =========================
   // NODO + BUSSOLA
   // =========================
   const KNOTS = [
-    { name:"Nodo piano", art:`\\ \\     / /\n \\ \\   / /\n  \\ \\_/ /\n   / _ \\\n  / / \\ \\\n /_/   \\_\\`, desc:"Serve per unire due corde dello stesso spessore. È semplice, ma deve essere fatto bene." },
-    { name:"Gassa d’amante", art:`   ____ \n  / __ \\__\n / /  \\___)\n \\ \\__\n  \\___\\\n (____)`, desc:"Fa un cappio fisso che non scorre. Utilissima quando ti serve un anello sicuro." },
-    { name:"Nodo parlato", art:`|\\      /|\n| \\____/ |\n|  ____  |\n| /    \\ |\n|/      \\|`, desc:"Ottimo per fissare una corda a un palo. È stabile e molto usato in campo." }
+    { name:"Nodo piano", art:`\\ \\     / /\n \\ \\   / /\n  \\ \\_/ /\n   / _ \\\n  / / \\ \\\n /_/   \\_\\`, desc:"Unisce due corde simili. Semplice, ma va fatto bene." },
+    { name:"Gassa d’amante", art:`   ____ \n  / __ \\__\n / /  \\___)\n \\ \\__\n  \\___\\\n (____)`, desc:"Cappio fisso che non scorre. Utilissimo quando ti serve un anello sicuro." },
+    { name:"Nodo parlato", art:`|\\      /|\n| \\____/ |\n|  ____  |\n| /    \\ |\n|/      \\|`, desc:"Per fissare una corda a un palo. Molto usato in campo." },
+    { name:"Nodo savoia", art:`  __\n /  \\__\n \\__/  \\\n    \\__/`, desc:"Ottimo per accorciare una corda o isolare un tratto rovinato." }
   ];
   const VIRTUES = [
     { name:"Coraggio", desc:"Fare la cosa giusta anche quando hai paura." },
@@ -1093,6 +1150,34 @@
     { name:"Lealtà", desc:"Essere affidabile con gli altri e con te stesso." },
     { name:"Servizio", desc:"Mettere il bene comune davanti alla comodità personale." }
   ];
+
+  // =========================
+  // TIMELINE (dal primo Jamboree al Jamboree dell'anno prossimo)
+  // =========================
+  function buildTimeline(){
+    // anno prossimo rispetto ad oggi reale
+    const ny = new Date().getFullYear() + 1;
+
+    // qui lo mettiamo “fino al Jamboree 2027” (anno prossimo nel tuo progetto)
+    // e comunque funziona anche se l'anno cambia
+    const items = [
+      { year:"1920", text:"1° World Scout Jamboree — Olympia, Londra (30 luglio–8 agosto)." },
+      { year:"1947", text:"Jamboree della Pace — ripartenza dopo la guerra (Francia)." },
+      { year:"1957", text:"50 anni di scoutismo — Jamboree a Sutton Park (UK)." },
+      { year:"2007", text:"Centenario dello scoutismo — grande celebrazione mondiale." },
+      { year:"2019", text:"Jamboree — Nord America (USA)." },
+      { year:"2023", text:"Jamboree — Corea del Sud (Saemangeum)." },
+      { year:"2027", text:"Jamboree — Polonia (Gdańsk), 30 luglio–8 agosto." }
+    ];
+
+    timelineEl.innerHTML = "";
+    items.forEach(x=>{
+      const div = document.createElement("div");
+      div.className="timeItem";
+      div.innerHTML = `<p class="timeYear">${x.year}</p><p class="timeText">${x.text}</p>`;
+      timelineEl.appendChild(div);
+    });
+  }
 
   // =========================
   // CALENDARIO - CALCOLI
@@ -1122,9 +1207,9 @@
   }
 
   // =========================
-  // EVENTI: mappa compleanni per mese/anno in vista
+  // EVENTI (mappa compleanni) — SOLO COMPLEANNI
   // =========================
-  function eventsByKeyForCurrentView(){
+  function birthdaysByKeyForCurrentView(){
     const list = getAllBirthdaysForYear(stateYear);
     const map = new Map();
     list.forEach(e=>{
@@ -1138,7 +1223,9 @@
   function markerForDate(key, eventMap){
     const evs = eventMap.get(key);
     if(!evs || !evs.length) return "";
-    return evs.length >= 2 ? "🎂🎂" : "🎂";
+    // se più di uno, mostra 🎂🎂 (max 2)
+    const icons = evs.slice(0,2).map(x=>x.icon).join("");
+    return icons;
   }
 
   // =========================
@@ -1177,7 +1264,7 @@
     const nextYear  = stateMonth === 12 ? stateYear + 1 : stateYear;
 
     const dimPrev = daysInMonth(prevYear, prevMonth);
-    const eventMap = eventsByKeyForCurrentView();
+    const eventMap = birthdaysByKeyForCurrentView();
 
     let cells = 0;
 
@@ -1213,8 +1300,6 @@
     const marker = markerForDate(key, eventMap);
 
     if(evs.length && !isOff) div.classList.add("eventDay");
-    if(!isOff && m===1 && d===23) div.classList.add("simoneBlink");
-
     div.dataset.key = key;
 
     div.innerHTML = `
@@ -1225,16 +1310,20 @@
     if(evs.length && !isOff){
       div.style.cursor = "pointer";
       div.addEventListener("click", ()=>{
+        // animazione cella
         div.classList.remove("jumpFlash");
         void div.offsetWidth;
         div.classList.add("jumpFlash");
+
+        // confetti
+        spawnConfettiBurst();
       });
     }
     return div;
   }
 
   // =========================
-  // LISTA COMPLEANNI DEL MESE
+  // LISTA COMPLEANNI DEL MESE (sotto calendario)
   // =========================
   function renderMonthEventsList(eventMap){
     monthEventsBox.innerHTML = "";
@@ -1262,13 +1351,12 @@
     items.forEach(item=>{
       const dt = dateToObj(item.key);
       const label = dt.toLocaleDateString("it-IT",{day:"2-digit", month:"long"});
-      const ageTxt = (item.e.age !== null) ? ` • ${item.e.age} anni` : "";
       const line = document.createElement("div");
       line.className="monthEventsLine";
       line.innerHTML = `
         <div class="monthEventsIco">🎂</div>
         <div class="monthEventsTxt">
-          <b>${item.e.name}${ageTxt}</b>
+          <b>${item.e.name}</b>
           <div class="monthEventsSub">📅 ${label}</div>
         </div>
       `;
@@ -1300,17 +1388,13 @@
   // =========================
   // COUNTDOWN: solo compleanni entro 10 giorni
   // =========================
-  function buildUpcomingCountdownList(){
+  function buildUpcomingBirthdayList(){
     const now = new Date();
+    // prendo anno corrente + prossimo, così funziona a fine anno
     const y = now.getFullYear();
+    const all = [...getAllBirthdaysForYear(y), ...getAllBirthdaysForYear(y+1)];
 
-    // generiamo compleanni per anno corrente e prossimo (per gestire dicembre->gennaio)
-    const list = [
-      ...getAllBirthdaysForYear(y),
-      ...getAllBirthdaysForYear(y+1)
-    ];
-
-    return list
+    return all
       .map(e => ({...e, diff: daysBetween(now, e.dateObj)}))
       .filter(e => e.diff >= 0 && e.diff <= 10)
       .sort((a,b)=> a.diff - b.diff);
@@ -1318,13 +1402,13 @@
 
   function renderCountdown(){
     countCards.innerHTML = "";
-    const list = buildUpcomingCountdownList();
+    const list = buildUpcomingBirthdayList();
 
     if(list.length === 0){
       const card = document.createElement("div");
       card.className="card";
       card.innerHTML = `
-        <div class="kicker">🎂 Countdown</div>
+        <div class="kicker">🔔 Avvisi</div>
         <p class="big">Nessun compleanno nei prossimi 10 giorni</p>
         <p class="small">Scorri il calendario per vedere tutti i compleanni segnati.</p>
       `;
@@ -1334,16 +1418,15 @@
 
     list.slice(0,10).forEach(e=>{
       const when = e.dateObj.toLocaleDateString("it-IT", {day:"2-digit", month:"long", year:"numeric"});
-      const ageTxt = (e.age !== null) ? ` (${e.age} anni)` : "";
 
-      let msg = `Mancano ${e.diff} giorni a ${e.name}${ageTxt}`;
-      if(e.diff === 0) msg = `È oggi: ${e.name}${ageTxt}!`;
-      if(e.diff === 1) msg = `Manca meno di un giorno a ${e.name}${ageTxt}`;
+      let msg = `Tra meno di 10 giorni è il compleanno di ${e.name}: mancano ${e.diff} giorni`;
+      if(e.diff === 0) msg = `🎉 È oggi il compleanno di ${e.name}!`;
+      if(e.diff === 1) msg = `⏳ Manca meno di un giorno al compleanno di ${e.name}`;
 
       const card = document.createElement("div");
       card.className="card";
       card.innerHTML = `
-        <div class="kicker">🎂 Countdown</div>
+        <div class="kicker">🎂 Compleanno</div>
         <p class="big">${msg}</p>
         <p class="small">📅 ${when}</p>
         <div class="redNote">🔴 Segnato sul calendario</div>
@@ -1354,9 +1437,113 @@
   }
 
   // =========================
+  // TOAST (notifica in pagina)
+  // =========================
+  function showToast({ icon="🎂", title="Avviso", message="", onClick=null }){
+    const t = document.createElement("div");
+    t.className = "toast";
+    t.innerHTML = `
+      <div class="tIco">${icon}</div>
+      <div class="tTxt">
+        <b>${title}</b>
+        <small>${message}</small>
+      </div>
+      <button class="tClose" type="button">✖</button>
+    `;
+    t.querySelector(".tClose").addEventListener("click", ()=> t.remove());
+
+    if(onClick){
+      t.style.cursor = "pointer";
+      t.addEventListener("click", (e)=>{
+        if(e.target && e.target.classList.contains("tClose")) return;
+        onClick();
+        t.remove();
+      });
+    }
+
+    toastWrap.prepend(t);
+    setTimeout(()=> { if(t.isConnected) t.remove(); }, 12000);
+  }
+
+  // =========================
+  // NOTIFICHE BROWSER (se autorizzate)
+  // =========================
+  function canNotify(){ return ("Notification" in window); }
+
+  async function ensureNotificationPermission(){
+    if(!canNotify()) return false;
+    if(Notification.permission === "granted") return true;
+    if(Notification.permission === "denied") return false;
+    const res = await Notification.requestPermission();
+    return res === "granted";
+  }
+
+  function pushWebNotification(title, body){
+    if(!canNotify()) return;
+    if(Notification.permission !== "granted") return;
+    try{ new Notification(title, { body }); }catch(e){}
+  }
+
+  // =========================
+  // NOTIFICHE COMPLEANNI: da 10 giorni prima fino al giorno (ogni giorno)
+  // Evita duplicati: una volta al giorno per ogni compleanno
+  // =========================
+  const NOTIF_KEY = "birthday_notifs_v1";
+
+  function loadNotifState(){
+    try{ return JSON.parse(localStorage.getItem(NOTIF_KEY) || "{}"); }
+    catch{ return {}; }
+  }
+  function saveNotifState(state){
+    localStorage.setItem(NOTIF_KEY, JSON.stringify(state));
+  }
+  function todayKeyLocal(){
+    const now = new Date();
+    return ymd(now.getFullYear(), now.getMonth()+1, now.getDate());
+  }
+
+  function runBirthdayNotificationsOncePerDay(){
+    const state = loadNotifState();
+    const today = todayKeyLocal();
+    const list = buildUpcomingBirthdayList();
+
+    list.forEach(e=>{
+      const dedupeKey = `${e.id}_${today}`;
+      if(state[dedupeKey]) return;
+
+      const when = e.dateObj.toLocaleDateString("it-IT", {day:"2-digit", month:"long", year:"numeric"});
+
+      let title = "🎂 Compleanno in arrivo";
+      let msg = `Tra meno di 10 giorni è il compleanno di ${e.name}: mancano ${e.diff} giorni (${when}).`;
+
+      if(e.diff === 0){
+        title = "🎉 È oggi!";
+        msg = `${e.name}. Auguri! (${when})`;
+      } else if(e.diff === 1){
+        msg = `Manca meno di un giorno al compleanno di ${e.name} (${when}).`;
+      }
+
+      // toast sempre
+      showToast({
+        icon: "🎂",
+        title,
+        message: msg,
+        onClick: ()=> jumpToDate(e.date)
+      });
+
+      // notifica browser se permesso
+      pushWebNotification(title, msg);
+
+      state[dedupeKey] = true;
+    });
+
+    saveNotifState(state);
+  }
+
+  // =========================
   // DIARIO
   // =========================
-  const JOURNAL_KEY = "scout_thoughts_v3";
+  const JOURNAL_KEY = "scout_thoughts_v4";
   function loadJournal(){
     const saved = localStorage.getItem(JOURNAL_KEY);
     if(saved !== null) journal.value = saved;
@@ -1396,32 +1583,6 @@
 
     const angle = idx * 72;
     needle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
-  }
-
-  // =========================
-  // LINEA DEL TEMPO (JAMBOREE)
-  // 1920 -> 2027 (prossimo anno rispetto a oggi)
-  // =========================
-  const TIMELINE_ITEMS = [
-    { year:"1920", text:"Primo World Scout Jamboree a Londra (Olympia): nasce la grande fraternità mondiale." },
-    { year:"1924", text:"Secondo Jamboree a Copenaghen: lo spirito internazionale cresce velocemente." },
-    { year:"1957+", text:"Nel dopoguerra i Jamboree diventano sempre più grandi, tra attività, cultura e servizio." },
-    { year:"Oggi", text:"Lo scoutismo è una famiglia globale: amicizie, natura, responsabilità e avventura." },
-    { year:"2027", text:"Prossimo World Scout Jamboree: 30 luglio–8 agosto 2027, Gdańsk (Polonia)." }
-  ];
-
-  function renderTimeline(){
-    timelineEl.innerHTML = "";
-    TIMELINE_ITEMS.forEach((x,i)=>{
-      const div = document.createElement("div");
-      div.className = "timeItem";
-      div.style.animationDelay = (i*0.05) + "s";
-      div.innerHTML = `
-        <p class="timeYear">${x.year}</p>
-        <p class="timeText">${x.text}</p>
-      `;
-      timelineEl.appendChild(div);
-    });
   }
 
   // =========================
@@ -1469,7 +1630,7 @@
     renderCalendar();
   });
 
-  // Swipe mese su mobile (sul calendario)
+  // Swipe mese su mobile
   const stage = document.getElementById("stage");
   let touchStartX = null;
   stage.addEventListener("touchstart",(e)=>{ touchStartX = e.touches[0].clientX; }, {passive:true});
@@ -1484,7 +1645,7 @@
   }, {passive:true});
 
   // =========================
-  // EFFETTI: foglie + lucciole + scintille
+  // EFFETTI: foglie + lucciole + scintille + stelle
   // =========================
   function spawnLeaves(){
     const box = document.getElementById("leaves");
@@ -1535,7 +1696,23 @@
       box.appendChild(s);
     }
   }
-  window.addEventListener("resize", ()=>{ spawnLeaves(); spawnFireflies(); spawnSparks(); });
+  function spawnStars(){
+    const box = document.getElementById("stars");
+    box.innerHTML = "";
+    const n = 10;
+    for(let i=0;i<n;i++){
+      const st = document.createElement("div");
+      st.className = "star";
+      st.style.left = (Math.random()*100) + "%";
+      st.style.top  = (Math.random()*60) + "%";
+      st.style.setProperty("--t", (6 + Math.random()*10) + "s");
+      st.style.setProperty("--dx", ((Math.random()*380)+180) + "px");
+      st.style.setProperty("--dy", ((Math.random()*260)+140) + "px");
+      st.style.animationDelay = (Math.random()*8) + "s";
+      box.appendChild(st);
+    }
+  }
+  window.addEventListener("resize", ()=>{ spawnLeaves(); spawnFireflies(); spawnSparks(); spawnStars(); });
 
   // =========================
   // VENTO: reagisce allo scroll
@@ -1569,7 +1746,46 @@
   }, {passive:true});
 
   // =========================
-  // FOTO + VIDEO (campo estivo 2025)
+  // PARALLAX mouse/touch (aurora)
+  // =========================
+  function setParallax(x,y){
+    // normalizzo -0.5..0.5
+    const nx = (x / window.innerWidth) - 0.5;
+    const ny = (y / window.innerHeight) - 0.5;
+    document.documentElement.style.setProperty("--mx", String(nx));
+    document.documentElement.style.setProperty("--my", String(ny));
+  }
+  window.addEventListener("mousemove",(e)=> setParallax(e.clientX, e.clientY), {passive:true});
+  window.addEventListener("touchmove",(e)=>{
+    if(!e.touches || !e.touches[0]) return;
+    setParallax(e.touches[0].clientX, e.touches[0].clientY);
+  }, {passive:true});
+
+  // =========================
+  // CONFETTI burst
+  // =========================
+  function spawnConfettiBurst(){
+    const n = 24;
+    const colors = [
+      "rgba(255,210,77,.92)",
+      "rgba(124,255,138,.85)",
+      "rgba(255,255,255,.85)",
+      "rgba(255,63,63,.80)"
+    ];
+    for(let i=0;i<n;i++){
+      const c = document.createElement("div");
+      c.className = "conf";
+      c.style.left = (10 + Math.random()*80) + "vw";
+      c.style.background = colors[i % colors.length];
+      c.style.setProperty("--t", (1.8 + Math.random()*1.2) + "s");
+      c.style.setProperty("--dx", ((Math.random()*360)-180) + "px");
+      confettiBox.appendChild(c);
+      setTimeout(()=>{ if(c.isConnected) c.remove(); }, 3200);
+    }
+  }
+
+  // =========================
+  // FOTO + VIDEO
   // =========================
   const MEDIA = [
     "1e38146e-d6d7-4fdd-bcb2-8a6b0887210e.jpg",
@@ -1653,12 +1869,18 @@
   window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeLightbox(); });
 
   // =========================
-  // INTRO -> ENTRA
+  // INTRO -> ENTRA (qui chiede permesso notifiche)
   // =========================
-  enterBtn.addEventListener("click", ()=>{
+  enterBtn.addEventListener("click", async ()=>{
     intro.classList.add("hide");
     app.style.opacity = "1";
     app.style.transform = "translateY(0)";
+
+    // permesso notifiche (facoltativo)
+    await ensureNotificationPermission();
+
+    // appena entri: controlla subito
+    runBirthdayNotificationsOncePerDay();
   });
 
   // =========================
@@ -1669,23 +1891,29 @@
     spawnLeaves();
     spawnFireflies();
     spawnSparks();
+    spawnStars();
 
     renderCalendar();
     renderCountdown();
-    renderTimeline();
 
     loadJournal();
     setKnotOfDay();
     setVirtueOfDay();
+    buildTimeline();
 
     setTheme();
     renderGallery();
 
+    // controllo notifiche anche al load (toast)
+    runBirthdayNotificationsOncePerDay();
+
+    // ogni minuto aggiorna (ma senza spam: dedupe giornaliero)
     setInterval(()=>{
       setTheme();
       renderCountdown();
       setKnotOfDay();
       setVirtueOfDay();
+      runBirthdayNotificationsOncePerDay();
     }, 60000);
   })();
 </script>
