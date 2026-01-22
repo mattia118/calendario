@@ -39,9 +39,7 @@
     background:#08190e;
   }
 
-  /* =========================
-     SFONDO + OVERLAY
-  ========================= */
+  /* SFONDO */
   .bg{
     position:fixed; inset:0;
     background-image: var(--bgUrl);
@@ -62,9 +60,9 @@
     z-index:-3;
     animation: overlayBreath 10s ease-in-out infinite;
   }
-  @keyframes overlayBreath{ 0%,100%{ filter: saturate(1); } 50%{ filter: saturate(1.12); } }
+  @keyframes overlayBreath{ 0%,100%{ filter:saturate(1); } 50%{ filter:saturate(1.12); } }
 
-  /* NEBBIA + VENTO */
+  /* NEBBIA/VENTO */
   .wind{
     position:fixed; inset:-80px;
     pointer-events:none;
@@ -115,9 +113,7 @@
     100%{ transform: translate(calc(var(--dx) + var(--windStrength) * 70px), var(--dy)) scale(1.25); opacity:0; }
   }
 
-  /* =========================
-     INTRO
-  ========================= */
+  /* INTRO */
   .intro{
     position:fixed; inset:0;
     display:flex; align-items:center; justify-content:center;
@@ -173,14 +169,12 @@
   }
   @keyframes shimmer{ 0%,100%{ opacity:.25; transform: translateX(-40%); } 50%{ opacity:.55; transform: translateX(40%); } }
   @keyframes pulse{
-    0%,100%{ transform: translateY(0); box-shadow: 0 22px 60px rgba(0,0,0,.55), 0 0 36px rgba(255,255,255,.16); }
-    50%{ transform: translateY(-2px); box-shadow: 0 26px 70px rgba(0,0,0,.62), 0 0 60px rgba(255,255,255,.30); }
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-2px); }
   }
   .enterHint{ margin-top:14px; color: rgba(238,247,239,.78); font-size: 13px; text-align:center; }
 
-  /* =========================
-     LAYOUT
-  ========================= */
+  /* LAYOUT */
   .wrap{ position:relative; z-index:2; max-width:1080px; margin:22px auto 46px; padding:14px; }
 
   .topbar{
@@ -201,6 +195,7 @@
   }
   button:hover, select:hover{ transform: translateY(-1px) scale(1.01); filter: brightness(1.08); box-shadow: 0 14px 28px rgba(0,0,0,.22); }
   button:active{ transform: translateY(0) scale(.99); }
+
   .monthTitle{ font-size:18px; font-weight:900; text-transform:capitalize; }
   .muted{ color: var(--muted); font-size:13px; }
 
@@ -211,7 +206,7 @@
     backdrop-filter: blur(10px);
   }
   .frame{ position:absolute; inset:0; background:url("frame.jpg") center/cover no-repeat; opacity:.96; pointer-events:none; z-index:1; }
-  .content{ position:relative; z-index:2; padding:34px 26px 26px; }
+  .content{ position:relative; z-index:2; padding:34px 26px 18px; }
 
   .grid{ display:grid; grid-template-columns:repeat(7, 1fr); gap:10px; }
 
@@ -245,7 +240,7 @@
     50%{ box-shadow: 0 0 28px rgba(124,255,138,.35); }
   }
 
-  /* Marker eventi */
+  /* eventi */
   .marker{
     position:absolute; right:8px; bottom:8px;
     font-size:14px; opacity:.98;
@@ -259,24 +254,35 @@
   .eventDay::before{
     content:"";
     position:absolute; inset:-40px;
-    background: radial-gradient(220px 160px at 20% 20%, rgba(255,63,63,.10), transparent 62%),
-                radial-gradient(240px 180px at 80% 40%, rgba(255,210,77,.12), transparent 62%);
+    background:
+      radial-gradient(240px 180px at 25% 25%, rgba(255,63,63,.12), transparent 62%),
+      radial-gradient(260px 200px at 80% 40%, rgba(255,210,77,.14), transparent 62%);
     opacity:.9;
-    filter: blur(10px);
+    filter: blur(12px);
     pointer-events:none;
     animation: eventAura 3.4s ease-in-out infinite;
   }
   @keyframes eventAura{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-6px); } }
 
-  /* 🎂 Simone: lampeggia */
+  /* 🎂 Simone lampeggia */
   .simoneBlink{
-    outline: 3px solid rgba(255,63,63,.75);
+    outline: 3px solid rgba(255,63,63,.80);
     outline-offset:-3px;
-    animation: blink 1.1s ease-in-out infinite;
+    animation: blink 1.05s ease-in-out infinite;
   }
   @keyframes blink{
     0%,100%{ filter: brightness(1); box-shadow: 0 0 0 rgba(255,63,63,0); }
-    50%{ filter: brightness(1.08); box-shadow: 0 0 34px rgba(255,63,63,.45); }
+    50%{ filter: brightness(1.10); box-shadow: 0 0 36px rgba(255,63,63,.50); }
+  }
+
+  /* jump highlight da countdown */
+  .jumpFlash{
+    animation: jumpFlash 1.6s ease-in-out 0s 3;
+  }
+  @keyframes jumpFlash{
+    0%{ transform: scale(1); }
+    50%{ transform: scale(1.03); filter: brightness(1.12); box-shadow: 0 0 36px rgba(255,63,63,.40); }
+    100%{ transform: scale(1); }
   }
 
   /* TELEFONO */
@@ -288,16 +294,36 @@
     .monthTitle{ font-size:16px; }
   }
 
-  /* =========================
-     ACCORDION (tasti uno sotto l'altro)
-  ========================= */
+  /* elenco eventi del mese (sotto al calendario) */
+  .monthEvents{
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 16px;
+    background: rgba(0,0,0,.18);
+    border:1px solid rgba(255,255,255,.14);
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    animation: rise .35s ease both;
+  }
+  .monthEventsLine{
+    display:flex; gap:10px; align-items:flex-start;
+    padding:8px 10px;
+    border-radius:14px;
+    background: rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.10);
+  }
+  .monthEventsIco{ font-size:18px; line-height:1; }
+  .monthEventsTxt{ font-size:13px; color: rgba(238,247,239,.88); }
+  .monthEventsSub{ font-size:12px; color: var(--muted); margin-top:2px; }
+
+  /* ACCORDION */
   .accordion{
     margin-top:14px;
     display:flex;
     flex-direction:column;
     gap:12px;
   }
-
   .accItem{
     background: var(--panel);
     border:1px solid var(--panel2);
@@ -305,7 +331,6 @@
     box-shadow: var(--shadow);
     backdrop-filter: blur(10px);
     overflow:hidden;
-    transform: translateY(0);
     transition: transform .18s ease, filter .18s ease;
   }
   .accItem:hover{ transform: translateY(-1px); filter: brightness(1.03); }
@@ -321,25 +346,19 @@
     background: transparent;
     cursor:pointer;
     color: var(--text);
-    transform:none !important;
     position:relative;
     overflow:hidden;
   }
   .accBtn::after{
     content:"";
     position:absolute; inset:-60px;
-    background: radial-gradient(320px 200px at 20% 30%, rgba(255,255,255,.10), transparent 60%);
-    opacity:.0;
+    background: radial-gradient(360px 220px at 20% 30%, rgba(255,255,255,.10), transparent 60%);
+    opacity:0;
     transition: opacity .22s ease;
   }
-  .accItem:hover .accBtn::after{ opacity:.6; }
+  .accItem:hover .accBtn::after{ opacity:.65; }
 
-  .accLeft{
-    display:flex; align-items:center; gap:10px;
-    font-weight: 900;
-    letter-spacing: .01em;
-  }
-
+  .accLeft{ display:flex; align-items:center; gap:10px; font-weight:900; }
   .accIco{
     width:34px; height:34px;
     display:grid; place-items:center;
@@ -352,7 +371,6 @@
   @keyframes icoFloat{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-2px); } }
 
   .accTitle{ font-size:15px; margin:0; }
-
   .chev{
     width:40px; height:40px;
     display:grid; place-items:center;
@@ -363,18 +381,9 @@
   }
   .accItem.open .chev{ transform: rotate(180deg); filter: brightness(1.15); }
 
-  .accBody{
-    display:none;
-    padding: 0 14px 14px;
-  }
-  .accItem.open .accBody{
-    display:block;
-    animation: rise .32s ease both;
-  }
-  @keyframes rise{
-    from{ opacity:0; transform: translateY(10px); }
-    to{ opacity:1; transform: translateY(0); }
-  }
+  .accBody{ display:none; padding: 0 14px 14px; }
+  .accItem.open .accBody{ display:block; animation: rise .32s ease both; }
+  @keyframes rise{ from{ opacity:0; transform: translateY(10px); } to{ opacity:1; transform: translateY(0); } }
 
   /* CARDS */
   .cards{ display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
@@ -401,7 +410,6 @@
   .big{ font-size:15px; font-weight:900; margin:0; }
   .small{ margin:6px 0 0; color: var(--muted); font-size:13px; }
 
-  /* Nota rossa "sul calendario" */
   .redNote{
     margin:8px 0 0;
     font-weight:900;
@@ -411,6 +419,20 @@
     animation: redPulse 1.6s ease-in-out infinite;
   }
   @keyframes redPulse{ 0%,100%{ opacity:.78; } 50%{ opacity:1; } }
+
+  .miniBtn{
+    margin-top:10px;
+    width:100%;
+    border-radius: 14px;
+    padding:10px 12px;
+    border:1px solid rgba(255,255,255,.16);
+    background: rgba(0,0,0,.18);
+    color: var(--text);
+    cursor:pointer;
+    font-weight:900;
+    transition: transform .18s ease, filter .18s ease;
+  }
+  .miniBtn:hover{ transform: translateY(-1px); filter: brightness(1.08); }
 
   /* DIARIO */
   .journalBox{
@@ -508,13 +530,42 @@
   .timeYear{ font-weight:900; font-size:16px; margin:0; }
   .timeText{ margin:8px 0 0; color: var(--muted); font-size:13px; }
 
-  /* FOTO FISSA IN FONDO */
+  /* TABELLE festività */
+  .tblWrap{ overflow:auto; border-radius:16px; border:1px solid rgba(255,255,255,.12); }
+  table{
+    width:100%;
+    border-collapse: collapse;
+    min-width: 640px;
+    background: rgba(0,0,0,.14);
+  }
+  th, td{
+    padding: 10px 10px;
+    border-bottom: 1px solid rgba(255,255,255,.10);
+    color: rgba(238,247,239,.90);
+    font-size: 13px;
+    text-align:left;
+    vertical-align:top;
+  }
+  th{
+    position: sticky;
+    top:0;
+    background: rgba(0,0,0,.28);
+    backdrop-filter: blur(8px);
+    font-weight: 900;
+  }
+  tr:hover td{ background: rgba(255,255,255,.05); }
+  .linkLine{ margin-top:10px; font-size:12px; color: var(--muted); }
+  .linkLine a{ color: rgba(255,210,77,.92); text-decoration:none; }
+  .linkLine a:hover{ text-decoration:underline; }
+
+  /* FOTO FINALE */
   .panel{
     margin-top:14px; background:var(--panel); border:1px solid var(--panel2);
     border-radius:var(--radius); box-shadow:var(--shadow); backdrop-filter: blur(10px);
     padding:14px;
   }
   .panel h3{ margin:0 0 10px; font-size:16px; }
+
   .belowImg{
     width:100%;
     border-radius: 18px;
@@ -525,7 +576,6 @@
   }
   @keyframes photoFloat{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-3px); } }
 
-  /* FINE */
   .footerWindow{
     margin-top:14px;
     background: rgba(0,0,0,.25);
@@ -560,7 +610,6 @@
         <div style="font-size:22px;">🌲</div>
         <div>
           <div style="font-size:16px;font-weight:900;">Calendario Scout nel Bosco</div>
-          <!-- ✅ tolte scritte extra richieste -->
         </div>
       </div>
 
@@ -586,22 +635,24 @@
         <div class="grid" id="dow"></div>
         <div style="height:10px"></div>
         <div class="grid" id="cal"></div>
+
+        <!-- ✅ elenco eventi del mese (così li vedi subito) -->
+        <div class="monthEvents" id="monthEvents"></div>
       </div>
     </div>
 
-    <!-- SEZIONI (accordion) -->
+    <!-- SEZIONI -->
     <div class="accordion">
 
-      <!-- PENSIERI -->
       <div class="accItem" id="accThoughts">
-        <button class="accBtn" type="button" data-target="thoughtsBox" aria-expanded="false">
+        <button class="accBtn" type="button" aria-expanded="false">
           <div class="accLeft">
             <div class="accIco">💭</div>
             <div class="accTitle">Pensieri</div>
           </div>
           <div class="chev">▾</div>
         </button>
-        <div class="accBody" id="thoughtsBox">
+        <div class="accBody">
           <h3 style="margin:10px 0 8px;">💭 Cosa ti passa per la mente?</h3>
           <p class="muted" style="margin:0 0 10px;">Scrivi qui. Rimane salvato anche se ricarichi il sito.</p>
           <textarea id="journal" class="journalBox" placeholder="Scrivi qui quello che ti passa per la mente..."></textarea>
@@ -609,47 +660,43 @@
         </div>
       </div>
 
-      <!-- GIORNATE A TEMA -->
       <div class="accItem" id="accTheme">
-        <button class="accBtn" type="button" data-target="themeBox" aria-expanded="false">
+        <button class="accBtn" type="button" aria-expanded="false">
           <div class="accLeft">
             <div class="accIco">🌍</div>
             <div class="accTitle">Giornate a tema</div>
           </div>
           <div class="chev">▾</div>
         </button>
-        <div class="accBody" id="themeBox">
+        <div class="accBody">
           <h3 style="margin:10px 0 8px;">🌍 Giornate a tema</h3>
           <div class="cards" id="themeCards"></div>
         </div>
       </div>
 
-      <!-- COUNTDOWN -->
       <div class="accItem" id="accCountdown">
-        <button class="accBtn" type="button" data-target="countBox" aria-expanded="false">
+        <button class="accBtn" type="button" aria-expanded="false">
           <div class="accLeft">
             <div class="accIco">⏳</div>
             <div class="accTitle">Countdown</div>
           </div>
           <div class="chev">▾</div>
         </button>
-        <div class="accBody" id="countBox">
+        <div class="accBody">
           <h3 style="margin:10px 0 8px;">⏳ Countdown</h3>
-          <!-- ✅ tolta scritta “solo eventi reali...” -->
           <div class="cards" id="countCards"></div>
         </div>
       </div>
 
-      <!-- NODO -->
       <div class="accItem" id="accKnot">
-        <button class="accBtn" type="button" data-target="knotBox" aria-expanded="false">
+        <button class="accBtn" type="button" aria-expanded="false">
           <div class="accLeft">
             <div class="accIco">🧵</div>
             <div class="accTitle">Nodo del giorno</div>
           </div>
           <div class="chev">▾</div>
         </button>
-        <div class="accBody" id="knotBox">
+        <div class="accBody">
           <h3 style="margin:10px 0 8px;">🧵 Nodo del giorno</h3>
           <div class="knotBox">
             <div class="knotArt" id="knotArt"></div>
@@ -661,16 +708,15 @@
         </div>
       </div>
 
-      <!-- BUSSOLA -->
       <div class="accItem" id="accCompass">
-        <button class="accBtn" type="button" data-target="compassBox" aria-expanded="false">
+        <button class="accBtn" type="button" aria-expanded="false">
           <div class="accLeft">
             <div class="accIco">🧭</div>
             <div class="accTitle">Bussola morale</div>
           </div>
           <div class="chev">▾</div>
         </button>
-        <div class="accBody" id="compassBox">
+        <div class="accBody">
           <h3 style="margin:10px 0 8px;">🧭 Bussola morale</h3>
           <div class="compassWrap">
             <div class="compass" aria-label="Bussola morale">
@@ -684,16 +730,15 @@
         </div>
       </div>
 
-      <!-- TIMELINE -->
       <div class="accItem" id="accTimeline">
-        <button class="accBtn" type="button" data-target="timelineBox" aria-expanded="false">
+        <button class="accBtn" type="button" aria-expanded="false">
           <div class="accLeft">
             <div class="accIco">🕰️</div>
             <div class="accTitle">Linea del tempo scout</div>
           </div>
           <div class="chev">▾</div>
         </button>
-        <div class="accBody" id="timelineBox">
+        <div class="accBody">
           <h3 style="margin:10px 0 8px;">🕰️ Linea del tempo scout</h3>
           <div class="timeline" id="timeline">
             <div class="timeItem">
@@ -716,36 +761,91 @@
         </div>
       </div>
 
-      <!-- LEGGI -->
-      <div class="accItem" id="accLaws">
-        <button class="accBtn" type="button" data-target="lawsBox" aria-expanded="false">
+      <!-- ✅ FESTIVITÀ + SANTI 2026 (come hai scritto tu) -->
+      <div class="accItem" id="accHolidays">
+        <button class="accBtn" type="button" aria-expanded="false">
           <div class="accLeft">
-            <div class="accIco">📜</div>
-            <div class="accTitle">Leggi Scout</div>
+            <div class="accIco">🎉</div>
+            <div class="accTitle">Festività e celebrazioni (2026)</div>
           </div>
           <div class="chev">▾</div>
         </button>
-        <div class="accBody" id="lawsBox">
-          <h3 style="margin:10px 0 8px;">📜 Legge Scout</h3>
-
-          <div class="card" style="margin-bottom:10px;">
-            <div class="big">⚜️ Promemoria</div>
-            <div class="small">Queste leggi sono sempre qui, apri/chiudi quando vuoi.</div>
+        <div class="accBody">
+          <h3 style="margin:10px 0 8px;">🎉 Festività / Celebrazione (Italia) — 2026</h3>
+          <div class="tblWrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Festività / Celebrazione</th>
+                  <th>Data 2026</th>
+                  <th>Giorno</th>
+                  <th>Fonte</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Capodanno</td><td>1 gennaio 2026</td><td>Giovedì</td><td><a href="https://www.idealista.it/en/news/lifestyle-in-italy/2025/12/30/302436-national-public-holidays-in-italy-2026-full-calendar-and-long-weekends?utm_source=chatgpt.com" target="_blank" rel="noopener">Idealista</a></td></tr>
+                <tr><td>Epifania (La Befana)</td><td>6 gennaio 2026</td><td>Martedì</td><td><a href="https://www.idealista.it/en/news/lifestyle-in-italy/2025/12/30/302436-national-public-holidays-in-italy-2026-full-calendar-and-long-weekends?utm_source=chatgpt.com" target="_blank" rel="noopener">Idealista</a></td></tr>
+                <tr><td>Pasqua (Easter)</td><td>5 aprile 2026</td><td>Domenica</td><td><a href="https://www.idealista.it/en/news/lifestyle-in-italy/2025/12/30/302436-national-public-holidays-in-italy-2026-full-calendar-and-long-weekends?utm_source=chatgpt.com" target="_blank" rel="noopener">Idealista</a></td></tr>
+                <tr><td>Lunedì dell’Angelo (Pasquetta)</td><td>6 aprile 2026</td><td>Lunedì</td><td><a href="https://www.idealista.it/en/news/lifestyle-in-italy/2025/12/30/302436-national-public-holidays-in-italy-2026-full-calendar-and-long-weekends?utm_source=chatgpt.com" target="_blank" rel="noopener">Idealista</a></td></tr>
+                <tr><td>Festa della Liberazione</td><td>25 aprile 2026</td><td>Sabato</td><td><a href="https://www.idealista.it/en/news/lifestyle-in-italy/2025/12/30/302436-national-public-holidays-in-italy-2026-full-calendar-and-long-weekends?utm_source=chatgpt.com" target="_blank" rel="noopener">Idealista</a></td></tr>
+                <tr><td>Festa dei Lavoratori (1° maggio)</td><td>1 maggio 2026</td><td>Venerdì</td><td><a href="https://www.idealista.it/en/news/lifestyle-in-italy/2025/12/30/302436-national-public-holidays-in-italy-2026-full-calendar-and-long-weekends?utm_source=chatgpt.com" target="_blank" rel="noopener">Idealista</a></td></tr>
+                <tr><td>Festa della Repubblica</td><td>2 giugno 2026</td><td>Martedì</td><td><a href="https://www.idealista.it/en/news/lifestyle-in-italy/2025/12/30/302436-national-public-holidays-in-italy-2026-full-calendar-and-long-weekends?utm_source=chatgpt.com" target="_blank" rel="noopener">Idealista</a></td></tr>
+                <tr><td>Ferragosto / Assunzione di Maria</td><td>15 agosto 2026</td><td>Sabato</td><td><a href="https://www.idealista.it/en/news/lifestyle-in-italy/2025/12/30/302436-national-public-holidays-in-italy-2026-full-calendar-and-long-weekends?utm_source=chatgpt.com" target="_blank" rel="noopener">Idealista</a></td></tr>
+                <tr><td>Tutti i Santi (Ognissanti)</td><td>1 novembre 2026</td><td>Domenica</td><td><a href="https://www.idealista.it/en/news/lifestyle-in-italy/2025/12/30/302436-national-public-holidays-in-italy-2026-full-calendar-and-long-weekends?utm_source=chatgpt.com" target="_blank" rel="noopener">Idealista</a></td></tr>
+                <tr><td>Immacolata Concezione</td><td>8 dicembre 2026</td><td>Martedì</td><td><a href="https://www.idealista.it/en/news/lifestyle-in-italy/2025/12/30/302436-national-public-holidays-in-italy-2026-full-calendar-and-long-weekends?utm_source=chatgpt.com" target="_blank" rel="noopener">Idealista</a></td></tr>
+                <tr><td>Natale</td><td>25 dicembre 2026</td><td>Venerdì</td><td><a href="https://www.idealista.it/en/news/lifestyle-in-italy/2025/12/30/302436-national-public-holidays-in-italy-2026-full-calendar-and-long-weekends?utm_source=chatgpt.com" target="_blank" rel="noopener">Idealista</a></td></tr>
+                <tr><td>Santo Stefano</td><td>26 dicembre 2026</td><td>Sabato</td><td><a href="https://www.idealista.it/en/news/lifestyle-in-italy/2025/12/30/302436-national-public-holidays-in-italy-2026-full-calendar-and-long-weekends?utm_source=chatgpt.com" target="_blank" rel="noopener">Idealista</a></td></tr>
+              </tbody>
+            </table>
           </div>
 
-          <div class="card" style="margin-bottom:10px;"><div class="big">1️⃣ Lo scout è leale.</div><div class="small">Dice la verità e mantiene la parola data.</div></div>
-          <div class="card" style="margin-bottom:10px;"><div class="big">2️⃣ Lo scout è amico di tutti.</div><div class="small">Aiuta senza guardare chi sei.</div></div>
-          <div class="card" style="margin-bottom:10px;"><div class="big">3️⃣ Lo scout è cortese.</div><div class="small">Rispetta gli altri e si comporta bene.</div></div>
-          <div class="card" style="margin-bottom:10px;"><div class="big">4️⃣ Lo scout ama la natura.</div><div class="small">Protegge il bosco, gli animali e l’ambiente.</div></div>
-          <div class="card" style="margin-bottom:10px;"><div class="big">5️⃣ Lo scout sorride e canta.</div><div class="small">Non si arrende e porta buon umore.</div></div>
-          <div class="card" style="margin-bottom:10px;"><div class="big">6️⃣ Lo scout è laborioso ed economo.</div><div class="small">Usa bene le cose e non spreca.</div></div>
-          <div class="card"><div class="big">7️⃣ Lo scout è puro.</div><div class="small">Fa scelte giuste e rispettose.</div></div>
+          <h3 style="margin:14px 0 8px;">🕯️ Celebrazione / Santo — 2026</h3>
+          <div class="tblWrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Celebrazione / Santo</th>
+                  <th>Data 2026</th>
+                  <th>Giorno</th>
+                  <th>Note / Fonte</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Festa del Tricolore</td><td>7 gennaio</td><td>Mercoledì</td><td><a href="https://www.calendario-365.it/giorni-festivi/2026.html?utm_source=chatgpt.com" target="_blank" rel="noopener">calendario-365.it</a></td></tr>
+                <tr><td>San Valentino</td><td>14 febbraio</td><td>Sabato</td><td><a href="https://www.calendario-365.it/giorni-festivi/2026.html?utm_source=chatgpt.com" target="_blank" rel="noopener">calendario-365.it</a></td></tr>
+                <tr><td>Carnevale (giorno clou)</td><td>17 febbraio</td><td>Martedì</td><td><a href="https://www.caldana.it/blog-it/ponti-2026.html?utm_source=chatgpt.com" target="_blank" rel="noopener">caldana.it</a></td></tr>
+                <tr><td>Festa del Papà / San Giuseppe</td><td>19 marzo</td><td>Giovedì</td><td><a href="https://www.timeanddate.com/holidays/italy/2026?utm_source=chatgpt.com" target="_blank" rel="noopener">Timeanddate</a></td></tr>
+
+                <tr><td>Sant’Agata (patrona Catania)</td><td>primi di febbraio</td><td>—</td><td><a href="https://www.idealista.it/en/news/lifestyle-in-italy/2026/01/05/302469-regional-and-local-holidays-in-italy-2026-patron-saints-and-city-closures?utm_source=chatgpt.com" target="_blank" rel="noopener">Idealista</a></td></tr>
+                <tr><td>San Marco (patrono Venezia)</td><td>25 aprile</td><td>Sabato</td><td><a href="https://www.idealista.it/en/news/lifestyle-in-italy/2026/01/05/302469-regional-and-local-holidays-in-italy-2026-patron-saints-and-city-closures?utm_source=chatgpt.com" target="_blank" rel="noopener">Idealista</a></td></tr>
+                <tr><td>San Giovanni Battista</td><td>24 giugno</td><td>Mercoledì</td><td><a href="https://www.idealista.it/en/news/lifestyle-in-italy/2026/01/05/302469-regional-and-local-holidays-in-italy-2026-patron-saints-and-city-closures?utm_source=chatgpt.com" target="_blank" rel="noopener">Idealista</a></td></tr>
+                <tr><td>Santi Pietro e Paolo</td><td>29 giugno</td><td>Lunedì</td><td><a href="https://www.idealista.it/en/news/lifestyle-in-italy/2026/01/05/302469-regional-and-local-holidays-in-italy-2026-patron-saints-and-city-closures?utm_source=chatgpt.com" target="_blank" rel="noopener">Idealista</a></td></tr>
+                <tr><td>San Ranieri (patrono Pisa)</td><td>17 giugno</td><td>Mercoledì</td><td><a href="https://www.idealista.it/en/news/lifestyle-in-italy/2026/01/05/302469-regional-and-local-holidays-in-italy-2026-patron-saints-and-city-closures?utm_source=chatgpt.com" target="_blank" rel="noopener">Idealista</a></td></tr>
+
+                <tr><td>Santa Rosalia (patrona Palermo)</td><td>15 luglio</td><td>Mercoledì</td><td><a href="https://www.expatica.com/it/lifestyle/holidays/italy-public-holidays-79470/?utm_source=chatgpt.com" target="_blank" rel="noopener">Expatica</a></td></tr>
+                <tr><td>San Gennaro (patrono Napoli)</td><td>19 settembre</td><td>Sabato</td><td><a href="https://www.expatica.com/it/lifestyle/holidays/italy-public-holidays-79470/?utm_source=chatgpt.com" target="_blank" rel="noopener">Expatica</a></td></tr>
+                <tr><td>San Petronio (patrono Bologna)</td><td>4 ottobre</td><td>Domenica</td><td><a href="https://www.expatica.com/it/lifestyle/holidays/italy-public-holidays-79470/?utm_source=chatgpt.com" target="_blank" rel="noopener">Expatica</a></td></tr>
+                <tr><td>San Francesco d’Assisi</td><td>4 ottobre</td><td>Domenica</td><td><a href="https://www.expatica.com/it/lifestyle/holidays/italy-public-holidays-79470/?utm_source=chatgpt.com" target="_blank" rel="noopener">Expatica</a></td></tr>
+                <tr><td>San Giusto (patrono Trieste)</td><td>2 novembre</td><td>Lunedì</td><td><a href="https://www.expatica.com/it/lifestyle/holidays/italy-public-holidays-79470/?utm_source=chatgpt.com" target="_blank" rel="noopener">Expatica</a></td></tr>
+                <tr><td>San Nicola (patrono Bari)</td><td>6 dicembre</td><td>Domenica</td><td><a href="https://www.expatica.com/it/lifestyle/holidays/italy-public-holidays-79470/?utm_source=chatgpt.com" target="_blank" rel="noopener">Expatica</a></td></tr>
+                <tr><td>Sant’Ambrogio (patrono Milano)</td><td>7 dicembre</td><td>Lunedì</td><td><a href="https://www.expatica.com/it/lifestyle/holidays/italy-public-holidays-79470/?utm_source=chatgpt.com" target="_blank" rel="noopener">Expatica</a></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="linkLine">
+            Fonti: <a href="https://www.idealista.it/en/news/lifestyle-in-italy/2025/12/30/302436-national-public-holidays-in-italy-2026-full-calendar-and-long-weekends?utm_source=chatgpt.com" target="_blank" rel="noopener">Idealista</a> •
+            <a href="https://www.calendario-365.it/giorni-festivi/2026.html?utm_source=chatgpt.com" target="_blank" rel="noopener">calendario-365.it</a> •
+            <a href="https://www.caldana.it/blog-it/ponti-2026.html?utm_source=chatgpt.com" target="_blank" rel="noopener">caldana.it</a> •
+            <a href="https://www.timeanddate.com/holidays/italy/2026?utm_source=chatgpt.com" target="_blank" rel="noopener">timeanddate</a> •
+            <a href="https://www.expatica.com/it/lifestyle/holidays/italy-public-holidays-79470/?utm_source=chatgpt.com" target="_blank" rel="noopener">Expatica</a>
+          </div>
         </div>
       </div>
 
     </div>
 
-    <!-- ✅ FOTO FISSA ALLA FINE -->
+    <!-- FOTO FISSA ALLA FINE -->
     <div class="panel">
       <h3>📷 Foto</h3>
       <img class="belowImg" src="Immagine 2026-01-21 205031.png" alt="Immagine sotto al calendario">
@@ -764,7 +864,8 @@
   const ymd = (y,m,d) => `${y}-${pad(m)}-${pad(d)}`;
   const itMonth = (y,m) => new Date(y, m-1, 1).toLocaleString("it-IT",{month:"long", year:"numeric"});
   const DOW = ["Lun","Mar","Mer","Gio","Ven","Sab","Dom"];
-  const inRange = y => (y>=2026 && y<=2029);
+  const YEAR_MIN = 2026, YEAR_MAX = 2029;
+  const inRange = y => (y>=YEAR_MIN && y<=YEAR_MAX);
 
   // =========================
   // DOM
@@ -792,23 +893,23 @@
   const virtueName = document.getElementById("virtueName");
   const virtueDesc = document.getElementById("virtueDesc");
 
+  const monthEventsBox = document.getElementById("monthEvents");
+
   // =========================
-  // STATO CALENDARIO
+  // STATO
   // =========================
   let stateYear = 2026;
   let stateMonth = 1;
 
   // =========================
   // EVENTI (UNICA SORGENTE)
-  // → markers del calendario + countdown
+  // - Campo estivo (fisso)
+  // - Route (fisso)
+  // - Compleanno Simone (una sola volta nel countdown, ma segnato in calendario ogni anno)
   // =========================
-  const YEAR_MIN = 2026, YEAR_MAX = 2029;
-
   const BASE_EVENTS = [
-    { kind:"fixed", date:"2026-07-15", icon:"🔥", name:"Campo estivo" },
-    { kind:"fixed", date:"2026-08-24", icon:"🧭", name:"Route" },
-
-    // ✅ Compleanno Simone (ogni anno) -> 23 gennaio
+    { kind:"fixed",  date:"2026-07-15", icon:"🔥", name:"Campo estivo" },
+    { kind:"fixed",  date:"2026-08-24", icon:"🧭", name:"Route" },
     { kind:"annual", md:"01-23", icon:"🎂", name:"Compleanno di Simone", special:"simone" }
   ];
 
@@ -816,10 +917,10 @@
     const out = [];
     for(const e of BASE_EVENTS){
       if(e.kind === "fixed"){
-        out.push({ date: e.date, icon: e.icon, name: e.name, special: e.special || "" });
+        out.push({ date: e.date, icon: e.icon, name: e.name, special: e.special || "", kind: e.kind });
       }else if(e.kind === "annual"){
         for(let y=YEAR_MIN; y<=YEAR_MAX; y++){
-          out.push({ date: `${y}-${e.md}`, icon: e.icon, name: e.name, special: e.special || "" });
+          out.push({ date: `${y}-${e.md}`, icon: e.icon, name: e.name, special: e.special || "", kind: e.kind });
         }
       }
     }
@@ -829,21 +930,13 @@
 
   const EVENTS = buildEvents();
 
-  function eventsForDate(key){
-    return EVENTS.filter(e => e.date === key);
-  }
+  function eventsForDate(key){ return EVENTS.filter(e => e.date === key); }
   function markerForDate(key){
     const list = eventsForDate(key);
-    if(!list.length) return "";
-    // se più eventi nello stesso giorno: mostra il primo (oppure potresti concatenare)
-    return list[0].icon;
+    return list.length ? list[0].icon : "";
   }
-  function isSimoneDay(key){
-    return eventsForDate(key).some(e => e.special === "simone");
-  }
-  function isEventDay(key){
-    return eventsForDate(key).length > 0;
-  }
+  function isEventDay(key){ return eventsForDate(key).length > 0; }
+  function isSimoneDay(key){ return eventsForDate(key).some(e => e.special === "simone"); }
 
   // =========================
   // GIORNATE A TEMA
@@ -916,7 +1009,7 @@
   // CALENDARIO - CALCOLI
   // =========================
   function firstDayOffset(y,m){
-    const js = new Date(y, m-1, 1).getDay();
+    const js = new Date(y, m-1, 1).getDay(); // 0 dom..6 sab
     return (js + 6) % 7; // lun=0..dom=6
   }
   function daysInMonth(y,m){ return new Date(y, m, 0).getDate(); }
@@ -998,6 +1091,8 @@
       cells++;
       nextDay++;
     }
+
+    renderMonthEventsList();
   }
 
   function makeDayCell(y,m,d,key,isOff,todayKey){
@@ -1015,21 +1110,56 @@
 
     const marker = markerForDate(key);
     const evs = eventsForDate(key);
-    const title = evs.length ? evs.map(e=>`${e.icon} ${e.name}`).join(" • ") : "";
-
-    div.title = title;
+    div.title = evs.length ? evs.map(e=>`${e.icon} ${e.name}`).join(" • ") : "";
 
     div.innerHTML = `<div class="n">${d}</div>${marker ? `<div class="marker">${marker}</div>` : ""}`;
+    div.dataset.key = key; // utile per highlight
     return div;
+  }
+
+  // =========================
+  // EVENTI DEL MESE (così li vedi subito)
+  // =========================
+  function renderMonthEventsList(){
+    monthEventsBox.innerHTML = "";
+
+    const monthKey = `${stateYear}-${pad(stateMonth)}`;
+    const list = EVENTS
+      .filter(e => e.date.startsWith(monthKey))
+      .sort((a,b)=> a.date.localeCompare(b.date));
+
+    if(!list.length){
+      monthEventsBox.innerHTML = `<div class="monthEventsLine">
+        <div class="monthEventsIco">🌙</div>
+        <div class="monthEventsTxt">Nessun evento in questo mese</div>
+      </div>`;
+      return;
+    }
+
+    list.forEach(e=>{
+      const [y,m,d] = e.date.split("-").map(n=>parseInt(n,10));
+      const dt = new Date(y, m-1, d);
+      const label = dt.toLocaleDateString("it-IT",{weekday:"long", day:"2-digit", month:"long", year:"numeric"});
+      const row = document.createElement("div");
+      row.className = "monthEventsLine";
+      row.innerHTML = `
+        <div class="monthEventsIco">${e.icon}</div>
+        <div class="monthEventsTxt">
+          <b>${e.name}</b>
+          <div class="monthEventsSub">${label}</div>
+        </div>
+      `;
+      monthEventsBox.appendChild(row);
+    });
   }
 
   // =========================
   // ACCORDION
   // =========================
   function setupAccordion(){
-    document.querySelectorAll(".accBtn").forEach(btn=>{
+    document.querySelectorAll(".accItem").forEach(item=>{
+      const btn = item.querySelector(".accBtn");
       btn.addEventListener("click", ()=>{
-        const item = btn.closest(".accItem");
         const isOpen = item.classList.contains("open");
         item.classList.toggle("open", !isOpen);
         btn.setAttribute("aria-expanded", String(!isOpen));
@@ -1041,9 +1171,9 @@
   }
 
   // =========================
-  // DIARIO (localStorage)
+  // DIARIO
   // =========================
-  const JOURNAL_KEY = "scout_thoughts_v2";
+  const JOURNAL_KEY = "scout_thoughts_v3";
 
   function loadJournal(){
     const saved = localStorage.getItem(JOURNAL_KEY);
@@ -1102,54 +1232,60 @@
   }
 
   // =========================
-  // COUNTDOWN: derivato dagli eventi del calendario
+  // COUNTDOWN
+  // ✅ Non ripete "Compleanno di Simone" per tutti gli anni:
+  //    mostra solo la prossima data utile
+  // ✅ Clic sul countdown -> va al mese giusto e lampeggia sul giorno
   // =========================
   function startOfDay(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
-
   function diffDaysFromToday(dateObj){
-    const now = new Date();
-    const A = startOfDay(now);
+    const A = startOfDay(new Date());
     const B = startOfDay(dateObj);
     return Math.round((B - A) / (1000*60*60*24));
+  }
+
+  function parseEventDate(e){
+    const [y,m,d] = e.date.split("-").map(n=>parseInt(n,10));
+    return new Date(y, m-1, d, 0, 0, 0, 0);
   }
 
   function renderCountdown(){
     countCards.innerHTML = "";
 
-    // eventi presenti nel calendario (unica sorgente)
-    if(!EVENTS.length){
-      const card = document.createElement("div");
-      card.className="card";
-      card.innerHTML = `<div class="kicker">⏳ Countdown</div>
-        <p class="big">Nessun evento nel calendario</p>`;
-      countCards.appendChild(card);
-      return;
-    }
-
     const now = new Date();
-    const list = EVENTS
+    const now0 = startOfDay(now);
+
+    // crea lista futura
+    const future = EVENTS
       .map(e=>{
-        const [y,m,d] = e.date.split("-").map(n=>parseInt(n,10));
-        const dateObj = new Date(y, m-1, d, 0, 0, 0, 0);
+        const dateObj = parseEventDate(e);
         return { ...e, dateObj, diff: diffDaysFromToday(dateObj) };
       })
-      .filter(e=> e.dateObj >= startOfDay(now)) // da oggi in poi
-      .sort((a,b)=> a.dateObj - b.dateObj)
-      .slice(0,6);
+      .filter(e => e.dateObj >= now0)
+      .sort((a,b)=> a.dateObj - b.dateObj);
 
-    if(list.length === 0){
+    if(!future.length){
       const card = document.createElement("div");
       card.className="card";
-      card.innerHTML = `<div class="kicker">⏳ Countdown</div>
-        <p class="big">Nessun evento futuro</p>`;
+      card.innerHTML = `<div class="kicker">⏳ Countdown</div><p class="big">Nessun evento futuro</p>`;
       countCards.appendChild(card);
       return;
     }
 
-    list.forEach(e=>{
+    // ✅ dedup: per ogni "name" prendiamo solo la prima data (la più vicina)
+    const picked = [];
+    const seen = new Set();
+    for(const e of future){
+      const key = e.name; // qui dedup per nome (Compleanno di Simone appare una volta)
+      if(seen.has(key)) continue;
+      seen.add(key);
+      picked.push(e);
+      if(picked.length >= 6) break;
+    }
+
+    picked.forEach(e=>{
       const when = e.dateObj.toLocaleDateString("it-IT", {day:"2-digit", month:"long", year:"numeric"});
 
-      // testo “manca 1 giorno / mancano X giorni / è oggi”
       let msg = `Mancano ${e.diff} giorni a ${e.name}`;
       if(e.diff === 0) msg = `È oggi: ${e.name}!`;
       if(e.diff === 1) msg = `Manca 1 giorno a ${e.name}`;
@@ -1161,9 +1297,35 @@
         <p class="big">${msg}</p>
         <p class="small">📅 ${when}</p>
         <p class="redNote">🔴 Segnato sul calendario</p>
+        <button class="miniBtn" type="button">Vai sul calendario</button>
       `;
+
+      card.querySelector(".miniBtn").addEventListener("click", ()=>{
+        jumpToEvent(e.date);
+      });
+
       countCards.appendChild(card);
     });
+  }
+
+  function jumpToEvent(dateStr){
+    const [y,m,d] = dateStr.split("-").map(n=>parseInt(n,10));
+
+    // cambia mese/anno
+    stateYear = Math.min(Math.max(y, YEAR_MIN), YEAR_MAX);
+    stateMonth = m;
+    renderCalendar();
+
+    // scorri al calendario
+    document.getElementById("stage").scrollIntoView({behavior:"smooth", block:"start"});
+
+    // lampeggia il giorno
+    const key = dateStr;
+    const cell = calEl.querySelector(`[data-key="${key}"]`);
+    if(cell){
+      cell.classList.add("jumpFlash");
+      setTimeout(()=> cell.classList.remove("jumpFlash"), 5200);
+    }
   }
 
   // =========================
@@ -1204,16 +1366,19 @@
     if(!inRange(stateYear)){ stateYear=YEAR_MIN; stateMonth=1; }
     renderCalendar();
   });
+
   document.getElementById("next").addEventListener("click", ()=>{
     stateMonth++;
     if(stateMonth>12){ stateMonth=1; stateYear++; }
     if(!inRange(stateYear)){ stateYear=YEAR_MAX; stateMonth=12; }
     renderCalendar();
   });
+
   yearSel.addEventListener("change", ()=>{
     stateYear = parseInt(yearSel.value,10);
     renderCalendar();
   });
+
   document.getElementById("todayBtn").addEventListener("click", ()=>{
     const t = new Date();
     if(t.getFullYear()<YEAR_MIN || t.getFullYear()>YEAR_MAX){ stateYear=YEAR_MIN; stateMonth=1; }
@@ -1221,7 +1386,7 @@
     renderCalendar();
   });
 
-  // Swipe mese su mobile
+  // swipe mobile
   const stage = document.getElementById("stage");
   let touchStartX = null;
   stage.addEventListener("touchstart",(e)=>{ touchStartX = e.touches[0].clientX; }, {passive:true});
@@ -1275,9 +1440,7 @@
 
   window.addEventListener("resize", ()=>{ spawnLeaves(); spawnFireflies(); });
 
-  // =========================
-  // VENTO: reagisce allo scroll
-  // =========================
+  // vento su scroll
   let lastY = window.scrollY;
   let lastT = performance.now();
   let wind = 0;
