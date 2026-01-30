@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Calendario Scout nel Bosco (2026–2029) — Compleanni</title>
 
+<!-- ✅ PWA + Notifiche -->
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#08190e">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
@@ -34,6 +35,7 @@
     --fliesOpacity: .75;
     --windStrength: 0;
 
+    /* parallax mouse */
     --mx: 0;
     --my: 0;
   }
@@ -47,12 +49,15 @@
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
     overflow-x:hidden;
     background-color:#08190e;
+
+    /* ✅ anti “verde sotto” su mobile */
     background-image: var(--bgUrl);
     background-size: cover;
     background-position:center;
     background-repeat:no-repeat;
   }
 
+  /* ✅ SFONDO fisso (con altezza dinamica per iOS) */
   .bg{
     position:fixed; top:0; left:0;
     width:100vw;
@@ -85,6 +90,7 @@
   }
   @keyframes overlayBreath{ 0%,100%{ opacity:1; } 50%{ opacity:.92; } }
 
+  /* AURORA layer */
   .aurora{
     position: fixed; inset:-80px;
     pointer-events:none;
@@ -104,6 +110,7 @@
     to{ opacity:.78; filter: blur(22px); }
   }
 
+  /* NEBBIA + VENTO */
   .wind{
     position:fixed; inset:-120px;
     pointer-events:none;
@@ -120,6 +127,7 @@
   }
   @keyframes fogDrift{ from{ filter: blur(18px);} to{ filter: blur(22px);} }
 
+  /* FOGLIE */
   .leaves{ position:fixed; inset:0; pointer-events:none; z-index:-1; overflow:hidden; }
   .leafFall{
     position:absolute; top:-80px;
@@ -139,6 +147,7 @@
   }
   @keyframes leafSpin{ 0%{ rotate:0deg; } 50%{ rotate:140deg; } 100%{ rotate:300deg; } }
 
+  /* LUCCIOLE */
   .fireflies{ position:fixed; inset:0; pointer-events:none; z-index:-1; opacity:var(--fliesOpacity); }
   .firefly{
     position:absolute; width:6px; height:6px; border-radius:50%;
@@ -154,6 +163,7 @@
     100%{ transform: translate(calc(var(--dx) + var(--windStrength) * 80px), var(--dy)) scale(1.25); opacity:0; }
   }
 
+  /* SCINTILLE */
   .sparks{ position:fixed; inset:0; pointer-events:none; z-index:-1; }
   .spark{
     position:absolute;
@@ -170,6 +180,7 @@
     100%{ transform: translate3d(var(--dx), calc(-140px - var(--dy)), 0) scale(1.2); opacity:0; }
   }
 
+  /* SHOOTING STARS */
   .stars{ position:fixed; inset:0; pointer-events:none; z-index:-2; overflow:hidden; }
   .star{
     position:absolute;
@@ -187,6 +198,7 @@
     100%{ opacity:0; transform: translate3d(var(--dx), var(--dy), 0) scale(1.1); }
   }
 
+  /* CONFETTI (compleanni) */
   .confetti{ position:fixed; inset:0; pointer-events:none; z-index:400; overflow:hidden; }
   .conf{
     position:absolute; top:-10px;
@@ -203,6 +215,7 @@
     100%{ transform: translate3d(var(--dx), 110vh, 0) rotate(680deg); opacity:0; }
   }
 
+  /* INTRO */
   .intro{
     position:fixed; inset:0;
     display:flex; align-items:center; justify-content:center;
@@ -256,6 +269,7 @@
   @keyframes shimmer{ 0%,100%{ opacity:.25; transform: translateX(-40%); } 50%{ opacity:.55; transform: translateX(40%); } }
   @keyframes pulse{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-2px); } }
 
+  /* LAYOUT */
   .wrap{ position:relative; z-index:2; max-width:1080px; margin:22px auto 46px; padding:14px; }
   .topbar{
     display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
@@ -264,7 +278,6 @@
     animation: floatPanel 7s ease-in-out infinite;
   }
   @keyframes floatPanel{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-2px); } }
-
   .title{ display:flex; gap:10px; align-items:center; font-weight:900; }
   .controls{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
   button, select{
@@ -340,6 +353,7 @@
     50%{ transform: translateY(-2px) rotate(-2deg); }
   }
 
+  /* Aura giorno compleanno */
   .eventDay::before{
     content:"";
     position:absolute; inset:-40px;
@@ -368,6 +382,7 @@
     .monthTitle{ font-size:16px; }
   }
 
+  /* Riga eventi del mese sotto calendario */
   .monthEvents{
     margin-top: 10px;
     padding: 10px 12px;
@@ -392,6 +407,7 @@
   .monthEventsTxt{ font-size:13px; color: rgba(238,247,239,.88); }
   .monthEventsSub{ font-size:12px; color: var(--muted); margin-top:2px; }
 
+  /* ACCORDION */
   .accordion{ margin-top:14px; display:flex; flex-direction:column; gap:12px; }
   .accItem{
     background: var(--panel);
@@ -488,6 +504,7 @@
   }
   @keyframes redPulse{ 0%,100%{ opacity:.78; } 50%{ opacity:1; } }
 
+  /* DIARIO */
   .journalBox{
     width:100%;
     border:1px solid rgba(255,255,255,.18);
@@ -503,21 +520,49 @@
   }
   .journalBox:focus{ box-shadow: 0 0 0 3px rgba(124,255,138,.22); filter: brightness(1.05); }
 
+  /* NODO */
   .knotBox{ display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start; }
   .knotImg{
-    flex: 0 0 220px;
+    flex: 0 0 260px;
     background: rgba(0,0,0,.22);
     border:1px solid rgba(255,255,255,.14);
     border-radius: 16px;
     padding: 10px;
-    box-shadow: 0 14px 30px rgba(0,0,0,.25);
     overflow:hidden;
+    box-shadow: 0 14px 30px rgba(0,0,0,.25);
   }
-  .knotImg svg{ width:100%; height:auto; display:block; }
+  .knotImg img{
+    width:100%;
+    height: 180px;
+    object-fit: cover;
+    display:block;
+    border-radius: 12px;
+    border:1px solid rgba(255,255,255,.10);
+    background: rgba(0,0,0,.18);
+  }
+  .knotImgCap{
+    margin-top:8px;
+    font-weight:900;
+    font-size:13px;
+    color: rgba(238,247,239,.92);
+  }
+  .knotArt{
+    margin-top:10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    white-space: pre;
+    line-height: 1.15;
+    font-size: 12px;
+    color: rgba(238,247,239,.86);
+    padding: 10px;
+    border-radius: 12px;
+    background: rgba(0,0,0,.16);
+    border:1px solid rgba(255,255,255,.10);
+  }
   .knotText{ flex: 1 1 260px; }
   .knotName{ font-weight:900; font-size:16px; margin:0; }
   .knotDesc{ margin:8px 0 0; color: var(--muted); }
 
+  /* BUSSOLA */
   .compassWrap{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
   .compass{
     width:140px; height:140px;
@@ -558,6 +603,7 @@
   .virtueName{ margin:0; font-weight:900; font-size:16px; }
   .virtueDesc{ margin:8px 0 0; color: var(--muted); }
 
+  /* TIMELINE */
   .timeline{
     display:flex; gap:12px;
     overflow-x:auto;
@@ -577,6 +623,7 @@
   .timeYear{ font-weight:900; font-size:16px; margin:0; }
   .timeText{ margin:8px 0 0; color: var(--muted); font-size:13px; }
 
+  /* MODAL LEGGE SCOUT */
   .modalBackdrop{
     position:fixed; inset:0;
     background: rgba(0,0,0,.60);
@@ -620,6 +667,7 @@
   .ico{ font-size: 22px; line-height:1; }
   .sub{ color: rgba(238,247,239,.85); font-size: 13px; margin:2px 0 0; }
 
+  /* FOTO (finestra apribile) */
   details.photoWin{
     margin-top:14px;
     background: var(--panel);
@@ -683,6 +731,7 @@
     display:block;
     background: rgba(0,0,0,.22);
   }
+  .thumb video{ outline:none; }
 
   .thumbCap{
     padding:10px 12px;
@@ -693,6 +742,7 @@
   }
   .thumbCap small{ display:block; font-weight:600; color: rgba(238,247,239,.72); margin-top:4px; }
 
+  /* LIGHTBOX */
   .lightbox{
     position:fixed; inset:0;
     background: rgba(0,0,0,.72);
@@ -738,6 +788,7 @@
     background: rgba(0,0,0,.20);
   }
 
+  /* FOOTER */
   .footerWindow{
     margin-top:14px;
     border-radius: 18px;
@@ -760,6 +811,7 @@
     text-transform: uppercase;
   }
 
+  /* ✅ TOAST NOTIFICA (sempre visibile nel sito) */
   .toastWrap{
     position: fixed;
     left: 50%;
@@ -813,9 +865,10 @@
 
   <div class="confetti" id="confetti"></div>
 
+  <!-- INTRO -->
   <div class="intro" id="intro">
     <div class="introRing"></div>
-    <button class="enterBtn" id="enterBtn">ENTRA</button>
+    <button class="enterBtn" id="enterBtn" type="button">ENTRA</button>
   </div>
 
   <div class="wrap" id="app" style="opacity:0; transform: translateY(8px); transition: opacity .5s ease, transform .5s ease;">
@@ -829,9 +882,9 @@
       </div>
 
       <div class="controls">
-        <button id="prev">⬅️</button>
+        <button id="prev" type="button">⬅️</button>
         <div class="monthTitle" id="monthTitle">—</div>
-        <button id="next">➡️</button>
+        <button id="next" type="button">➡️</button>
 
         <select id="yearSel">
           <option>2026</option>
@@ -840,7 +893,7 @@
           <option>2029</option>
         </select>
 
-        <button id="todayBtn">Oggi</button>
+        <button id="todayBtn" type="button">Oggi</button>
       </div>
     </div>
 
@@ -854,8 +907,8 @@
       </div>
     </div>
 
+    <!-- SEZIONI -->
     <div class="accordion" id="accordion">
-
       <div class="accItem open" id="accCountdown">
         <button class="accBtn" type="button" data-acc="accCountdown">
           <div class="accLeft">
@@ -898,9 +951,11 @@
         <div class="accBody">
           <div class="knotBox">
             <div class="knotImg" id="knotImg"></div>
+
             <div class="knotText">
               <p class="knotName" id="knotName">—</p>
               <p class="knotDesc" id="knotDesc">—</p>
+              <div class="knotArt" id="knotArt" aria-label="Schema nodo">—</div>
             </div>
           </div>
         </div>
@@ -955,6 +1010,7 @@
       </div>
     </div>
 
+    <!-- FOTO -->
     <details class="photoWin" id="photoWin">
       <summary>
         <div class="sumLeft">
@@ -966,7 +1022,7 @@
       <div class="galleryWrap">
         <div class="galleryGrid" id="galleryGrid"></div>
         <p class="muted" style="margin:10px 0 0;">
-          Nota: i file <b>.HEIC</b> non sempre si vedono nel browser. Qui usiamo JPG/MP4.
+          Nota: i file <b>.HEIC</b> non sempre si vedono nel browser. Qui ci sono JPG/MP4 quindi ok.
         </p>
       </div>
     </details>
@@ -976,11 +1032,12 @@
     </div>
   </div>
 
+  <!-- MODAL LEGGI SCOUT -->
   <div class="modalBackdrop" id="lawsBackdrop">
     <div class="modal">
       <div class="modalHeader">
         <h3 class="modalTitle">📜 Legge Scout</h3>
-        <button id="lawsClose">Chiudi ✖</button>
+        <button id="lawsClose" type="button">Chiudi ✖</button>
       </div>
       <div class="modalBody">
         <div class="line"><div class="ico">1️⃣</div><div><b>Lo scout è leale.</b><div class="sub">Dice la verità e mantiene la parola data.</div></div></div>
@@ -994,31 +1051,31 @@
     </div>
   </div>
 
+  <!-- LIGHTBOX FOTO -->
   <div class="lightbox" id="lightbox">
     <div class="lbBox">
       <div class="lbTop">
         <div class="lbTitle" id="lbTitle">Media</div>
-        <button class="lbClose" id="lbClose">Chiudi ✖</button>
+        <button class="lbClose" id="lbClose" type="button">Chiudi ✖</button>
       </div>
       <div id="lbMediaHost"></div>
     </div>
   </div>
 
+  <!-- TOAST (notifiche nel sito) -->
   <div class="toastWrap" id="toastWrap"></div>
 
 <script>
-  // ✅ Service Worker: non blocca mai ENTRA
+  // ✅ registra il Service Worker (necessario per PWA + notifiche push)
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      const isSecure =
-        location.protocol === "https:" ||
-        location.hostname === "localhost" ||
-        location.hostname === "127.0.0.1";
-      if(!isSecure) return;
-      navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
+      navigator.serviceWorker.register("./service-worker.js").catch(console.error);
     });
   }
 
+  // =========================
+  // UTIL
+  // =========================
   const pad = n => String(n).padStart(2,"0");
   const ymd = (y,m,d) => `${y}-${pad(m)}-${pad(d)}`;
   const itMonth = (y,m) => new Date(y, m-1, 1).toLocaleString("it-IT",{month:"long", year:"numeric"});
@@ -1031,16 +1088,15 @@
     const B = new Date(b.getFullYear(), b.getMonth(), b.getDate());
     return Math.round((B - A) / (1000*60*60*24));
   }
+
   function dateToObj(iso){
     const [y,m,d] = iso.split("-").map(n=>parseInt(n,10));
     return new Date(y, m-1, d);
   }
-  function firstDayOffset(y,m){
-    const js = new Date(y, m-1, 1).getDay();
-    return (js + 6) % 7;
-  }
-  function daysInMonth(y,m){ return new Date(y, m, 0).getDate(); }
 
+  // =========================
+  // DOM
+  // =========================
   const intro = document.getElementById("intro");
   const enterBtn = document.getElementById("enterBtn");
   const app = document.getElementById("app");
@@ -1056,6 +1112,7 @@
   const journalStatus = document.getElementById("journalStatus");
 
   const knotImg = document.getElementById("knotImg");
+  const knotArt = document.getElementById("knotArt");
   const knotName = document.getElementById("knotName");
   const knotDesc = document.getElementById("knotDesc");
 
@@ -1077,123 +1134,129 @@
   const confettiBox = document.getElementById("confetti");
   const timelineEl = document.getElementById("timeline");
 
+  // =========================
+  // STATO CALENDARIO
+  // =========================
   let stateYear = 2026;
   let stateMonth = 1;
 
-  // ✅ COMPLEANNI
+  // =========================
+  // COMPLEANNI (AGGIORNATI)
+  // =========================
   const BIRTHDAYS = [
     { id:"mariateresa", name:"Mariateresa", day:7,  month:1,  icon:"🎂" },
     { id:"clara",       name:"Clara",       day:19, month:1,  icon:"🎂" },
     { id:"cristian",    name:"Cristian",    day:28, month:1,  icon:"🎂" },
+
     { id:"ambra",       name:"Ambra",       day:28, month:2,  icon:"🎂" },
+
     { id:"arta",        name:"Arta",        day:22, month:3,  icon:"🎂" },
     { id:"ginevra",     name:"Ginevra Di Buono", day:22, month:3, icon:"🎂" },
     { id:"greta",       name:"Greta Iorio", day:28, month:3,  icon:"🎂" },
+
     { id:"eliana",      name:"Eliana Alfieri", day:30, month:4, icon:"🎂" },
+
     { id:"rudi",        name:"Rudi",        day:11, month:5,  icon:"🎂" },
     { id:"annalisa",    name:"Annalisa",    day:22, month:5,  icon:"🎂" },
+
     { id:"alessia",     name:"Alessia Di Michele", day:12, month:6, icon:"🎂" },
     { id:"lorenzo",     name:"Lorenzo",     day:18, month:6,  icon:"🎂" },
     { id:"paolo",       name:"Paolo Iannetta", day:20, month:6, icon:"🎂" },
+
     { id:"pasquale",    name:"Pasquale Petrone", day:1, month:7, icon:"🎂" },
     { id:"loris",       name:"Loris",       day:16, month:7,  icon:"🎂" },
+
     { id:"vittorio",    name:"Vittorio",    day:20, month:8,  icon:"🎂" },
+
     { id:"gabriele",    name:"Gabriele Pio Ciocca", day:13, month:9, icon:"🎂" },
+
     { id:"sofia",       name:"Sofia",       day:31, month:10, icon:"🎂" },
-    { id:"giulia",      name:"Giulia Leone", day:15, month:11, icon:"🎂" },
+
     { id:"giuseppe",    name:"Giuseppe",    day:18, month:11, icon:"🎂" },
-    { id:"simone",      name:"Simone",      day:18, month:12, icon:"🎂" },
-    { id:"chiara",      name:"Chiara",      day:22, month:12, icon:"🎂" }
+    { id:"giulia",      name:"Giulia Leone",day:15, month:11, icon:"🎂" },
+
+    { id:"chiara",      name:"Chiara",      day:22, month:12, icon:"🎂" },
+    { id:"simone",      name:"Simone",      day:18, month:12, icon:"🎂" }
   ];
 
   function getAllBirthdaysForYear(year){
     return BIRTHDAYS.map(b=>{
       const d = new Date(year, b.month-1, b.day);
-      return { id:b.id, icon:b.icon, name:b.name, kind:"birthday", dateObj:d, date: ymd(year, b.month, b.day) };
+      return {
+        id: b.id,
+        icon: b.icon,
+        name: b.name,
+        kind: "birthday",
+        dateObj: d,
+        date: ymd(year, b.month, b.day)
+      };
     });
   }
 
-  // ✅ NODI (SVG)
-  function knotSvg(kind){
-    const stroke1 = "rgba(255,210,77,.92)";
-    const stroke2 = "rgba(124,255,138,.82)";
-    let p1="", p2="", ring=false;
-
-    switch(kind){
-      case "piano":
-        p1="M30 70 C60 20, 120 20, 150 70 C180 120, 240 120, 270 70";
-        p2="M30 90 C70 140, 110 140, 150 90 C190 40, 230 40, 270 90";
-        break;
-      case "gassa":
-        p1="M70 130 C40 90, 70 40, 130 55 C170 65, 155 115, 115 110 C90 107, 78 92, 82 75";
-        p2="M145 120 C185 150, 245 135, 255 95 C265 55, 228 35, 190 45 C162 52, 150 75, 160 95";
-        break;
-      case "parlato":
-        ring=true;
-        p1="M78 35 C52 72, 52 118, 78 155";
-        p2="M112 35 C142 70, 142 120, 112 155";
-        break;
-      case "otto":
-        p1="M85 55 C55 55, 52 98, 85 106 C118 115, 118 150, 85 150 C55 150, 52 112, 82 106";
-        p2="M215 55 C245 55, 248 98, 215 106 C182 115, 182 150, 215 150 C245 150, 248 112, 218 106";
-        break;
-      case "prusik":
-        ring=true;
-        p1="M78 40 C60 80, 60 120, 78 160";
-        p2="M222 40 C240 80, 240 120, 222 160";
-        break;
-      case "savoia":
-        p1="M40 90 C80 40, 120 40, 160 90 C200 140, 240 140, 280 90";
-        p2="M40 110 C85 160, 120 160, 160 110 C200 60, 235 60, 280 110";
-        break;
-      case "bandiera":
-        p1="M35 120 C80 70, 120 70, 150 120 C180 170, 220 170, 265 120";
-        p2="M35 70 C80 20, 120 20, 150 70 C180 120, 220 120, 265 70";
-        break;
-      case "pescatore":
-        p1="M40 95 C90 40, 140 40, 155 90 C170 140, 220 140, 260 95";
-        p2="M40 115 C95 170, 140 170, 155 120 C170 70, 225 70, 260 115";
-        break;
-      case "barcaiolo":
-        p1="M35 80 C90 30, 130 30, 150 80 C170 130, 210 130, 265 80";
-        p2="M35 110 C90 160, 130 160, 150 110 C170 60, 210 60, 265 110";
-        break;
-      default:
-        p1="M30 80 C80 20, 120 20, 150 80 C180 140, 240 140, 270 80";
-        p2="M30 100 C80 160, 120 160, 150 100 C180 40, 240 40, 270 100";
-    }
-
-    const ringEl = ring ? `<circle cx="150" cy="95" r="42" fill="none" stroke="rgba(255,255,255,.20)" stroke-width="10"/>` : "";
-
-    return `
-    <svg viewBox="0 0 300 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Nodo">
-      <defs>
-        <filter id="g" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="3" result="b"/>
-          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-      </defs>
-      <rect x="0" y="0" width="300" height="190" rx="18" fill="rgba(0,0,0,.18)"/>
-      <path d="${p1}" fill="none" stroke="rgba(255,210,77,.92)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" filter="url(#g)"/>
-      <path d="${p2}" fill="none" stroke="rgba(124,255,138,.82)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" filter="url(#g)"/>
-      ${ringEl}
-      <circle cx="38" cy="78" r="6" fill="rgba(255,210,77,.92)"/>
-      <circle cx="262" cy="112" r="6" fill="rgba(124,255,138,.82)"/>
-    </svg>`;
-  }
-
+  // =========================
+  // NODI + IMMAGINI (AGGIUNTA RICHIESTA)
+  // Metti questi file nella stessa cartella dell'HTML:
+  // - ChatGPT Image 27 gen 2026, 17_09_38.png  (Nodo parlato)
+  // - ChatGPT Image 27 gen 2026, 17_09_46.png  (Nodo savoia)
+  // - ChatGPT Image 27 gen 2026, 17_09_36.png  (Nodo piano)
+  // - ChatGPT Image 27 gen 2026, 17_15_10.png  (Gassa d’amante / Prusik / Legatura quadra)
+  // - ChatGPT Image 27 gen 2026, 17_23_01.png  (Nodo bandiera)
+  // =========================
   const KNOTS = [
-    { name:"Nodo piano",     svg:knotSvg("piano"),     desc:"Unisce due corde simili. Semplice, ma va fatto bene." },
-    { name:"Gassa d’amante", svg:knotSvg("gassa"),     desc:"Cappio fisso che non scorre. Un classico indispensabile." },
-    { name:"Nodo parlato",   svg:knotSvg("parlato"),   desc:"Per fissare una corda a un palo. Molto usato in campo." },
-    { name:"Nodo a otto",    svg:knotSvg("otto"),      desc:"Nodo di arresto: sicuro e facilissimo da controllare." },
-    { name:"Prusik",         svg:knotSvg("prusik"),    desc:"Autobloccante: scorre se lo spingi, si blocca se lo carichi." },
-    { name:"Nodo savoia",    svg:knotSvg("savoia"),    desc:"Accorcia una corda o isola un tratto rovinato." },
-    { name:"Nodo bandiera",  svg:knotSvg("bandiera"),  desc:"Ottimo per unire corde diverse o fare una giunzione robusta." },
-    { name:"Nodo pescatore", svg:knotSvg("pescatore"), desc:"Unione molto tenace, perfetta per corde sottili o scivolose." },
-    { name:"Nodo barcaiolo", svg:knotSvg("barcaiolo"), desc:"Fissaggio rapido: utile quando devi regolare al volo." }
+    {
+      id:"nodo_savoia",
+      name:"Nodo Savoia (nodo dell’amicizia scout)",
+      img:"ChatGPT Image 27 gen 2026, 17_09_46.png",
+      art:`   __\n  /  \\__\n  \\__/  \\\n     \\__/`,
+      desc:"Nodo simbolico scout (amicizia). Bello da mostrare e ricordare."
+    },
+    {
+      id:"nodo_parlato",
+      name:"Nodo parlato",
+      img:"ChatGPT Image 27 gen 2026, 17_09_38.png",
+      art:`|\\      /|\n| \\____/ |\n|  ____  |\n| /    \\ |\n|/      \\|`,
+      desc:"Per fissare una corda a un palo. Molto usato in campo e nei lavori di legatura."
+    },
+    {
+      id:"nodo_piano",
+      name:"Nodo piano (o nodo diritto)",
+      img:"ChatGPT Image 27 gen 2026, 17_09_36.png",
+      art:`\\ \\     / /\n \\ \\   / /\n  \\ \\_/ /\n   / _ \\\n  / / \\ \\\n /_/   \\_\\`,
+      desc:"Unisce due corde simili. Semplice ma va fatto bene (occhio al verso!)."
+    },
+    {
+      id:"gassa_damante",
+      name:"Gassa d’amante",
+      img:"ChatGPT Image 27 gen 2026, 17_15_10.png",
+      art:`   ____ \n  / __ \\__\n / /  \\___)\n \\ \\__\n  \\___\\\n (____)`,
+      desc:"Cappio fisso che non scorre. Utilissimo quando ti serve un anello sicuro."
+    },
+    {
+      id:"prusik",
+      name:"Nodo Prusik",
+      img:"ChatGPT Image 27 gen 2026, 17_15_10.png",
+      art:`(====)\n (==)\n  ()`,
+      desc:"Nodo autobloccante su corda. Si usa in progressione/recupero con grande attenzione."
+    },
+    {
+      id:"legatura_quadra",
+      name:"Legatura quadra",
+      img:"ChatGPT Image 27 gen 2026, 17_15_10.png",
+      art:`|\\  /|\n| \\/ |\n| /\\ |\n|/  \\|`,
+      desc:"Per unire due pali a 90°. Classica per costruzioni di campo."
+    },
+    {
+      id:"nodo_bandiera",
+      name:"Nodo bandiera",
+      img:"ChatGPT Image 27 gen 2026, 17_23_01.png",
+      art:`\\____\n     \\\n_____/`,
+      desc:"Per unire due corde anche diverse. Tieni ben serrato e controlla sempre."
+    }
   ];
 
+  // =========================
+  // BUSSOLA
+  // =========================
   const VIRTUES = [
     { name:"Coraggio", desc:"Fare la cosa giusta anche quando hai paura." },
     { name:"Aiuto", desc:"Dare una mano senza aspettarsi niente in cambio." },
@@ -1202,6 +1265,9 @@
     { name:"Servizio", desc:"Mettere il bene comune davanti alla comodità personale." }
   ];
 
+  // =========================
+  // TIMELINE
+  // =========================
   function buildTimeline(){
     const items = [
       { year:"1920", text:"1° World Scout Jamboree — Olympia, Londra (30 luglio–8 agosto)." },
@@ -1212,6 +1278,7 @@
       { year:"2023", text:"Jamboree — Corea del Sud (Saemangeum)." },
       { year:"2027", text:"Jamboree — Polonia (Gdańsk), 30 luglio–8 agosto." }
     ];
+
     timelineEl.innerHTML = "";
     items.forEach(x=>{
       const div = document.createElement("div");
@@ -1221,6 +1288,18 @@
     });
   }
 
+  // =========================
+  // CALENDARIO - CALCOLI
+  // =========================
+  function firstDayOffset(y,m){
+    const js = new Date(y, m-1, 1).getDay(); // 0 dom..6 sab
+    return (js + 6) % 7; // lun=0..dom=6
+  }
+  function daysInMonth(y,m){ return new Date(y, m, 0).getDate(); }
+
+  // =========================
+  // TEMA giorno/notte
+  // =========================
   function setTheme(){
     const m = stateMonth;
     const hour = new Date().getHours();
@@ -1236,6 +1315,9 @@
     document.documentElement.style.setProperty("--fliesOpacity", night ? ".95" : ".55");
   }
 
+  // =========================
+  // EVENTI (mappa compleanni)
+  // =========================
   function birthdaysByKeyForCurrentView(){
     const list = getAllBirthdaysForYear(stateYear);
     const map = new Map();
@@ -1250,9 +1332,13 @@
   function markerForDate(key, eventMap){
     const evs = eventMap.get(key);
     if(!evs || !evs.length) return "";
-    return evs.slice(0,2).map(x=>x.icon).join("");
+    const icons = evs.slice(0,2).map(x=>x.icon).join("");
+    return icons;
   }
 
+  // =========================
+  // RENDER DOW
+  // =========================
   function renderDOW(){
     dowEl.innerHTML = "";
     DOW.forEach(d=>{
@@ -1263,6 +1349,9 @@
     });
   }
 
+  // =========================
+  // RENDER CALENDARIO
+  // =========================
   function renderCalendar(){
     if(!inRange(stateYear)){ stateYear=YEAR_MIN; stateMonth=1; }
     setTheme();
@@ -1338,19 +1427,23 @@
     return div;
   }
 
+  // =========================
+  // LISTA COMPLEANNI DEL MESE
+  // =========================
   function renderMonthEventsList(eventMap){
     monthEventsBox.innerHTML = "";
 
     const dim = daysInMonth(stateYear, stateMonth);
-    const items = [];
+    const keys = [];
+    for(let d=1; d<=dim; d++) keys.push(ymd(stateYear, stateMonth, d));
 
-    for(let d=1; d<=dim; d++){
-      const k = ymd(stateYear, stateMonth, d);
+    const items = [];
+    keys.forEach(k=>{
       const evs = eventMap.get(k);
       if(evs && evs.length){
         evs.forEach(e => items.push({ key:k, e }));
       }
-    }
+    });
 
     if(items.length === 0){
       const line = document.createElement("div");
@@ -1377,6 +1470,9 @@
     });
   }
 
+  // =========================
+  // JUMP
+  // =========================
   function jumpToDate(isoKey){
     const [y,m] = isoKey.split("-").map(n=>parseInt(n,10));
     if(!inRange(y)) return;
@@ -1394,10 +1490,14 @@
     });
   }
 
+  // =========================
+  // COUNTDOWN: compleanni entro 10 giorni
+  // =========================
   function buildUpcomingBirthdayList(){
     const now = new Date();
     const y = now.getFullYear();
     const all = [...getAllBirthdaysForYear(y), ...getAllBirthdaysForYear(y+1)];
+
     return all
       .map(e => ({...e, diff: daysBetween(now, e.dateObj)}))
       .filter(e => e.diff >= 0 && e.diff <= 10)
@@ -1439,6 +1539,9 @@
     });
   }
 
+  // =========================
+  // TOAST (notifica in pagina)
+  // =========================
   function showToast({ icon="🎂", title="Avviso", message="", onClick=null }){
     const t = document.createElement("div");
     t.className = "toast";
@@ -1465,26 +1568,28 @@
     setTimeout(()=> { if(t.isConnected) t.remove(); }, 12000);
   }
 
+  // =========================
+  // NOTIFICHE BROWSER (quando l'app è aperta)
+  // =========================
+  function canNotify(){ return ("Notification" in window); }
+
   async function ensureNotificationPermission(){
-    try{
-      if(!("Notification" in window)) return false;
-      if(Notification.permission === "granted") return true;
-      if(Notification.permission === "denied") return false;
-      const res = await Notification.requestPermission();
-      return res === "granted";
-    }catch(e){
-      return false;
-    }
+    if(!canNotify()) return false;
+    if(Notification.permission === "granted") return true;
+    if(Notification.permission === "denied") return false;
+    const res = await Notification.requestPermission();
+    return res === "granted";
   }
 
   function pushWebNotification(title, body){
-    try{
-      if(!("Notification" in window)) return;
-      if(Notification.permission !== "granted") return;
-      new Notification(title, { body });
-    }catch(e){}
+    if(!canNotify()) return;
+    if(Notification.permission !== "granted") return;
+    try{ new Notification(title, { body }); }catch(e){}
   }
 
+  // =========================
+  // AVVISI ore 09:00
+  // =========================
   const NOTIF_KEY = "birthday_notifs_9am_v1";
   const ALERT_DAYS = new Set([10, 5, 0]);
 
@@ -1495,10 +1600,12 @@
   function saveNotifState(state){
     localStorage.setItem(NOTIF_KEY, JSON.stringify(state));
   }
+
   function todayIso(){
     const now = new Date();
     return ymd(now.getFullYear(), now.getMonth()+1, now.getDate());
   }
+
   function isAroundNineAM(now){
     const h = now.getHours();
     const min = now.getMinutes();
@@ -1524,6 +1631,7 @@
       if(state[dedupeKey]) return;
 
       const when = e.dateObj.toLocaleDateString("it-IT", {day:"2-digit", month:"long", year:"numeric"});
+
       let title = "🎂 Compleanno in arrivo";
       let msg = `Tra ${e.diff} giorni è il compleanno di ${e.name} (${when}).`;
 
@@ -1540,6 +1648,9 @@
     saveNotifState(state);
   }
 
+  // =========================
+  // DIARIO
+  // =========================
   const JOURNAL_KEY = "scout_thoughts_v4";
   function loadJournal(){
     const saved = localStorage.getItem(JOURNAL_KEY);
@@ -1557,16 +1668,36 @@
   }
   journal.addEventListener("input", scheduleSave);
 
+  // =========================
+  // NODO DEL GIORNO (con immagine accanto)
+  // =========================
   function setKnotOfDay(){
     const now = new Date();
     const seed = (now.getFullYear()*10000) + ((now.getMonth()+1)*100) + now.getDate();
     const idx = seed % KNOTS.length;
     const k = KNOTS[idx];
+
     knotName.textContent = k.name;
-    knotImg.innerHTML = k.svg;
-    knotDesc.textContent = k.desc;
+    knotDesc.textContent = k.desc || "—";
+    knotArt.textContent  = k.art  || "—";
+
+    // immagine
+    if(k.img){
+      knotImg.innerHTML = `
+        <img src="${k.img}" alt="${k.name}">
+        <div class="knotImgCap">📷 ${k.name}</div>
+      `;
+    } else {
+      knotImg.innerHTML = `
+        <img src="frame.jpg" alt="Nodo del giorno">
+        <div class="knotImgCap">📷 Nodo del giorno</div>
+      `;
+    }
   }
 
+  // =========================
+  // BUSSOLA (virtù del giorno)
+  // =========================
   function setVirtueOfDay(){
     const now = new Date();
     const seed = (now.getFullYear()*10000) + ((now.getMonth()+1)*100) + now.getDate();
@@ -1580,6 +1711,9 @@
     needle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
   }
 
+  // =========================
+  // ACCORDION
+  // =========================
   document.querySelectorAll(".accBtn[data-acc]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const id = btn.getAttribute("data-acc");
@@ -1588,11 +1722,17 @@
     });
   });
 
+  // =========================
+  // MODAL LEGGE SCOUT
+  // =========================
   lawsBtn.addEventListener("click", ()=> lawsBackdrop.classList.add("show"));
   lawsClose.addEventListener("click", ()=> lawsBackdrop.classList.remove("show"));
   lawsBackdrop.addEventListener("click", (e)=>{ if(e.target===lawsBackdrop) lawsBackdrop.classList.remove("show"); });
   window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") lawsBackdrop.classList.remove("show"); });
 
+  // =========================
+  // NAV CALENDARIO
+  // =========================
   document.getElementById("prev").addEventListener("click", ()=>{
     stateMonth--;
     if(stateMonth<1){ stateMonth=12; stateYear--; }
@@ -1616,6 +1756,7 @@
     renderCalendar();
   });
 
+  // Swipe mese su mobile
   const stage = document.getElementById("stage");
   let touchStartX = null;
   stage.addEventListener("touchstart",(e)=>{ touchStartX = e.touches[0].clientX; }, {passive:true});
@@ -1629,6 +1770,9 @@
     else document.getElementById("prev").click();
   }, {passive:true});
 
+  // =========================
+  // EFFETTI: foglie + lucciole + scintille + stelle
+  // =========================
   function spawnLeaves(){
     const box = document.getElementById("leaves");
     box.innerHTML = "";
@@ -1696,6 +1840,9 @@
   }
   window.addEventListener("resize", ()=>{ spawnLeaves(); spawnFireflies(); spawnSparks(); spawnStars(); });
 
+  // =========================
+  // VENTO: reagisce allo scroll
+  // =========================
   let lastY = window.scrollY;
   let lastT = performance.now();
   let wind = 0;
@@ -1724,6 +1871,9 @@
     setTimeout(()=> setWindStrength(0), 1400);
   }, {passive:true});
 
+  // =========================
+  // PARALLAX mouse/touch (aurora)
+  // =========================
   function setParallax(x,y){
     const nx = (x / window.innerWidth) - 0.5;
     const ny = (y / window.innerHeight) - 0.5;
@@ -1736,6 +1886,9 @@
     setParallax(e.touches[0].clientX, e.touches[0].clientY);
   }, {passive:true});
 
+  // =========================
+  // CONFETTI burst
+  // =========================
   function spawnConfettiBurst(){
     const n = 24;
     const colors = [
@@ -1756,7 +1909,9 @@
     }
   }
 
-  // ✅ FOTO / VIDEO campo estivo
+  // =========================
+  // FOTO + VIDEO
+  // =========================
   const MEDIA = [
     "1e38146e-d6d7-4fdd-bcb2-8a6b0887210e.jpg",
     "3e799a83-3336-47db-a2eb-bc55540677ba.jpg",
@@ -1832,21 +1987,29 @@
     lightbox.classList.remove("show");
     lbMediaHost.innerHTML = "";
   }
+
   lbClose.addEventListener("click", closeLightbox);
   lightbox.addEventListener("click",(e)=>{ if(e.target===lightbox) closeLightbox(); });
   window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeLightbox(); });
 
-  // ✅ ENTRA (sempre funzionante)
-  enterBtn.addEventListener("click", async ()=>{
+  // =========================
+  // INTRO -> ENTRA (fix: listener sempre attivo)
+  // =========================
+  async function doEnter(){
     intro.classList.add("hide");
     app.style.opacity = "1";
     app.style.transform = "translateY(0)";
 
-    try{ await ensureNotificationPermission(); }catch(e){}
-    checkBirthdayAlertsAt9();
-  });
+    await ensureNotificationPermission();
 
-  // ✅ START
+    checkBirthdayAlertsAt9();
+    // salva stato (così se vuoi in futuro puoi saltare intro)
+    try{ localStorage.setItem("scout_entered_v1","1"); }catch(e){}
+  }
+
+  // =========================
+  // AVVIO
+  // =========================
   (function init(){
     renderDOW();
     spawnLeaves();
@@ -1865,8 +2028,10 @@
     setTheme();
     renderGallery();
 
+    // ✅ controlla sempre (ma invia solo tra 09:00 e 09:15)
     checkBirthdayAlertsAt9();
 
+    // ogni minuto aggiorna
     setInterval(()=>{
       setTheme();
       renderCountdown();
@@ -1874,8 +2039,11 @@
       setVirtueOfDay();
       checkBirthdayAlertsAt9();
     }, 60000);
+
+    // ✅ ENTRA: aggiungo il listener qui, sicuro al 100%
+    enterBtn.addEventListener("click", doEnter);
+
   })();
 </script>
 </body>
 </html>
-
