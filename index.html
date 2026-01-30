@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Calendario Scout nel Bosco (2026–2029) — Compleanni</title>
 
-<!-- ✅ PWA + Notifiche -->
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#08190e">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
@@ -14,346 +13,169 @@
 
 <style>
   :root{
-    --text:#eef7ef; --muted: rgba(238,247,239,.78);
-    --danger:#ff3f3f; --gold:#ffd24d;
+    --bg:#08190e;
+    --text:#eef7ef;
+    --muted:rgba(238,247,239,.78);
+    --panel:rgba(255,255,255,.10);
+    --panel2:rgba(255,255,255,.14);
+    --shadow:0 18px 50px rgba(0,0,0,.55);
+    --radius:18px;
+    --btn:rgba(0,0,0,.22);
+    --btnBorder:rgba(255,255,255,.18);
+    --overlayA:rgba(8,25,14,.58);
+    --overlayB:rgba(8,25,14,.26);
 
-    --overlayA: rgba(8,25,14,.58);
-    --overlayB: rgba(8,25,14,.26);
-
-    --panel: rgba(255,255,255,.10);
-    --panel2: rgba(255,255,255,.14);
-
-    --btn: rgba(0,0,0,.22);
-    --btnBorder: rgba(255,255,255,.18);
-
-    --shadow: 0 18px 50px rgba(0,0,0,.55);
-    --radius: 18px;
-
-    /* ✅ SFONDO */
+    /* 🔥 metti qui la tua immagine */
     --bgUrl: url("ChatGPT Image 19 gen 2026, 21_00_05.png");
-
-    --fliesOpacity: .75;
-    --windStrength: 0;
-
-    /* parallax mouse */
-    --mx: 0;
-    --my: 0;
   }
 
-  *{ box-sizing:border-box; }
-  html, body { height:100%; }
+  *{box-sizing:border-box}
+  html,body{height:100%}
   body{
     margin:0;
     min-height:100vh;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
     color:var(--text);
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    background: var(--bg);
     overflow-x:hidden;
-    background-color:#08190e;
-
-    /* ✅ anti “verde sotto” su mobile */
-    background-image: var(--bgUrl);
-    background-size: cover;
-    background-position:center;
-    background-repeat:no-repeat;
   }
 
-  /* ✅ SFONDO fisso (con altezza dinamica per iOS) */
+  /* sfondo */
   .bg{
-    position:fixed; top:0; left:0;
-    width:100vw;
-    height:100vh;
-    height:100dvh;
-    background-image: var(--bgUrl);
-    background-size: cover;
+    position:fixed; inset:0; z-index:-10;
+    background-image:var(--bgUrl);
+    background-size:cover;
     background-position:center;
     transform:scale(1.03);
-    z-index:-10;
-    animation: bgSlow 16s ease-in-out infinite alternate;
-    will-change: transform, filter;
   }
-  @keyframes bgSlow{
-    from{ transform: scale(1.03) translateY(0) translateX(0); filter:saturate(1); }
-    to  { transform: scale(1.07) translateY(-12px) translateX(6px); filter:saturate(1.16); }
-  }
-
   .bgOverlay{
-    position:fixed; top:0; left:0;
-    width:100vw;
-    height:100vh;
-    height:100dvh;
+    position:fixed; inset:0; z-index:-9;
     background:
       radial-gradient(1200px 800px at 20% 10%, rgba(124,255,138,.18), transparent 55%),
       radial-gradient(900px 600px at 90% 20%, rgba(255,210,77,.16), transparent 60%),
       linear-gradient(160deg, var(--overlayA), var(--overlayB));
-    z-index:-9;
-    animation: overlayBreath 9s ease-in-out infinite;
-  }
-  @keyframes overlayBreath{ 0%,100%{ opacity:1; } 50%{ opacity:.92; } }
-
-  /* AURORA layer */
-  .aurora{
-    position: fixed; inset:-80px;
-    pointer-events:none;
-    z-index:-8;
-    background:
-      radial-gradient(520px 360px at 20% 30%, rgba(124,255,138,.18), transparent 64%),
-      radial-gradient(520px 360px at 80% 40%, rgba(255,210,77,.14), transparent 64%),
-      radial-gradient(620px 420px at 50% 80%, rgba(180,255,205,.10), transparent 70%);
-    filter: blur(18px);
-    opacity:.65;
-    transform: translate3d(calc(var(--mx) * 12px), calc(var(--my) * 10px), 0);
-    transition: transform .18s ease;
-    animation: auroraDrift 10s ease-in-out infinite alternate;
-  }
-  @keyframes auroraDrift{
-    from{ opacity:.55; filter: blur(18px); }
-    to{ opacity:.78; filter: blur(22px); }
   }
 
-  /* NEBBIA + VENTO */
-  .wind{
-    position:fixed; inset:-120px;
-    pointer-events:none;
-    background:
-      radial-gradient(700px 440px at 30% 30%, rgba(255,255,255,.12), transparent 72%),
-      radial-gradient(900px 600px at 70% 45%, rgba(255,255,255,.09), transparent 74%),
-      radial-gradient(720px 480px at 40% 80%, rgba(255,255,255,.08), transparent 72%);
-    filter: blur(18px);
-    opacity: calc(0.55 + (var(--windStrength) * 0.25));
-    transform: translate3d(calc(var(--windStrength) * 18px), calc(var(--windStrength) * -8px), 0) scale(calc(1.02 + var(--windStrength) * 0.02));
-    transition: opacity .35s ease, transform .35s ease;
-    z-index:-7;
-    animation: fogDrift 10s ease-in-out infinite alternate;
-  }
-  @keyframes fogDrift{ from{ filter: blur(18px);} to{ filter: blur(22px);} }
-
-  /* FOGLIE */
-  .leaves{ position:fixed; inset:0; pointer-events:none; z-index:-1; overflow:hidden; }
-  .leafFall{
-    position:absolute; top:-80px;
-    width:28px; height:28px;
-    background: radial-gradient(circle at 30% 30%, rgba(255,210,77,.9), rgba(18,58,32,.25));
-    border-radius: 6px 18px 6px 18px;
-    opacity:0;
-    animation: leafDown var(--t) linear infinite, leafSpin calc(var(--t) * .75) ease-in-out infinite;
-    box-shadow: 0 6px 20px rgba(0,0,0,.18);
-    transform: translateX(calc(var(--windStrength) * 8px));
-  }
-  @keyframes leafDown{
-    0%{ transform: translate3d(0,-60px,0); opacity:0; }
-    8%{ opacity:.85; }
-    50%{ opacity:.55; }
-    100%{ transform: translate3d(calc(var(--dx) + var(--windStrength) * 140px), 110vh, 0); opacity:0; }
-  }
-  @keyframes leafSpin{ 0%{ rotate:0deg; } 50%{ rotate:140deg; } 100%{ rotate:300deg; } }
-
-  /* LUCCIOLE */
-  .fireflies{ position:fixed; inset:0; pointer-events:none; z-index:-1; opacity:var(--fliesOpacity); }
-  .firefly{
-    position:absolute; width:6px; height:6px; border-radius:50%;
-    background: rgba(255,210,77,.95);
-    box-shadow: 0 0 18px rgba(255,210,77,.85);
-    opacity:0;
-    animation: fly var(--t) linear infinite;
-  }
-  @keyframes fly{
-    0%{ transform: translate(0,0) scale(.8); opacity:0; }
-    12%{ opacity:.95; }
-    50%{ opacity:.35; }
-    100%{ transform: translate(calc(var(--dx) + var(--windStrength) * 80px), var(--dy)) scale(1.25); opacity:0; }
-  }
-
-  /* SCINTILLE */
-  .sparks{ position:fixed; inset:0; pointer-events:none; z-index:-1; }
-  .spark{
-    position:absolute;
-    width:3px; height:3px; border-radius:50%;
-    background: rgba(255,255,255,.85);
-    box-shadow: 0 0 16px rgba(255,255,255,.32);
-    opacity:0;
-    animation: sparkFloat var(--t) ease-in-out infinite;
-  }
-  @keyframes sparkFloat{
-    0%{ transform: translate3d(0,20px,0) scale(.8); opacity:0; }
-    15%{ opacity:.55; }
-    60%{ opacity:.25; }
-    100%{ transform: translate3d(var(--dx), calc(-140px - var(--dy)), 0) scale(1.2); opacity:0; }
-  }
-
-  /* SHOOTING STARS */
-  .stars{ position:fixed; inset:0; pointer-events:none; z-index:-2; overflow:hidden; }
-  .star{
-    position:absolute;
-    width:2px; height:2px;
-    background: rgba(255,255,255,.9);
-    border-radius:50%;
-    box-shadow: 0 0 18px rgba(255,255,255,.35);
-    opacity:0;
-    transform: translate3d(0,0,0);
-    animation: shoot var(--t) linear infinite;
-  }
-  @keyframes shoot{
-    0%{ opacity:0; transform: translate3d(0,0,0) scale(.8); }
-    10%{ opacity:.8; }
-    100%{ opacity:0; transform: translate3d(var(--dx), var(--dy), 0) scale(1.1); }
-  }
-
-  /* CONFETTI (compleanni) */
-  .confetti{ position:fixed; inset:0; pointer-events:none; z-index:400; overflow:hidden; }
-  .conf{
-    position:absolute; top:-10px;
-    width:10px; height:14px;
-    border-radius: 4px;
-    opacity:0;
-    background: rgba(255,210,77,.9);
-    box-shadow: 0 10px 26px rgba(0,0,0,.25);
-    animation: confFall var(--t) linear forwards;
-  }
-  @keyframes confFall{
-    0%{ transform: translate3d(0,-20px,0) rotate(0deg); opacity:0; }
-    10%{ opacity:.9; }
-    100%{ transform: translate3d(var(--dx), 110vh, 0) rotate(680deg); opacity:0; }
-  }
-
-  /* INTRO */
+  /* intro */
   .intro{
-    position:fixed; inset:0;
+    position:fixed; inset:0; z-index:50;
     display:flex; align-items:center; justify-content:center;
-    background: rgba(0,0,0,.62);
+    background:rgba(0,0,0,.62);
     backdrop-filter: blur(10px);
-    z-index:50;
     transition: opacity .6s ease, transform .6s ease;
   }
-  .intro.hide{ opacity:0; pointer-events:none; transform: scale(1.02); }
-
+  .intro.hide{opacity:0; pointer-events:none; transform:scale(1.02)}
   .introRing{
     position:absolute;
-    width:280px; height:280px;
-    border-radius:50%;
+    width:280px;height:280px;border-radius:50%;
     border:1px solid rgba(255,255,255,.22);
-    box-shadow: 0 0 60px rgba(255,255,255,.10);
-    animation: ring 3.2s ease-in-out infinite;
+    box-shadow:0 0 60px rgba(255,255,255,.10);
+    animation:ring 3.2s ease-in-out infinite;
   }
   .introRing::after{
-    content:"";
-    position:absolute; inset:-18px;
-    border-radius:50%;
+    content:""; position:absolute; inset:-18px; border-radius:50%;
     border:1px dashed rgba(255,210,77,.22);
-    animation: ring2 6.8s linear infinite;
+    animation:ring2 6.8s linear infinite;
   }
-  @keyframes ring{ 0%,100%{ transform: scale(1); opacity:.65; } 50%{ transform: scale(1.06); opacity:.95; } }
-  @keyframes ring2{ to{ transform: rotate(360deg); } }
-
+  @keyframes ring{0%,100%{transform:scale(1);opacity:.65}50%{transform:scale(1.06);opacity:.95}}
+  @keyframes ring2{to{transform:rotate(360deg)}}
   .enterBtn{
     position:relative;
-    padding: 22px 46px;
-    font-size: 26px;
-    font-weight: 900;
-    letter-spacing: .06em;
-    border-radius: 999px;
-    border: 2px solid rgba(255,255,255,.48);
-    background: rgba(0,0,0,.30);
-    color: var(--text);
+    padding:22px 46px;
+    font-size:26px;
+    font-weight:900;
+    letter-spacing:.06em;
+    border-radius:999px;
+    border:2px solid rgba(255,255,255,.48);
+    background:rgba(0,0,0,.30);
+    color:var(--text);
     cursor:pointer;
-    box-shadow: 0 22px 60px rgba(0,0,0,.55), 0 0 40px rgba(255,255,255,.18);
-    animation: pulse 2.2s ease-in-out infinite;
+    box-shadow:0 22px 60px rgba(0,0,0,.55), 0 0 40px rgba(255,255,255,.18);
     overflow:hidden;
+    animation:pulse 2.2s ease-in-out infinite;
   }
   .enterBtn::after{
-    content:"";
-    position:absolute; inset:-70px;
-    background: radial-gradient(320px 220px at 30% 30%, rgba(255,255,255,.14), transparent 60%);
-    transform: translateX(-40%);
-    animation: shimmer 2.6s ease-in-out infinite;
+    content:""; position:absolute; inset:-70px;
+    background:radial-gradient(320px 220px at 30% 30%, rgba(255,255,255,.14), transparent 60%);
+    transform:translateX(-40%);
+    animation:shimmer 2.6s ease-in-out infinite;
   }
-  @keyframes shimmer{ 0%,100%{ opacity:.25; transform: translateX(-40%); } 50%{ opacity:.55; transform: translateX(40%); } }
-  @keyframes pulse{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-2px); } }
+  @keyframes shimmer{0%,100%{opacity:.25;transform:translateX(-40%)}50%{opacity:.55;transform:translateX(40%)}}
+  @keyframes pulse{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
 
-  /* LAYOUT */
-  .wrap{ position:relative; z-index:2; max-width:1080px; margin:22px auto 46px; padding:14px; }
+  /* layout */
+  .wrap{max-width:1080px; margin:22px auto 46px; padding:14px; position:relative; z-index:2}
   .topbar{
-    display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
-    padding:14px; background:var(--panel); border:1px solid var(--panel2);
-    border-radius:var(--radius); box-shadow:var(--shadow); backdrop-filter: blur(10px);
-    animation: floatPanel 7s ease-in-out infinite;
+    display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+    padding:14px; border-radius:var(--radius);
+    background:var(--panel); border:1px solid var(--panel2);
+    box-shadow:var(--shadow); backdrop-filter: blur(10px);
   }
-  @keyframes floatPanel{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-2px); } }
-  .title{ display:flex; gap:10px; align-items:center; font-weight:900; }
-  .controls{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-  button, select{
-    border:1px solid var(--btnBorder); background: var(--btn); color: var(--text);
-    padding:10px 12px; border-radius:14px; cursor:pointer; outline:none; font-family:inherit;
+  .title{display:flex; gap:10px; align-items:center; font-weight:900}
+  .controls{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  button,select{
+    border:1px solid var(--btnBorder);
+    background:var(--btn);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:14px;
+    cursor:pointer;
+    outline:none;
+    font-family:inherit;
     transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
   }
-  button:hover, select:hover{ transform: translateY(-1px) scale(1.01); filter: brightness(1.08); box-shadow: 0 14px 28px rgba(0,0,0,.22); }
-  button:active{ transform: translateY(0) scale(.99); }
-
-  .monthTitle{ font-size:18px; font-weight:900; text-transform:capitalize; }
-  .muted{ color: var(--muted); font-size:13px; }
+  button:hover,select:hover{transform:translateY(-1px) scale(1.01); filter:brightness(1.08); box-shadow:0 14px 28px rgba(0,0,0,.22)}
+  .monthTitle{font-size:18px; font-weight:900; text-transform:capitalize}
+  .muted{color:var(--muted); font-size:13px}
 
   .stage{
-    margin-top:14px; position:relative; border-radius:22px; overflow:hidden;
-    box-shadow:var(--shadow); border:1px solid rgba(255,255,255,.14);
-    background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+    margin-top:14px; border-radius:22px; overflow:hidden;
+    box-shadow:var(--shadow);
+    border:1px solid rgba(255,255,255,.14);
+    background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
     backdrop-filter: blur(10px);
   }
-  .frame{ position:absolute; inset:0; background:url("frame.jpg") center/cover no-repeat; opacity:.96; pointer-events:none; z-index:1; }
-  .content{ position:relative; z-index:2; padding:34px 26px 18px; }
+  .content{padding:22px 18px 14px}
 
-  .grid{ display:grid; grid-template-columns:repeat(7, 1fr); gap:10px; }
+  .grid{display:grid; grid-template-columns:repeat(7,1fr); gap:10px}
   .dow{
-    text-align:center; font-weight:900; font-size:13px; color: rgba(0,0,0,.80);
-    background: rgba(255,255,255,.84); border-radius:12px; padding:10px 6px; border:1px solid rgba(0,0,0,.08);
-    animation: popIn .5s ease both;
+    text-align:center; font-weight:900; font-size:13px;
+    color:rgba(0,0,0,.8);
+    background:rgba(255,255,255,.84);
+    border-radius:12px;
+    padding:10px 6px;
+    border:1px solid rgba(0,0,0,.08);
   }
-  @keyframes popIn{ from{ transform: translateY(6px); opacity:0; } to{ transform: translateY(0); opacity:1; } }
 
   .day{
-    border-radius:16px; padding:10px; background: rgba(255,255,255,.90);
-    border:1px solid rgba(0,0,0,.08); color: rgba(0,0,0,.88);
-    position:relative; overflow:hidden; display:flex; align-items:flex-start; justify-content:flex-start;
+    border-radius:16px;
+    padding:10px;
+    background:rgba(255,255,255,.90);
+    border:1px solid rgba(0,0,0,.08);
+    color:rgba(0,0,0,.88);
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    align-items:flex-start;
+    justify-content:flex-start;
     transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
   }
-  .day:hover{
-    transform: translateY(-2px) scale(1.01);
-    filter: brightness(1.03);
-    box-shadow: 0 16px 30px rgba(0,0,0,.18);
-  }
-  .day .n{ font-weight:900; font-size:16px; }
-  .off{ opacity:.55; }
-
-  .today{
-    outline: 3px solid rgba(124,255,138,.75);
-    outline-offset:-3px;
-    animation: todayGlow 2.2s ease-in-out infinite;
-  }
-  @keyframes todayGlow{
-    0%,100%{ box-shadow: 0 0 0 rgba(124,255,138,0); }
-    50%{ box-shadow: 0 0 28px rgba(124,255,138,.35); }
-  }
+  .day:hover{transform:translateY(-2px) scale(1.01); filter:brightness(1.03); box-shadow:0 16px 30px rgba(0,0,0,.18)}
+  .day .n{font-weight:900; font-size:16px}
+  .off{opacity:.55}
+  .today{outline:3px solid rgba(124,255,138,.75); outline-offset:-3px}
 
   .marker{
     position:absolute; right:8px; bottom:8px;
-    font-size:14px; opacity:.98;
+    font-size:14px;
     display:flex; align-items:center; gap:6px;
-    transform-origin: 50% 70%;
-    animation: markerBounce 1.8s ease-in-out infinite;
-    padding: 4px 6px;
-    border-radius: 999px;
-    background: rgba(0,0,0,.10);
-    border: 1px solid rgba(0,0,0,.08);
+    padding:4px 6px;
+    border-radius:999px;
+    background:rgba(0,0,0,.10);
+    border:1px solid rgba(0,0,0,.08);
   }
-  .dotRed{
-    width:7px; height:7px; border-radius:50%;
-    background: rgba(255,63,63,.95);
-    box-shadow: 0 0 16px rgba(255,63,63,.45);
-  }
-  @keyframes markerBounce{
-    0%,100%{ transform: translateY(0) rotate(0deg); }
-    50%{ transform: translateY(-2px) rotate(-2deg); }
-  }
+  .dotRed{width:7px;height:7px;border-radius:50%;background:rgba(255,63,63,.95); box-shadow:0 0 16px rgba(255,63,63,.45)}
 
-  /* Aura giorno compleanno */
   .eventDay::before{
     content:"";
     position:absolute; inset:-40px;
@@ -363,31 +185,13 @@
     opacity:.9;
     filter: blur(12px);
     pointer-events:none;
-    animation: eventAura 3.4s ease-in-out infinite;
-  }
-  @keyframes eventAura{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-6px); } }
-
-  .jumpFlash{ animation: jumpFlash 1.6s ease-in-out 0s 3; }
-  @keyframes jumpFlash{
-    0%{ transform: scale(1); }
-    50%{ transform: scale(1.03); filter: brightness(1.14); box-shadow: 0 0 40px rgba(255,63,63,.45); }
-    100%{ transform: scale(1); }
   }
 
-  @media (max-width: 780px){
-    .content{ padding: 18px 14px 14px; }
-    .grid{ gap:8px; }
-    .day{ aspect-ratio: 1/1; padding:8px; }
-    .day .n{ font-size:14px; }
-    .monthTitle{ font-size:16px; }
-  }
-
-  /* Riga eventi del mese sotto calendario */
   .monthEvents{
-    margin-top: 10px;
-    padding: 10px 12px;
-    border-radius: 16px;
-    background: rgba(0,0,0,.18);
+    margin-top:10px;
+    padding:10px 12px;
+    border-radius:16px;
+    background:rgba(0,0,0,.18);
     border:1px solid rgba(255,255,255,.14);
     display:flex;
     flex-direction:column;
@@ -397,434 +201,169 @@
     display:flex; gap:10px; align-items:flex-start;
     padding:8px 10px;
     border-radius:14px;
-    background: rgba(255,255,255,.06);
+    background:rgba(255,255,255,.06);
     border:1px solid rgba(255,255,255,.10);
-    transition: transform .18s ease, filter .18s ease;
     cursor:pointer;
   }
-  .monthEventsLine:hover{ transform: translateY(-1px); filter: brightness(1.06); }
-  .monthEventsIco{ font-size:18px; line-height:1; }
-  .monthEventsTxt{ font-size:13px; color: rgba(238,247,239,.88); }
-  .monthEventsSub{ font-size:12px; color: var(--muted); margin-top:2px; }
+  .monthEventsIco{font-size:18px}
+  .monthEventsTxt{font-size:13px; color:rgba(238,247,239,.88)}
+  .monthEventsSub{font-size:12px; color:var(--muted); margin-top:2px}
 
-  /* ACCORDION */
-  .accordion{ margin-top:14px; display:flex; flex-direction:column; gap:12px; }
+  /* accordion */
+  .accordion{margin-top:14px; display:flex; flex-direction:column; gap:12px}
   .accItem{
-    background: var(--panel);
+    background:var(--panel);
     border:1px solid var(--panel2);
-    border-radius: 20px;
-    box-shadow: var(--shadow);
+    border-radius:20px;
+    box-shadow:var(--shadow);
     backdrop-filter: blur(10px);
     overflow:hidden;
-    transition: transform .18s ease, filter .18s ease;
   }
-  .accItem:hover{ transform: translateY(-1px); filter: brightness(1.03); }
-
   .accBtn{
     width:100%;
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:12px;
-    padding:14px 14px;
+    padding:14px;
     border:0;
-    background: transparent;
+    background:transparent;
     cursor:pointer;
-    color: var(--text);
-    position:relative;
+    color:var(--text);
+  }
+  .accLeft{display:flex; align-items:center; gap:10px; font-weight:900}
+  .accIco{
+    width:34px;height:34px;
+    display:grid; place-items:center;
+    border-radius:12px;
+    background:rgba(0,0,0,.18);
+    border:1px solid rgba(255,255,255,.14);
+  }
+  .accTitle{margin:0; font-size:15px}
+  .chev{
+    width:40px;height:40px;
+    display:grid; place-items:center;
+    border-radius:14px;
+    background:rgba(0,0,0,.14);
+    border:1px solid rgba(255,255,255,.14);
+    transition: transform .25s ease;
+  }
+  .accItem.open .chev{transform:rotate(180deg)}
+  .accBody{display:none; padding:0 14px 14px}
+  .accItem.open .accBody{display:block}
+
+  .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+  @media(max-width:900px){.cards{grid-template-columns:1fr}}
+  .card{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:16px;
+    padding:12px;
+  }
+  .kicker{font-size:12px; color:var(--muted); margin-bottom:6px}
+  .big{font-size:15px; font-weight:900; margin:0}
+  .small{margin:6px 0 0; color:var(--muted); font-size:13px}
+  .redNote{margin:8px 0 0; font-weight:900; color:rgba(255,63,63,.95)}
+
+  /* knot */
+  .knotBox{display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start}
+  .knotImg{
+    flex:0 0 220px;
+    background:rgba(0,0,0,.22);
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:16px;
+    padding:10px;
+    box-shadow:0 12px 30px rgba(0,0,0,.25);
     overflow:hidden;
   }
-  .accBtn::after{
-    content:"";
-    position:absolute; inset:-60px;
-    background: radial-gradient(360px 220px at 20% 30%, rgba(255,255,255,.10), transparent 60%);
-    opacity:0;
-    transition: opacity .22s ease;
-  }
-  .accItem:hover .accBtn::after{ opacity:.65; }
+  .knotImg svg{width:100%; height:auto; display:block}
+  .knotText{flex:1 1 260px}
+  .knotName{font-weight:900; font-size:16px; margin:0}
+  .knotDesc{margin:8px 0 0; color:var(--muted)}
 
-  .accLeft{ display:flex; align-items:center; gap:10px; font-weight:900; }
-  .accIco{
-    width:34px; height:34px;
-    display:grid; place-items:center;
-    border-radius: 12px;
-    background: rgba(0,0,0,.18);
-    border: 1px solid rgba(255,255,255,.14);
-    box-shadow: 0 10px 26px rgba(0,0,0,.22);
-    animation: icoFloat 4.2s ease-in-out infinite;
-  }
-  @keyframes icoFloat{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-2px); } }
-
-  .accTitle{ font-size:15px; margin:0; }
-  .chev{
-    width:40px; height:40px;
-    display:grid; place-items:center;
-    border-radius: 14px;
-    background: rgba(0,0,0,.14);
-    border:1px solid rgba(255,255,255,.14);
-    transition: transform .25s ease, filter .25s ease;
-  }
-  .accItem.open .chev{ transform: rotate(180deg); filter: brightness(1.15); }
-
-  .accBody{ display:none; padding: 0 14px 14px; }
-  .accItem.open .accBody{ display:block; animation: rise .32s ease both; }
-  @keyframes rise{ from{ opacity:0; transform: translateY(10px);} to{ opacity:1; transform: translateY(0);} }
-
-  .cards{ display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
-  @media (max-width: 900px){ .cards{ grid-template-columns: 1fr; } }
-
-  .card{
-    background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
-    border-radius: 16px; padding:12px; position:relative; overflow:hidden;
-    transition: transform .18s ease, filter .18s ease;
-  }
-  .card:hover{ transform: translateY(-2px); filter: brightness(1.06); }
-  .card::before{
-    content:""; position:absolute; inset:-80px;
-    background:
-      radial-gradient(280px 200px at 20% 20%, rgba(124,255,138,.22), transparent 60%),
-      radial-gradient(240px 180px at 80% 30%, rgba(255,210,77,.18), transparent 60%);
-    filter: blur(12px); opacity:.9; pointer-events:none;
-    animation: cardGlow 6s ease-in-out infinite;
-  }
-  @keyframes cardGlow{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-10px); } }
-
-  .card > *{ position:relative; z-index:1; }
-  .kicker{ font-size:12px; color: var(--muted); margin-bottom:6px; }
-  .big{ font-size:15px; font-weight:900; margin:0; }
-  .small{ margin:6px 0 0; color: var(--muted); font-size:13px; }
-
-  .redNote{
-    margin:8px 0 0;
-    font-weight:900;
-    color: rgba(255,63,63,.95);
-    letter-spacing: .02em;
-    text-shadow: 0 10px 26px rgba(0,0,0,.35);
-    animation: redPulse 1.4s ease-in-out infinite;
-  }
-  @keyframes redPulse{ 0%,100%{ opacity:.78; } 50%{ opacity:1; } }
-
-  /* DIARIO */
-  .journalBox{
-    width:100%;
-    border:1px solid rgba(255,255,255,.18);
-    background: rgba(0,0,0,.18);
-    color: var(--text);
-    border-radius: 16px;
-    padding: 12px;
-    min-height: 110px;
-    outline:none;
-    font-family: inherit;
-    resize: vertical;
-    transition: box-shadow .18s ease, filter .18s ease;
-  }
-  .journalBox:focus{ box-shadow: 0 0 0 3px rgba(124,255,138,.22); filter: brightness(1.05); }
-
-  /* NODO */
-  .knotBox{ display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start; }
-  .knotArt{
-    flex: 0 0 260px;
-    background: rgba(0,0,0,.22);
-    border:1px solid rgba(255,255,255,.14);
-    border-radius: 16px;
-    padding: 12px;
-    line-height: 1.15;
-    animation: knotFloat 4.8s ease-in-out infinite;
-    /* ✅ ora può contenere HTML/SVG */
-    white-space: normal;
-  }
-  @keyframes knotFloat{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-3px); } }
-  .knotText{ flex: 1 1 260px; }
-  .knotName{ font-weight:900; font-size:16px; margin:0; }
-  .knotDesc{ margin:8px 0 0; color: var(--muted); }
-
-  /* BUSSOLA */
-  .compassWrap{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  /* bussola */
+  .compassWrap{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
   .compass{
-    width:140px; height:140px;
-    border-radius:50%;
+    width:140px;height:140px;border-radius:50%;
     border:2px solid rgba(255,255,255,.35);
-    background: rgba(0,0,0,.18);
+    background:rgba(0,0,0,.18);
     position:relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,.35);
-    animation: compassBreath 3.6s ease-in-out infinite;
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
   }
-  @keyframes compassBreath{ 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.02); } }
   .compass::before{
-    content:""; position:absolute; inset:10px;
-    border-radius:50%;
+    content:""; position:absolute; inset:10px; border-radius:50%;
     border:1px dashed rgba(255,210,77,.28);
     opacity:.85;
-    animation: spinSlow 18s linear infinite;
   }
-  @keyframes spinSlow{ to{ transform: rotate(360deg); } }
-
   .needle{
-    position:absolute;
-    left:50%; top:22px;
+    position:absolute; left:50%; top:22px;
     width:4px; height:54px;
-    transform-origin: 50% 100%;
-    background: rgba(255,63,63,.95);
-    border-radius: 6px;
-    box-shadow: 0 0 18px rgba(255,63,63,.35);
-    transform: translateX(-50%) rotate(0deg);
+    transform-origin:50% 100%;
+    background:rgba(255,63,63,.95);
+    border-radius:6px;
+    box-shadow:0 0 18px rgba(255,63,63,.35);
+    transform:translateX(-50%) rotate(0deg);
     transition: transform .5s ease;
   }
   .needle::after{
     content:""; position:absolute; left:-6px; top:-6px;
     width:16px; height:16px; border-radius:50%;
-    background: rgba(255,255,255,.75);
-    box-shadow: 0 0 18px rgba(255,255,255,.25);
+    background:rgba(255,255,255,.75);
   }
-  .virtueName{ margin:0; font-weight:900; font-size:16px; }
-  .virtueDesc{ margin:8px 0 0; color: var(--muted); }
+  .virtueName{margin:0; font-weight:900; font-size:16px}
+  .virtueDesc{margin:8px 0 0; color:var(--muted)}
 
-  /* TIMELINE */
-  .timeline{
-    display:flex; gap:12px;
-    overflow-x:auto;
-    scroll-snap-type: x mandatory;
-    padding-bottom: 6px;
-  }
-  .timeItem{
-    min-width: 240px;
-    scroll-snap-align: start;
-    background: rgba(0,0,0,.18);
-    border:1px solid rgba(255,255,255,.14);
-    border-radius: 16px;
-    padding: 12px;
-    transition: transform .18s ease, filter .18s ease;
-  }
-  .timeItem:hover{ transform: translateY(-2px); filter: brightness(1.08); }
-  .timeYear{ font-weight:900; font-size:16px; margin:0; }
-  .timeText{ margin:8px 0 0; color: var(--muted); font-size:13px; }
-
-  /* MODAL LEGGE SCOUT */
-  .modalBackdrop{
-    position:fixed; inset:0;
-    background: rgba(0,0,0,.60);
-    display:none;
-    align-items:center; justify-content:center;
-    padding: 18px;
-    z-index:99;
-  }
-  .modalBackdrop.show{ display:flex; }
-  .modal{
-    width:min(680px, 96vw);
-    background: rgba(14,44,25,.92);
-    border:1px solid rgba(255,255,255,.14);
-    border-radius: 22px;
-    box-shadow: var(--shadow);
-    padding: 16px;
-    transform: translateY(18px) scale(.95);
-    opacity:0;
-    animation: pop .32s ease forwards;
-    overflow:hidden;
-  }
-  @keyframes pop{ to{ transform: translateY(0) scale(1); opacity:1; } }
-  .modalHeader{ display:flex; justify-content:space-between; gap:12px; align-items:flex-start; padding:6px 6px 10px; }
-  .modalTitle{ font-weight:900; font-size:18px; margin:0; }
-  .modalBody{
-    background: rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.12);
-    border-radius: 18px;
-    padding: 12px;
-    margin: 6px;
-  }
-  .line{
-    display:flex; gap:10px; align-items:flex-start;
-    padding:10px; border-radius:14px;
-    background: rgba(0,0,0,.20);
-    border:1px solid rgba(255,255,255,.10);
-    margin-bottom: 10px;
-    animation: slideIn .35s ease both;
-  }
-  @keyframes slideIn{ from{ transform: translateX(-12px); opacity:0; } to{ transform: translateX(0); opacity:1; } }
-  .ico{ font-size: 22px; line-height:1; }
-  .sub{ color: rgba(238,247,239,.85); font-size: 13px; margin:2px 0 0; }
-
-  /* FOTO (finestra apribile) */
-  details.photoWin{
-    margin-top:14px;
-    background: var(--panel);
-    border:1px solid var(--panel2);
-    border-radius: 20px;
-    box-shadow: var(--shadow);
-    backdrop-filter: blur(10px);
-    overflow:hidden;
-  }
-  details.photoWin > summary{
-    list-style:none;
-    cursor:pointer;
-    padding:14px 14px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    font-weight:900;
-  }
-  details.photoWin > summary::-webkit-details-marker{ display:none; }
-  .sumLeft{ display:flex; gap:10px; align-items:center; }
-  .sumIco{
-    width:34px; height:34px; display:grid; place-items:center;
-    border-radius:12px;
-    background: rgba(0,0,0,.18);
-    border: 1px solid rgba(255,255,255,.14);
-    box-shadow: 0 10px 26px rgba(0,0,0,.22);
-  }
-  .sumChev{
-    width:40px; height:40px; display:grid; place-items:center;
-    border-radius: 14px;
-    background: rgba(0,0,0,.14);
-    border:1px solid rgba(255,255,255,.14);
-    transition: transform .25s ease;
-  }
-  details[open] .sumChev{ transform: rotate(180deg); }
-
-  .galleryWrap{ padding: 0 14px 14px; }
-  .galleryGrid{
-    display:grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap:10px;
-  }
-  @media (max-width: 860px){ .galleryGrid{ grid-template-columns: 1fr; } }
-
-  .thumb{
-    border-radius: 16px;
-    overflow:hidden;
-    border:1px solid rgba(255,255,255,.14);
-    background: rgba(0,0,0,.18);
-    box-shadow: 0 14px 30px rgba(0,0,0,.25);
-    cursor:pointer;
-    transition: transform .18s ease, filter .18s ease;
-  }
-  .thumb:hover{ transform: translateY(-2px); filter: brightness(1.06); }
-
-  .thumb img, .thumb video{
-    width:100%;
-    height: 280px;
-    object-fit: cover;
-    display:block;
-    background: rgba(0,0,0,.22);
-  }
-  .thumb video{ outline:none; }
-
-  .thumbCap{
-    padding:10px 12px;
-    font-weight:900;
-    color: rgba(238,247,239,.92);
-    border-top:1px solid rgba(255,255,255,.10);
-    background: rgba(0,0,0,.14);
-  }
-  .thumbCap small{ display:block; font-weight:600; color: rgba(238,247,239,.72); margin-top:4px; }
-
-  /* LIGHTBOX */
-  .lightbox{
-    position:fixed; inset:0;
-    background: rgba(0,0,0,.72);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding: 14px;
-    z-index: 200;
-  }
-  .lightbox.show{ display:flex; }
-  .lbBox{
-    width:min(980px, 96vw);
-    max-height: 88vh;
-    border-radius: 18px;
-    overflow:hidden;
-    border:1px solid rgba(255,255,255,.14);
-    background: rgba(10,28,16,.85);
-    box-shadow: 0 30px 80px rgba(0,0,0,.6);
-    animation: lbPop .26s ease both;
-  }
-  @keyframes lbPop{ from{ transform: translateY(14px) scale(.98); opacity:0; } to{ transform: translateY(0) scale(1); opacity:1; } }
-  .lbTop{
-    display:flex; justify-content:space-between; align-items:center;
-    padding: 10px 12px;
-    background: rgba(0,0,0,.25);
-    border-bottom: 1px solid rgba(255,255,255,.12);
-  }
-  .lbTitle{ font-weight:900; font-size: 14px; color: rgba(238,247,239,.92); }
-  .lbClose{
-    border:1px solid rgba(255,255,255,.18);
-    background: rgba(0,0,0,.22);
-    color: var(--text);
-    border-radius: 12px;
-    padding: 8px 10px;
-    cursor:pointer;
-    font-weight:900;
-  }
-  .lbMedia{
-    display:block;
-    width:100%;
-    height: min(78vh, 720px);
-    object-fit: contain;
-    background: rgba(0,0,0,.20);
-  }
-
-  /* FOOTER */
-  .footerWindow{
-    margin-top:14px;
-    border-radius: 18px;
-    padding: 14px;
-    text-align:center;
-    box-shadow: var(--shadow);
-    background: rgba(0,0,0,.34);
-    border: 1px solid rgba(255,255,255,.22);
-    backdrop-filter: blur(10px);
-  }
-  .footerWindow b{
-    display:inline-block;
-    font-size: 14px;
-    letter-spacing: .06em;
-    padding: 10px 16px;
-    border-radius: 999px;
-    background: rgba(255,255,255,.10);
-    border: 1px solid rgba(255,255,255,.18);
-    box-shadow: 0 18px 44px rgba(0,0,0,.30);
-    text-transform: uppercase;
-  }
-
-  /* ✅ TOAST NOTIFICA */
+  /* toast */
   .toastWrap{
-    position: fixed;
-    left: 50%;
-    bottom: 16px;
-    transform: translateX(-50%);
-    z-index: 500;
-    display: grid;
-    gap: 10px;
-    width: min(720px, 94vw);
-    pointer-events: none;
+    position:fixed;
+    left:50%; bottom:16px;
+    transform:translateX(-50%);
+    z-index:500;
+    display:grid;
+    gap:10px;
+    width:min(720px,94vw);
+    pointer-events:none;
   }
   .toast{
-    pointer-events: auto;
+    pointer-events:auto;
     display:flex;
     gap:10px;
     align-items:flex-start;
-    padding: 12px 14px;
-    border-radius: 18px;
-    background: rgba(0,0,0,.50);
-    border: 1px solid rgba(255,255,255,.18);
-    box-shadow: 0 18px 50px rgba(0,0,0,.55);
+    padding:12px 14px;
+    border-radius:18px;
+    background:rgba(0,0,0,.50);
+    border:1px solid rgba(255,255,255,.18);
+    box-shadow:0 18px 50px rgba(0,0,0,.55);
     backdrop-filter: blur(10px);
-    animation: toastIn .28s ease both;
   }
-  @keyframes toastIn{ from{ opacity:0; transform: translateY(10px) scale(.98);} to{ opacity:1; transform: translateY(0) scale(1);} }
-  .toast .tIco{ font-size:20px; line-height:1; }
-  .toast .tTxt{ flex:1; }
-  .toast .tTxt b{ display:block; font-size:14px; }
-  .toast .tTxt small{ display:block; color: rgba(238,247,239,.75); margin-top:4px; }
+  .toast .tIco{font-size:20px; line-height:1}
+  .toast .tTxt{flex:1}
+  .toast .tTxt b{display:block; font-size:14px}
+  .toast .tTxt small{display:block; color:rgba(238,247,239,.75); margin-top:4px}
   .toast .tClose{
     border:1px solid rgba(255,255,255,.18);
-    background: rgba(255,255,255,.08);
-    color: var(--text);
-    border-radius: 12px;
-    padding: 6px 10px;
+    background:rgba(255,255,255,.08);
+    color:var(--text);
+    border-radius:12px;
+    padding:6px 10px;
     cursor:pointer;
     font-weight:900;
+  }
+
+  /* confetti */
+  .confetti{position:fixed; inset:0; pointer-events:none; z-index:400; overflow:hidden}
+  .conf{
+    position:absolute; top:-10px;
+    width:10px; height:14px;
+    border-radius:4px;
+    opacity:0;
+    box-shadow:0 10px 26px rgba(0,0,0,.25);
+    animation: confFall var(--t) linear forwards;
+  }
+  @keyframes confFall{
+    0%{transform:translate3d(0,-20px,0) rotate(0deg); opacity:0}
+    10%{opacity:.9}
+    100%{transform:translate3d(var(--dx), 110vh, 0) rotate(680deg); opacity:0}
   }
 </style>
 </head>
@@ -832,12 +371,6 @@
 <body>
   <div class="bg"></div>
   <div class="bgOverlay"></div>
-  <div class="aurora"></div>
-  <div class="wind" id="windLayer"></div>
-  <div class="stars" id="stars"></div>
-  <div class="leaves" id="leaves"></div>
-  <div class="fireflies" id="fireflies"></div>
-  <div class="sparks" id="sparks"></div>
 
   <div class="confetti" id="confetti"></div>
 
@@ -874,7 +407,6 @@
     </div>
 
     <div class="stage" id="stage">
-      <div class="frame"></div>
       <div class="content">
         <div class="grid" id="dow"></div>
         <div style="height:10px"></div>
@@ -885,34 +417,20 @@
 
     <!-- SEZIONI -->
     <div class="accordion" id="accordion">
+
       <div class="accItem open" id="accCountdown">
         <button class="accBtn" type="button" data-acc="accCountdown">
           <div class="accLeft">
             <div class="accIco">🔔</div>
-            <p class="accTitle">Avvisi compleanni (alle 09:00: -10, -5, 0 giorni)</p>
+            <p class="accTitle">Avvisi compleanni (09:00: -10, -5, 0 giorni)</p>
           </div>
           <div class="chev">▾</div>
         </button>
         <div class="accBody">
           <div class="cards" id="countCards"></div>
           <p class="muted" style="margin:10px 0 0;">
-            Nota: le notifiche del telefono (push) funzionano bene solo se hai installato il sito come App e hai dato il permesso.
+            Nota: per notifiche push vere serve HTTPS + installazione PWA. Ma l’app funziona anche senza.
           </p>
-        </div>
-      </div>
-
-      <div class="accItem" id="accThoughts">
-        <button class="accBtn" type="button" data-acc="accThoughts">
-          <div class="accLeft">
-            <div class="accIco">💭</div>
-            <p class="accTitle">Pensieri</p>
-          </div>
-          <div class="chev">▾</div>
-        </button>
-        <div class="accBody">
-          <p class="muted" style="margin:0 0 10px;">Scrivi qui. Rimane salvato sul tuo dispositivo.</p>
-          <textarea id="journal" class="journalBox" placeholder="Scrivi qui quello che ti passa per la mente..."></textarea>
-          <div class="muted" id="journalStatus" style="margin-top:8px;"></div>
         </div>
       </div>
 
@@ -926,7 +444,7 @@
         </button>
         <div class="accBody">
           <div class="knotBox">
-            <div class="knotArt" id="knotArt"></div>
+            <div class="knotImg" id="knotImg"></div>
             <div class="knotText">
               <p class="knotName" id="knotName">—</p>
               <p class="knotDesc" id="knotDesc">—</p>
@@ -956,1087 +474,678 @@
         </div>
       </div>
 
-      <div class="accItem open" id="accTimeline">
-        <button class="accBtn" type="button" data-acc="accTimeline">
-          <div class="accLeft">
-            <div class="accIco">🕰️</div>
-            <p class="accTitle">Linea del tempo scout (Jamboree)</p>
-          </div>
-          <div class="chev">▾</div>
-        </button>
-        <div class="accBody">
-          <div class="timeline" id="timeline"></div>
-          <p class="muted" style="margin:10px 0 0;">Scorri a destra/sinistra 👉</p>
-        </div>
-      </div>
-
-      <div class="accItem" id="accLaws">
-        <button class="accBtn" type="button" id="lawsBtn">
-          <div class="accLeft">
-            <div class="accIco">📜</div>
-            <p class="accTitle">Legge Scout</p>
-          </div>
-          <div class="chev">▾</div>
-        </button>
-        <div class="accBody">
-          <p class="muted" style="margin:0;">Apri la finestra con la legge scout.</p>
-        </div>
-      </div>
     </div>
 
-    <!-- FOTO -->
-    <details class="photoWin" id="photoWin">
-      <summary>
-        <div class="sumLeft">
-          <div class="sumIco">📷</div>
-          <div>Foto campo estivo 2025</div>
-        </div>
-        <div class="sumChev">▾</div>
-      </summary>
-      <div class="galleryWrap">
-        <div class="galleryGrid" id="galleryGrid"></div>
-        <p class="muted" style="margin:10px 0 0;">
-          Nota: i file <b>.HEIC</b> non sempre si vedono nel browser. Qui ci sono JPG/MP4 quindi ok.
-        </p>
-      </div>
-    </details>
-
-    <div class="footerWindow">
-      <b>Site created by Mattia Spensieri</b>
-    </div>
   </div>
 
-  <!-- MODAL LEGGI SCOUT -->
-  <div class="modalBackdrop" id="lawsBackdrop">
-    <div class="modal">
-      <div class="modalHeader">
-        <h3 class="modalTitle">📜 Legge Scout</h3>
-        <button id="lawsClose">Chiudi ✖</button>
-      </div>
-      <div class="modalBody">
-        <div class="line"><div class="ico">1️⃣</div><div><b>Lo scout è leale.</b><div class="sub">Dice la verità e mantiene la parola data.</div></div></div>
-        <div class="line"><div class="ico">2️⃣</div><div><b>Lo scout è amico di tutti e fratello di ogni altro scout.</b><div class="sub">Aiuta senza guardare chi sei.</div></div></div>
-        <div class="line"><div class="ico">3️⃣</div><div><b>Lo scout è cortese.</b><div class="sub">Rispetta gli altri e si comporta bene.</div></div></div>
-        <div class="line"><div class="ico">4️⃣</div><div><b>Lo scout ama e rispetta la natura.</b><div class="sub">Protegge il bosco, gli animali e l’ambiente.</div></div></div>
-        <div class="line"><div class="ico">5️⃣</div><div><b>Lo scout sorride e canta anche nelle difficoltà.</b><div class="sub">Non si arrende e porta buon umore.</div></div></div>
-        <div class="line"><div class="ico">6️⃣</div><div><b>Lo scout è laborioso ed economo.</b><div class="sub">Usa bene le cose e non spreca.</div></div></div>
-        <div class="line"><div class="ico">7️⃣</div><div><b>Lo scout è puro nei pensieri, parole e azioni.</b><div class="sub">Fa scelte giuste e rispettose.</div></div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- LIGHTBOX FOTO -->
-  <div class="lightbox" id="lightbox">
-    <div class="lbBox">
-      <div class="lbTop">
-        <div class="lbTitle" id="lbTitle">Media</div>
-        <button class="lbClose" id="lbClose">Chiudi ✖</button>
-      </div>
-      <div id="lbMediaHost"></div>
-    </div>
-  </div>
-
-  <!-- TOAST (notifiche nel sito) -->
+  <!-- TOAST -->
   <div class="toastWrap" id="toastWrap"></div>
 
 <script>
-  // ✅ registra il Service Worker (necessario per PWA + notifiche push)
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js").catch(console.error);
-    });
-  }
-
-  // =========================
-  // UTIL
-  // =========================
-  const pad = n => String(n).padStart(2,"0");
-  const ymd = (y,m,d) => \`\${y}-\${pad(m)}-\${pad(d)}\`;
-  const itMonth = (y,m) => new Date(y, m-1, 1).toLocaleString("it-IT",{month:"long", year:"numeric"});
-  const DOW = ["Lun","Mar","Mer","Gio","Ven","Sab","Dom"];
-  const YEAR_MIN = 2026, YEAR_MAX = 2029;
-  const inRange = y => (y>=YEAR_MIN && y<=YEAR_MAX);
-
-  function daysBetween(a,b){
-    const A = new Date(a.getFullYear(), a.getMonth(), a.getDate());
-    const B = new Date(b.getFullYear(), b.getMonth(), b.getDate());
-    return Math.round((B - A) / (1000*60*60*24));
-  }
-
-  function dateToObj(iso){
-    const [y,m,d] = iso.split("-").map(n=>parseInt(n,10));
-    return new Date(y, m-1, d);
-  }
-
-  // =========================
-  // DOM
-  // =========================
-  const intro = document.getElementById("intro");
-  const enterBtn = document.getElementById("enterBtn");
-  const app = document.getElementById("app");
-
-  const dowEl = document.getElementById("dow");
-  const calEl = document.getElementById("cal");
-  const monthTitleEl = document.getElementById("monthTitle");
-  const yearSel = document.getElementById("yearSel");
-  const monthEventsBox = document.getElementById("monthEvents");
-  const countCards = document.getElementById("countCards");
-
-  const journal = document.getElementById("journal");
-  const journalStatus = document.getElementById("journalStatus");
-
-  const knotArt = document.getElementById("knotArt");
-  const knotName = document.getElementById("knotName");
-  const knotDesc = document.getElementById("knotDesc");
-
-  const needle = document.getElementById("needle");
-  const virtueName = document.getElementById("virtueName");
-  const virtueDesc = document.getElementById("virtueDesc");
-
-  const lawsBtn = document.getElementById("lawsBtn");
-  const lawsBackdrop = document.getElementById("lawsBackdrop");
-  const lawsClose = document.getElementById("lawsClose");
-
-  const galleryGrid = document.getElementById("galleryGrid");
-  const lightbox = document.getElementById("lightbox");
-  const lbTitle = document.getElementById("lbTitle");
-  const lbClose = document.getElementById("lbClose");
-  const lbMediaHost = document.getElementById("lbMediaHost");
-
-  const toastWrap = document.getElementById("toastWrap");
-  const confettiBox = document.getElementById("confetti");
-  const timelineEl = document.getElementById("timeline");
-
-  // =========================
-  // STATO CALENDARIO
-  // =========================
-  let stateYear = 2026;
-  let stateMonth = 1;
-
-  // =========================
-  // COMPLEANNI (AGGIUNTI TUTTI QUELLI CHE MI HAI DATO)
-  // =========================
-  const BIRTHDAYS = [
-    { id:"mariateresa", name:"Mariateresa", day:7,  month:1,  icon:"🎂" },
-    { id:"clara",       name:"Clara",       day:19, month:1,  icon:"🎂" },
-    { id:"cristian",    name:"Cristian",    day:28, month:1,  icon:"🎂" },
-
-    { id:"ambra",       name:"Ambra",       day:28, month:2,  icon:"🎂" },
-
-    { id:"arta",        name:"Arta",        day:22, month:3,  icon:"🎂" },
-    { id:"ginevra",     name:"Ginevra Di Buono", day:22, month:3, icon:"🎂" },
-    { id:"greta",       name:"Greta Iorio", day:28, month:3,  icon:"🎂" },
-
-    { id:"eliana",      name:"Eliana Alfieri", day:30, month:4, icon:"🎂" },
-
-    { id:"rudi",        name:"Rudi",        day:11, month:5,  icon:"🎂" },
-    { id:"annalisa",    name:"Annalisa",    day:22, month:5,  icon:"🎂" },
-
-    { id:"alessia",     name:"Alessia Di Michele", day:12, month:6, icon:"🎂" },
-    { id:"lorenzo",     name:"Lorenzo",     day:18, month:6,  icon:"🎂" },
-    { id:"paolo",       name:"Paolo Iannetta", day:20, month:6, icon:"🎂" },
-
-    { id:"pasquale",    name:"Pasquale Petrone", day:1, month:7, icon:"🎂" },
-    { id:"loris",       name:"Loris",       day:16, month:7,  icon:"🎂" },
-
-    { id:"vittorio",    name:"Vittorio",    day:20, month:8,  icon:"🎂" },
-
-    { id:"gabriele",    name:"Gabriele Pio Ciocca", day:13, month:9, icon:"🎂" },
-
-    { id:"sofia",       name:"Sofia",       day:31, month:10, icon:"🎂" },
-
-    { id:"giulia",      name:"Giulia Leone", day:15, month:11, icon:"🎂" },
-    { id:"giuseppe",    name:"Giuseppe",    day:18, month:11, icon:"🎂" },
-
-    { id:"chiara",      name:"Chiara",      day:22, month:12, icon:"🎂" },
-    { id:"simone",      name:"Simone",      day:18, month:12, icon:"🎂" }
-  ];
-
-  function getAllBirthdaysForYear(year){
-    return BIRTHDAYS.map(b=>{
-      const d = new Date(year, b.month-1, b.day);
-      return {
-        id: b.id,
-        icon: b.icon,
-        name: b.name,
-        kind: "birthday",
-        dateObj: d,
-        date: ymd(year, b.month, b.day)
-      };
-    });
-  }
-
-  // =========================
-  // NODO + BUSSOLA (NODI AUMENTATI + IMMAGINI SVG)
-  // =========================
-  function knotSVG(type){
-    const stroke = "rgba(255,210,77,.95)";
-    const stroke2 = "rgba(124,255,138,.85)";
-    const bg = "rgba(0,0,0,.18)";
-
-    const base = (paths) => `
-      <div style="
-        width: 260px; max-width:100%;
-        background:${bg};
-        border:1px solid rgba(255,255,255,.14);
-        border-radius:16px;
-        padding:10px;
-        box-shadow:0 10px 26px rgba(0,0,0,.22);
-      ">
-        <svg viewBox="0 0 260 140" width="100%" height="120" role="img" aria-label="Nodo">
-          <defs>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="2.2" result="coloredBlur"/>
-              <feMerge>
-                <feMergeNode in="coloredBlur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-          </defs>
-          ${paths}
-        </svg>
-      </div>
-    `;
-
-    const rope = (d, color, w=10) =>
-      `<path d="${d}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>`;
-
-    const dot = (cx,cy,color) =>
-      `<circle cx="${cx}" cy="${cy}" r="4.6" fill="${color}" opacity=".9" />`;
-
-    switch(type){
-      case "piano":
-        return base(`
-          ${rope("M25,70 C65,30 105,30 130,70 C155,110 195,110 235,70", stroke, 10)}
-          ${rope("M25,70 C65,110 105,110 130,70 C155,30 195,30 235,70", stroke2, 10)}
-          ${dot(130,70,"rgba(255,255,255,.78)")}
-        `);
-
-      case "gassa":
-        return base(`
-          ${rope("M35,95 C35,55 70,32 110,45 C150,58 150,108 110,108 C75,108 58,85 58,64", stroke, 10)}
-          ${rope("M58,64 C90,55 116,66 132,92 C148,118 198,112 210,84 C222,56 190,35 155,45", stroke2, 10)}
-          ${dot(82,94,"rgba(255,255,255,.78)")}
-        `);
-
-      case "parlato":
-        return base(`
-          <rect x="190" y="18" width="18" height="104" rx="9" fill="rgba(255,255,255,.24)"/>
-          ${rope("M25,50 C80,50 110,75 190,75", stroke, 10)}
-          ${rope("M35,102 C95,102 120,75 190,75", stroke2, 10)}
-          ${rope("M190,75 C150,75 140,30 95,30", stroke, 10)}
-          ${dot(190,75,"rgba(255,255,255,.78)")}
-        `);
-
-      case "barcaiolo":
-        return base(`
-          <rect x="190" y="18" width="18" height="104" rx="9" fill="rgba(255,255,255,.24)"/>
-          ${rope("M25,48 C90,48 110,75 190,75", stroke, 10)}
-          ${rope("M25,102 C90,102 110,75 190,75", stroke2, 10)}
-          ${rope("M190,75 C150,75 145,35 105,35", stroke, 10)}
-          ${dot(185,75,"rgba(255,255,255,.78)")}
-        `);
-
-      case "savoia":
-        return base(`
-          ${rope("M22,70 C70,18 120,18 150,70 C180,122 238,122 238,70", stroke, 10)}
-          ${rope("M22,70 C70,122 120,122 150,70 C180,18 238,18 238,70", stroke2, 10)}
-          ${rope("M95,40 C108,60 108,80 95,100", "rgba(255,255,255,.62)", 6)}
-          ${rope("M125,40 C112,60 112,80 125,100", "rgba(255,255,255,.62)", 6)}
-        `);
-
-      case "otto":
-        return base(`
-          ${rope("M85,32 C55,52 60,88 90,88 C115,88 120,60 98,56 C82,52 72,70 85,78", stroke, 10)}
-          ${rope("M108,56 C132,45 170,55 176,82 C182,112 135,122 112,100 C96,84 108,72 125,72", stroke2, 10)}
-          ${dot(112,98,"rgba(255,255,255,.78)")}
-        `);
-
-      case "prusik":
-        return base(`
-          ${rope("M25,70 C90,70 160,70 235,70", "rgba(255,255,255,.55)", 8)}
-          ${rope("M118,40 C98,56 98,86 118,102", stroke, 10)}
-          ${rope("M142,40 C162,56 162,86 142,102", stroke2, 10)}
-          ${dot(130,70,"rgba(255,255,255,.78)")}
-        `);
-
-      default:
-        return base(`${rope("M25,70 C90,30 170,110 235,70", stroke, 10)}`);
-    }
-  }
-
-  const KNOTS = [
-    { name:"Nodo piano",     svg: knotSVG("piano"),     desc:"Unisce due corde simili. Semplice ma va fatto bene." },
-    { name:"Gassa d’amante", svg: knotSVG("gassa"),     desc:"Cappio fisso che non scorre. Perfetto per un anello sicuro." },
-    { name:"Nodo parlato",   svg: knotSVG("parlato"),   desc:"Per fissare una corda a un palo. Usatissimo in campo." },
-    { name:"Nodo barcaiolo", svg: knotSVG("barcaiolo"), desc:"Nodo comodo per regolare la tensione al volo (pali e moschettoni)." },
-    { name:"Nodo savoia",    svg: knotSVG("savoia"),    desc:"Accorcia la corda o isola un tratto rovinato." },
-    { name:"Nodo a otto",    svg: knotSVG("otto"),      desc:"Nodo di arresto: impedisce alla corda di sfilarsi." },
-    { name:"Prusik",         svg: knotSVG("prusik"),    desc:"Autobloccante: fondamentale per sicurezza e recupero." }
-  ];
-
-  const VIRTUES = [
-    { name:"Coraggio", desc:"Fare la cosa giusta anche quando hai paura." },
-    { name:"Aiuto", desc:"Dare una mano senza aspettarsi niente in cambio." },
-    { name:"Onestà", desc:"Dire la verità e rispettare la parola data." },
-    { name:"Lealtà", desc:"Essere affidabile con gli altri e con te stesso." },
-    { name:"Servizio", desc:"Mettere il bene comune davanti alla comodità personale." }
-  ];
-
-  // =========================
-  // TIMELINE
-  // =========================
-  function buildTimeline(){
-    const items = [
-      { year:"1920", text:"1° World Scout Jamboree — Olympia, Londra (30 luglio–8 agosto)." },
-      { year:"1947", text:"Jamboree della Pace — ripartenza dopo la guerra (Francia)." },
-      { year:"1957", text:"50 anni di scoutismo — Jamboree a Sutton Park (UK)." },
-      { year:"2007", text:"Centenario dello scoutismo — grande celebrazione mondiale." },
-      { year:"2019", text:"Jamboree — Nord America (USA)." },
-      { year:"2023", text:"Jamboree — Corea del Sud (Saemangeum)." },
-      { year:"2027", text:"Jamboree — Polonia (Gdańsk), 30 luglio–8 agosto." }
-    ];
-
-    timelineEl.innerHTML = "";
-    items.forEach(x=>{
-      const div = document.createElement("div");
-      div.className="timeItem";
-      div.innerHTML = `<p class="timeYear">${x.year}</p><p class="timeText">${x.text}</p>`;
-      timelineEl.appendChild(div);
-    });
-  }
-
-  // =========================
-  // CALENDARIO - CALCOLI
-  // =========================
-  function firstDayOffset(y,m){
-    const js = new Date(y, m-1, 1).getDay(); // 0 dom..6 sab
-    return (js + 6) % 7; // lun=0..dom=6
-  }
-  function daysInMonth(y,m){ return new Date(y, m, 0).getDate(); }
-
-  // =========================
-  // TEMA giorno/notte
-  // =========================
-  function setTheme(){
-    const m = stateMonth;
-    const hour = new Date().getHours();
-    const night = (hour >= 20 || hour < 7);
-
-    let overlayA = "rgba(8,25,14,.58)", overlayB = "rgba(8,25,14,.26)";
-    if([12,1,2].includes(m)) { overlayA="rgba(8,16,32,.64)"; overlayB="rgba(8,16,32,.30)"; }
-    if([6,7,8].includes(m)) { overlayA="rgba(40,22,6,.58)"; overlayB="rgba(15,35,18,.22)"; }
-    if([9,10,11].includes(m)) { overlayA="rgba(22,12,6,.62)"; overlayB="rgba(15,30,16,.24)"; }
-
-    document.documentElement.style.setProperty("--overlayA", night ? "rgba(0,0,0,.72)" : overlayA);
-    document.documentElement.style.setProperty("--overlayB", night ? "rgba(0,0,0,.32)" : overlayB);
-    document.documentElement.style.setProperty("--fliesOpacity", night ? ".95" : ".55");
-  }
-
-  // =========================
-  // EVENTI (mappa compleanni)
-  // =========================
-  function birthdaysByKeyForCurrentView(){
-    const list = getAllBirthdaysForYear(stateYear);
-    const map = new Map();
-    list.forEach(e=>{
-      const key = e.date;
-      if(!map.has(key)) map.set(key, []);
-      map.get(key).push(e);
-    });
-    return map;
-  }
-
-  function markerForDate(key, eventMap){
-    const evs = eventMap.get(key);
-    if(!evs || !evs.length) return "";
-    const icons = evs.slice(0,2).map(x=>x.icon).join("");
-    return icons;
-  }
-
-  // =========================
-  // RENDER DOW
-  // =========================
-  function renderDOW(){
-    dowEl.innerHTML = "";
-    DOW.forEach(d=>{
-      const div = document.createElement("div");
-      div.className="dow";
-      div.textContent = d;
-      dowEl.appendChild(div);
-    });
-  }
-
-  // =========================
-  // RENDER CALENDARIO
-  // =========================
-  function renderCalendar(){
-    if(!inRange(stateYear)){ stateYear=YEAR_MIN; stateMonth=1; }
-    setTheme();
-
-    monthTitleEl.textContent = itMonth(stateYear, stateMonth);
-    yearSel.value = String(stateYear);
-    calEl.innerHTML = "";
-
-    const today = new Date();
-    const todayKey = ymd(today.getFullYear(), today.getMonth()+1, today.getDate());
-
-    const offset = firstDayOffset(stateYear, stateMonth);
-    const dim = daysInMonth(stateYear, stateMonth);
-
-    const prevMonth = stateMonth === 1 ? 12 : stateMonth - 1;
-    const prevYear  = stateMonth === 1 ? stateYear - 1 : stateYear;
-    const nextMonth = stateMonth === 12 ? 1 : stateMonth + 1;
-    const nextYear  = stateMonth === 12 ? stateYear + 1 : stateYear;
-
-    const dimPrev = daysInMonth(prevYear, prevMonth);
-    const eventMap = birthdaysByKeyForCurrentView();
-
-    let cells = 0;
-
-    for(let i=0;i<offset;i++){
-      const dayNum = dimPrev - offset + 1 + i;
-      const key = ymd(prevYear, prevMonth, dayNum);
-      calEl.appendChild(makeDayCell(prevYear, prevMonth, dayNum, key, true, todayKey, eventMap));
-      cells++;
-    }
-
-    for(let d=1; d<=dim; d++){
-      const key = ymd(stateYear, stateMonth, d);
-      calEl.appendChild(makeDayCell(stateYear, stateMonth, d, key, false, todayKey, eventMap));
-      cells++;
-    }
-
-    let nextDay = 1;
-    while(cells < 42){
-      const key = ymd(nextYear, nextMonth, nextDay);
-      calEl.appendChild(makeDayCell(nextYear, nextMonth, nextDay, key, true, todayKey, eventMap));
-      cells++;
-      nextDay++;
-    }
-
-    renderMonthEventsList(eventMap);
-  }
-
-  function makeDayCell(y,m,d,key,isOff,todayKey,eventMap){
-    const div = document.createElement("div");
-    div.className = "day" + (isOff ? " off" : "") + (key===todayKey ? " today" : "");
-
-    const evs = eventMap.get(key) || [];
-    const marker = markerForDate(key, eventMap);
-
-    if(evs.length && !isOff) div.classList.add("eventDay");
-    div.dataset.key = key;
-
-    div.innerHTML = `
-      <div class="n">${d}</div>
-      ${marker && !isOff ? `<div class="marker"><span>${marker}</span><span class="dotRed"></span></div>` : ""}
-    `;
-
-    if(evs.length && !isOff){
-      div.style.cursor = "pointer";
-      div.addEventListener("click", ()=>{
-        div.classList.remove("jumpFlash");
-        void div.offsetWidth;
-        div.classList.add("jumpFlash");
-        spawnConfettiBurst();
-      });
-    }
-    return div;
-  }
-
-  // =========================
-  // LISTA COMPLEANNI DEL MESE
-  // =========================
-  function renderMonthEventsList(eventMap){
-    monthEventsBox.innerHTML = "";
-
-    const dim = daysInMonth(stateYear, stateMonth);
-    const keys = [];
-    for(let d=1; d<=dim; d++) keys.push(ymd(stateYear, stateMonth, d));
-
-    const items = [];
-    keys.forEach(k=>{
-      const evs = eventMap.get(k);
-      if(evs && evs.length){
-        evs.forEach(e => items.push({ key:k, e }));
-      }
-    });
-
-    if(items.length === 0){
-      const line = document.createElement("div");
-      line.className="monthEventsLine";
-      line.innerHTML = `<div class="monthEventsIco">🌙</div><div class="monthEventsTxt">Nessun compleanno in questo mese</div>`;
-      monthEventsBox.appendChild(line);
+/* ============================================================
+   ✅ SERVICE WORKER + NOTIFICHE (SAFE) — NON BLOCCA MAI ENTRA
+   ============================================================ */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    const isSecure =
+      location.protocol === "https:" ||
+      location.hostname === "localhost" ||
+      location.hostname === "127.0.0.1";
+
+    if (!isSecure) {
+      console.warn("Service Worker disattivato: serve HTTPS o localhost.");
       return;
     }
+    navigator.serviceWorker.register("./service-worker.js")
+      .catch(err => console.warn("SW register failed:", err));
+  });
+}
 
-    items.forEach(item=>{
-      const dt = dateToObj(item.key);
-      const label = dt.toLocaleDateString("it-IT",{day:"2-digit", month:"long"});
-      const line = document.createElement("div");
-      line.className="monthEventsLine";
-      line.innerHTML = `
-        <div class="monthEventsIco">🎂</div>
-        <div class="monthEventsTxt">
-          <b>${item.e.name}</b>
-          <div class="monthEventsSub">📅 ${label}</div>
-        </div>
-      `;
-      line.addEventListener("click", ()=> jumpToDate(item.key));
-      monthEventsBox.appendChild(line);
-    });
-  }
+function canNotify(){
+  return ("Notification" in window) &&
+    (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1");
+}
 
-  // =========================
-  // JUMP
-  // =========================
-  function jumpToDate(isoKey){
-    const [y,m] = isoKey.split("-").map(n=>parseInt(n,10));
-    if(!inRange(y)) return;
-    stateYear = y; stateMonth = m;
-    renderCalendar();
-
-    requestAnimationFrame(()=>{
-      const cell = calEl.querySelector(`[data-key="${isoKey}"]`);
-      if(cell){
-        cell.scrollIntoView({behavior:"smooth", block:"center"});
-        cell.classList.remove("jumpFlash");
-        void cell.offsetWidth;
-        cell.classList.add("jumpFlash");
-      }
-    });
-  }
-
-  // =========================
-  // COUNTDOWN: compleanni entro 10 giorni
-  // =========================
-  function buildUpcomingBirthdayList(){
-    const now = new Date();
-    const y = now.getFullYear();
-    const all = [...getAllBirthdaysForYear(y), ...getAllBirthdaysForYear(y+1)];
-
-    return all
-      .map(e => ({...e, diff: daysBetween(now, e.dateObj)}))
-      .filter(e => e.diff >= 0 && e.diff <= 10)
-      .sort((a,b)=> a.diff - b.diff);
-  }
-
-  function renderCountdown(){
-    countCards.innerHTML = "";
-    const list = buildUpcomingBirthdayList();
-
-    if(list.length === 0){
-      const card = document.createElement("div");
-      card.className="card";
-      card.innerHTML = `
-        <div class="kicker">🔔 Avvisi</div>
-        <p class="big">Nessun compleanno nei prossimi 10 giorni</p>
-        <p class="small">Scorri il calendario per vedere tutti i compleanni segnati.</p>
-      `;
-      countCards.appendChild(card);
-      return;
-    }
-
-    list.slice(0,10).forEach(e=>{
-      const when = e.dateObj.toLocaleDateString("it-IT", {day:"2-digit", month:"long", year:"numeric"});
-      const msg = (e.diff===0)
-        ? `🎉 È oggi il compleanno di ${e.name}!`
-        : `Tra ${e.diff} giorni è il compleanno di ${e.name} (${when}).`;
-
-      const card = document.createElement("div");
-      card.className="card";
-      card.innerHTML = `
-        <div class="kicker">🎂 Compleanno</div>
-        <p class="big">${msg}</p>
-        <p class="small">📅 ${when}</p>
-        <div class="redNote">🔴 Segnato sul calendario</div>
-      `;
-      card.addEventListener("click", ()=> jumpToDate(e.date));
-      countCards.appendChild(card);
-    });
-  }
-
-  // =========================
-  // TOAST
-  // =========================
-  function showToast({ icon="🎂", title="Avviso", message="", onClick=null }){
-    const t = document.createElement("div");
-    t.className = "toast";
-    t.innerHTML = `
-      <div class="tIco">${icon}</div>
-      <div class="tTxt">
-        <b>${title}</b>
-        <small>${message}</small>
-      </div>
-      <button class="tClose" type="button">✖</button>
-    `;
-    t.querySelector(".tClose").addEventListener("click", ()=> t.remove());
-
-    if(onClick){
-      t.style.cursor = "pointer";
-      t.addEventListener("click", (e)=>{
-        if(e.target && e.target.classList.contains("tClose")) return;
-        onClick();
-        t.remove();
-      });
-    }
-
-    toastWrap.prepend(t);
-    setTimeout(()=> { if(t.isConnected) t.remove(); }, 12000);
-  }
-
-  // =========================
-  // NOTIFICHE BROWSER
-  // =========================
-  function canNotify(){ return ("Notification" in window); }
-
-  async function ensureNotificationPermission(){
+async function ensureNotificationPermission(){
+  try{
     if(!canNotify()) return false;
     if(Notification.permission === "granted") return true;
     if(Notification.permission === "denied") return false;
     const res = await Notification.requestPermission();
     return res === "granted";
+  }catch(e){
+    console.warn("Notifiche non disponibili:", e);
+    return false;
   }
+}
 
-  function pushWebNotification(title, body){
+function pushWebNotification(title, body){
+  try{
     if(!canNotify()) return;
     if(Notification.permission !== "granted") return;
-    try{ new Notification(title, { body }); }catch(e){}
+    new Notification(title, { body });
+  }catch(e){
+    console.warn("Push notification error:", e);
+  }
+}
+
+/* ============================================================
+   UTIL
+   ============================================================ */
+const pad = n => String(n).padStart(2,"0");
+const ymd = (y,m,d) => `${y}-${pad(m)}-${pad(d)}`;
+const itMonth = (y,m) => new Date(y, m-1, 1).toLocaleString("it-IT",{month:"long", year:"numeric"});
+const DOW = ["Lun","Mar","Mer","Gio","Ven","Sab","Dom"];
+const YEAR_MIN = 2026, YEAR_MAX = 2029;
+const inRange = y => (y>=YEAR_MIN && y<=YEAR_MAX);
+
+function daysBetween(a,b){
+  const A = new Date(a.getFullYear(), a.getMonth(), a.getDate());
+  const B = new Date(b.getFullYear(), b.getMonth(), b.getDate());
+  return Math.round((B - A) / (1000*60*60*24));
+}
+function dateToObj(iso){
+  const [y,m,d] = iso.split("-").map(n=>parseInt(n,10));
+  return new Date(y, m-1, d);
+}
+function firstDayOffset(y,m){
+  const js = new Date(y, m-1, 1).getDay(); // 0 dom..6 sab
+  return (js + 6) % 7; // lun=0..dom=6
+}
+function daysInMonth(y,m){ return new Date(y, m, 0).getDate(); }
+
+/* ============================================================
+   DOM
+   ============================================================ */
+const intro = document.getElementById("intro");
+const enterBtn = document.getElementById("enterBtn");
+const app = document.getElementById("app");
+const dowEl = document.getElementById("dow");
+const calEl = document.getElementById("cal");
+const monthTitleEl = document.getElementById("monthTitle");
+const yearSel = document.getElementById("yearSel");
+const monthEventsBox = document.getElementById("monthEvents");
+const countCards = document.getElementById("countCards");
+
+const knotImg = document.getElementById("knotImg");
+const knotName = document.getElementById("knotName");
+const knotDesc = document.getElementById("knotDesc");
+
+const needle = document.getElementById("needle");
+const virtueName = document.getElementById("virtueName");
+const virtueDesc = document.getElementById("virtueDesc");
+
+const toastWrap = document.getElementById("toastWrap");
+const confettiBox = document.getElementById("confetti");
+
+/* ============================================================
+   STATO
+   ============================================================ */
+let stateYear = 2026;
+let stateMonth = 1;
+
+/* ============================================================
+   ✅ COMPLEANNI (tutti quelli che mi hai dato)
+   ============================================================ */
+const BIRTHDAYS = [
+  { id:"mariateresa", name:"Mariateresa", day:7,  month:1,  icon:"🎂" },
+  { id:"clara",       name:"Clara",       day:19, month:1,  icon:"🎂" },
+  { id:"cristian",    name:"Cristian",    day:28, month:1,  icon:"🎂" },
+
+  { id:"ambra",       name:"Ambra",       day:28, month:2,  icon:"🎂" },
+
+  { id:"arta",        name:"Arta",        day:22, month:3,  icon:"🎂" },
+  { id:"ginevra",     name:"Ginevra Di Buono", day:22, month:3, icon:"🎂" },
+  { id:"greta",       name:"Greta Iorio", day:28, month:3,  icon:"🎂" },
+
+  { id:"eliana",      name:"Eliana Alfieri", day:30, month:4, icon:"🎂" },
+
+  { id:"rudi",        name:"Rudi",        day:11, month:5,  icon:"🎂" },
+  { id:"annalisa",    name:"Annalisa",    day:22, month:5,  icon:"🎂" },
+
+  { id:"alessia",     name:"Alessia Di Michele", day:12, month:6, icon:"🎂" },
+  { id:"lorenzo",     name:"Lorenzo",     day:18, month:6,  icon:"🎂" },
+  { id:"paolo",       name:"Paolo Iannetta", day:20, month:6, icon:"🎂" },
+
+  { id:"pasquale",    name:"Pasquale Petrone", day:1, month:7, icon:"🎂" },
+  { id:"loris",       name:"Loris",       day:16, month:7,  icon:"🎂" },
+
+  { id:"vittorio",    name:"Vittorio",    day:20, month:8,  icon:"🎂" },
+
+  { id:"gabriele",    name:"Gabriele Pio Ciocca", day:13, month:9, icon:"🎂" },
+
+  { id:"sofia",       name:"Sofia",       day:31, month:10, icon:"🎂" },
+
+  { id:"giulia",      name:"Giulia Leone", day:15, month:11, icon:"🎂" },
+  { id:"giuseppe",    name:"Giuseppe",    day:18, month:11, icon:"🎂" },
+
+  { id:"simone",      name:"Simone",      day:18, month:12, icon:"🎂" },
+  { id:"chiara",      name:"Chiara",      day:22, month:12, icon:"🎂" }
+];
+
+function getAllBirthdaysForYear(year){
+  return BIRTHDAYS.map(b=>{
+    const d = new Date(year, b.month-1, b.day);
+    return {
+      id: b.id,
+      icon: b.icon,
+      name: b.name,
+      kind: "birthday",
+      dateObj: d,
+      date: ymd(year, b.month, b.day)
+    };
+  });
+}
+
+/* ============================================================
+   ✅ NODI (immagini SVG)
+   ============================================================ */
+function knotSvg(kind){
+  const stroke1 = "rgba(255,210,77,.92)";
+  const stroke2 = "rgba(124,255,138,.82)";
+
+  let p1 = "", p2 = "", circle=false;
+
+  switch(kind){
+    case "piano":
+      p1 = "M30 70 C60 20, 120 20, 150 70 C180 120, 240 120, 270 70";
+      p2 = "M30 90 C70 140, 110 140, 150 90 C190 40, 230 40, 270 90";
+      break;
+    case "gassa":
+      p1 = "M70 130 C40 90, 70 40, 130 55 C170 65, 155 115, 115 110 C90 107, 78 92, 82 75";
+      p2 = "M145 120 C185 150, 245 135, 255 95 C265 55, 228 35, 190 45 C162 52, 150 75, 160 95";
+      break;
+    case "parlato":
+      circle = true;
+      p1 = "M78 35 C52 72, 52 118, 78 155";
+      p2 = "M112 35 C142 70, 142 120, 112 155";
+      break;
+    case "otto":
+      p1 = "M110 40 C70 40, 60 95, 105 108 C150 122, 155 165, 110 165 C70 165, 58 118, 100 110";
+      p2 = "M190 40 C230 40, 240 95, 195 108 C150 122, 145 165, 190 165 C230 165, 242 118, 200 110";
+      break;
+    case "prusik":
+      circle = true;
+      p1 = "M78 40 C60 80, 60 120, 78 160";
+      p2 = "M222 40 C240 80, 240 120, 222 160";
+      break;
+    case "savoia":
+      p1 = "M40 90 C80 40, 120 40, 160 90 C200 140, 240 140, 280 90";
+      p2 = "M40 110 C85 160, 120 160, 160 110 C200 60, 235 60, 280 110";
+      break;
+    default:
+      p1 = "M30 80 C80 20, 120 20, 150 80 C180 140, 240 140, 270 80";
+      p2 = "M30 100 C80 160, 120 160, 150 100 C180 40, 240 40, 270 100";
   }
 
-  // =========================
-  // AVVISI 09:00 (-10, -5, 0)
-  // =========================
-  const NOTIF_KEY = "birthday_notifs_9am_v1";
-  const ALERT_DAYS = new Set([10, 5, 0]);
+  const ring = circle ? `<circle cx="150" cy="95" r="42" fill="none" stroke="rgba(255,255,255,.20)" stroke-width="10"/>` : "";
 
-  function loadNotifState(){
-    try{ return JSON.parse(localStorage.getItem(NOTIF_KEY) || "{}"); }
-    catch{ return {}; }
-  }
-  function saveNotifState(state){
-    localStorage.setItem(NOTIF_KEY, JSON.stringify(state));
-  }
+  return `
+  <svg viewBox="0 0 300 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Nodo">
+    <defs>
+      <filter id="g" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="3" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <rect x="0" y="0" width="300" height="190" rx="18" fill="rgba(0,0,0,.18)"/>
+    <path d="${p1}" fill="none" stroke="${stroke1}" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" filter="url(#g)"/>
+    <path d="${p2}" fill="none" stroke="${stroke2}" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" filter="url(#g)"/>
+    ${ring}
+    <circle cx="38" cy="78" r="6" fill="${stroke1}"/>
+    <circle cx="262" cy="112" r="6" fill="${stroke2}"/>
+  </svg>`;
+}
 
-  function todayIso(){
-    const now = new Date();
-    return ymd(now.getFullYear(), now.getMonth()+1, now.getDate());
-  }
+const KNOTS = [
+  { name:"Nodo piano",     svg:knotSvg("piano"),   desc:"Unisce due corde simili. Semplice, ma va fatto bene." },
+  { name:"Gassa d’amante", svg:knotSvg("gassa"),   desc:"Cappio fisso che non scorre. Utilissimo quando ti serve un anello sicuro." },
+  { name:"Nodo parlato",   svg:knotSvg("parlato"), desc:"Per fissare una corda a un palo. Molto usato in campo." },
+  { name:"Nodo a otto",    svg:knotSvg("otto"),    desc:"Nodo di arresto: sicuro e facilissimo da riconoscere." },
+  { name:"Prusik",         svg:knotSvg("prusik"),  desc:"Nodo autobloccante: scorre se lo spingi, si blocca se lo carichi." },
+  { name:"Nodo savoia",    svg:knotSvg("savoia"),  desc:"Ottimo per accorciare una corda o isolare un tratto rovinato." }
+];
 
-  function isAroundNineAM(now){
-    const h = now.getHours();
-    const min = now.getMinutes();
-    return (h === 9 && min <= 15);
-  }
+const VIRTUES = [
+  { name:"Coraggio", desc:"Fare la cosa giusta anche quando hai paura." },
+  { name:"Aiuto", desc:"Dare una mano senza aspettarsi niente in cambio." },
+  { name:"Onestà", desc:"Dire la verità e rispettare la parola data." },
+  { name:"Lealtà", desc:"Essere affidabile con gli altri e con te stesso." },
+  { name:"Servizio", desc:"Mettere il bene comune davanti alla comodità personale." }
+];
 
-  function checkBirthdayAlertsAt9(){
-    const now = new Date();
-    if(!isAroundNineAM(now)) return;
+/* ============================================================
+   EVENT MAP
+   ============================================================ */
+function birthdaysByKeyForCurrentView(){
+  const list = getAllBirthdaysForYear(stateYear);
+  const map = new Map();
+  list.forEach(e=>{
+    const key = e.date;
+    if(!map.has(key)) map.set(key, []);
+    map.get(key).push(e);
+  });
+  return map;
+}
+function markerForDate(key, eventMap){
+  const evs = eventMap.get(key);
+  if(!evs || !evs.length) return "";
+  return evs.slice(0,2).map(x=>x.icon).join("");
+}
 
-    const state = loadNotifState();
-    const today = todayIso();
+/* ============================================================
+   RENDER DOW
+   ============================================================ */
+function renderDOW(){
+  dowEl.innerHTML = "";
+  DOW.forEach(d=>{
+    const div = document.createElement("div");
+    div.className="dow";
+    div.textContent = d;
+    dowEl.appendChild(div);
+  });
+}
 
-    const y = now.getFullYear();
-    const all = [...getAllBirthdaysForYear(y), ...getAllBirthdaysForYear(y+1)];
-    const list = all
-      .map(e => ({...e, diff: daysBetween(now, e.dateObj)}))
-      .filter(e => e.diff >= 0 && e.diff <= 10)
-      .filter(e => ALERT_DAYS.has(e.diff));
+/* ============================================================
+   CALENDARIO
+   ============================================================ */
+function makeDayCell(y,m,d,key,isOff,todayKey,eventMap){
+  const div = document.createElement("div");
+  div.className = "day" + (isOff ? " off" : "") + (key===todayKey ? " today" : "");
 
-    list.forEach(e=>{
-      const dedupeKey = `${e.id}_${e.diff}_${today}`;
-      if(state[dedupeKey]) return;
+  const evs = eventMap.get(key) || [];
+  const marker = markerForDate(key, eventMap);
+  if(evs.length && !isOff) div.classList.add("eventDay");
 
-      const when = e.dateObj.toLocaleDateString("it-IT", {day:"2-digit", month:"long", year:"numeric"});
+  div.dataset.key = key;
+  div.innerHTML = `
+    <div class="n">${d}</div>
+    ${marker && !isOff ? `<div class="marker"><span>${marker}</span><span class="dotRed"></span></div>` : ""}
+  `;
 
-      let title = "🎂 Compleanno in arrivo";
-      let msg = `Tra ${e.diff} giorni è il compleanno di ${e.name} (${when}).`;
-
-      if(e.diff === 10) msg = `⏳ Tra meno di 10 giorni è il compleanno di ${e.name} (${when}).`;
-      if(e.diff === 5)  msg = `⚠️ Tra 5 giorni è il compleanno di ${e.name} (${when}).`;
-      if(e.diff === 0){ title = "🎉 È oggi!"; msg = `Auguri ${e.name}! (${when})`; }
-
-      showToast({ icon:"🎂", title, message: msg, onClick: ()=> jumpToDate(e.date) });
-      pushWebNotification(title, msg);
-
-      state[dedupeKey] = true;
+  if(evs.length && !isOff){
+    div.style.cursor="pointer";
+    div.addEventListener("click", ()=>{
+      spawnConfettiBurst();
+      showToast({
+        icon:"🎂",
+        title:"Compleanno",
+        message: evs.map(x=>`${x.name}`).join(", "),
+        onClick: ()=> jumpToDate(key)
+      });
     });
+  }
+  return div;
+}
 
-    saveNotifState(state);
+function renderCalendar(){
+  if(!inRange(stateYear)){ stateYear = YEAR_MIN; stateMonth = 1; }
+
+  monthTitleEl.textContent = itMonth(stateYear, stateMonth);
+  yearSel.value = String(stateYear);
+  calEl.innerHTML = "";
+
+  const today = new Date();
+  const todayKey = ymd(today.getFullYear(), today.getMonth()+1, today.getDate());
+
+  const offset = firstDayOffset(stateYear, stateMonth);
+  const dim = daysInMonth(stateYear, stateMonth);
+
+  const prevMonth = stateMonth === 1 ? 12 : stateMonth - 1;
+  const prevYear  = stateMonth === 1 ? stateYear - 1 : stateYear;
+  const nextMonth = stateMonth === 12 ? 1 : stateMonth + 1;
+  const nextYear  = stateMonth === 12 ? stateYear + 1 : stateYear;
+
+  const dimPrev = daysInMonth(prevYear, prevMonth);
+  const eventMap = birthdaysByKeyForCurrentView();
+
+  let cells = 0;
+
+  for(let i=0;i<offset;i++){
+    const dayNum = dimPrev - offset + 1 + i;
+    const key = ymd(prevYear, prevMonth, dayNum);
+    calEl.appendChild(makeDayCell(prevYear, prevMonth, dayNum, key, true, todayKey, eventMap));
+    cells++;
   }
 
-  // =========================
-  // DIARIO
-  // =========================
-  const JOURNAL_KEY = "scout_thoughts_v4";
-  function loadJournal(){
-    const saved = localStorage.getItem(JOURNAL_KEY);
-    if(saved !== null) journal.value = saved;
-    journalStatus.textContent = saved ? "✅ Testo caricato (salvato sul tuo dispositivo)" : "✍️ Inizia a scrivere…";
-  }
-  let saveTimer = null;
-  function scheduleSave(){
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(()=>{
-      localStorage.setItem(JOURNAL_KEY, journal.value);
-      const t = new Date();
-      journalStatus.textContent = "💾 Salvato: " + t.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"});
-    }, 220);
-  }
-  journal.addEventListener("input", scheduleSave);
-
-  // =========================
-  // NODO + BUSSOLA
-  // =========================
-  function setKnotOfDay(){
-    const now = new Date();
-    const seed = (now.getFullYear()*10000) + ((now.getMonth()+1)*100) + now.getDate();
-    const idx = seed % KNOTS.length;
-    const k = KNOTS[idx];
-
-    knotName.textContent = k.name;
-    knotArt.innerHTML = k.svg;   // ✅ immagini SVG
-    knotDesc.textContent = k.desc;
-  }
-  function setVirtueOfDay(){
-    const now = new Date();
-    const seed = (now.getFullYear()*10000) + ((now.getMonth()+1)*100) + now.getDate();
-    const idx = seed % VIRTUES.length;
-    const v = VIRTUES[idx];
-
-    virtueName.textContent = `Virtù del giorno: ${v.name}`;
-    virtueDesc.textContent = v.desc;
-
-    const angle = idx * 72;
-    needle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+  for(let d=1; d<=dim; d++){
+    const key = ymd(stateYear, stateMonth, d);
+    calEl.appendChild(makeDayCell(stateYear, stateMonth, d, key, false, todayKey, eventMap));
+    cells++;
   }
 
-  // =========================
-  // ACCORDION
-  // =========================
-  document.querySelectorAll(".accBtn[data-acc]").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      const id = btn.getAttribute("data-acc");
-      const item = document.getElementById(id);
-      item.classList.toggle("open");
+  let nextDay = 1;
+  while(cells < 42){
+    const key = ymd(nextYear, nextMonth, nextDay);
+    calEl.appendChild(makeDayCell(nextYear, nextMonth, nextDay, key, true, todayKey, eventMap));
+    cells++;
+    nextDay++;
+  }
+
+  renderMonthEventsList(eventMap);
+}
+
+/* ============================================================
+   LISTA COMPLEANNI DEL MESE
+   ============================================================ */
+function renderMonthEventsList(eventMap){
+  monthEventsBox.innerHTML = "";
+  const dim = daysInMonth(stateYear, stateMonth);
+
+  const items = [];
+  for(let d=1; d<=dim; d++){
+    const k = ymd(stateYear, stateMonth, d);
+    const evs = eventMap.get(k);
+    if(evs && evs.length){
+      evs.forEach(e=> items.push({key:k, e}));
+    }
+  }
+
+  if(items.length === 0){
+    const line = document.createElement("div");
+    line.className="monthEventsLine";
+    line.innerHTML = `<div class="monthEventsIco">🌙</div><div class="monthEventsTxt">Nessun compleanno in questo mese</div>`;
+    monthEventsBox.appendChild(line);
+    return;
+  }
+
+  items.forEach(item=>{
+    const dt = dateToObj(item.key);
+    const label = dt.toLocaleDateString("it-IT",{day:"2-digit", month:"long"});
+    const line = document.createElement("div");
+    line.className="monthEventsLine";
+    line.innerHTML = `
+      <div class="monthEventsIco">🎂</div>
+      <div class="monthEventsTxt">
+        <b>${item.e.name}</b>
+        <div class="monthEventsSub">📅 ${label}</div>
+      </div>
+    `;
+    line.addEventListener("click", ()=> jumpToDate(item.key));
+    monthEventsBox.appendChild(line);
+  });
+}
+
+/* ============================================================
+   JUMP
+   ============================================================ */
+function jumpToDate(isoKey){
+  const [y,m] = isoKey.split("-").map(n=>parseInt(n,10));
+  if(!inRange(y)) return;
+  stateYear = y; stateMonth = m;
+  renderCalendar();
+
+  requestAnimationFrame(()=>{
+    const cell = calEl.querySelector(`[data-key="${isoKey}"]`);
+    if(cell){
+      cell.scrollIntoView({behavior:"smooth", block:"center"});
+    }
+  });
+}
+
+/* ============================================================
+   COUNTDOWN ENTRO 10 GIORNI
+   ============================================================ */
+function buildUpcomingBirthdayList(){
+  const now = new Date();
+  const y = now.getFullYear();
+  const all = [...getAllBirthdaysForYear(y), ...getAllBirthdaysForYear(y+1)];
+
+  return all
+    .map(e => ({...e, diff: daysBetween(now, e.dateObj)}))
+    .filter(e => e.diff >= 0 && e.diff <= 10)
+    .sort((a,b)=> a.diff - b.diff);
+}
+
+function renderCountdown(){
+  countCards.innerHTML = "";
+  const list = buildUpcomingBirthdayList();
+
+  if(list.length === 0){
+    const card = document.createElement("div");
+    card.className="card";
+    card.innerHTML = `
+      <div class="kicker">🔔 Avvisi</div>
+      <p class="big">Nessun compleanno nei prossimi 10 giorni</p>
+      <p class="small">Scorri il calendario per vedere tutti i compleanni segnati.</p>
+    `;
+    countCards.appendChild(card);
+    return;
+  }
+
+  list.slice(0,10).forEach(e=>{
+    const when = e.dateObj.toLocaleDateString("it-IT", {day:"2-digit", month:"long", year:"numeric"});
+    const msg = (e.diff===0)
+      ? `🎉 È oggi il compleanno di ${e.name}!`
+      : `Tra ${e.diff} giorni è il compleanno di ${e.name} (${when}).`;
+
+    const card = document.createElement("div");
+    card.className="card";
+    card.innerHTML = `
+      <div class="kicker">🎂 Compleanno</div>
+      <p class="big">${msg}</p>
+      <p class="small">📅 ${when}</p>
+      <div class="redNote">🔴 Segnato sul calendario</div>
+    `;
+    card.addEventListener("click", ()=> jumpToDate(e.date));
+    countCards.appendChild(card);
+  });
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function showToast({ icon="🎂", title="Avviso", message="", onClick=null }){
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.innerHTML = `
+    <div class="tIco">${icon}</div>
+    <div class="tTxt">
+      <b>${title}</b>
+      <small>${message}</small>
+    </div>
+    <button class="tClose" type="button">✖</button>
+  `;
+  t.querySelector(".tClose").addEventListener("click", ()=> t.remove());
+
+  if(onClick){
+    t.style.cursor = "pointer";
+    t.addEventListener("click", (e)=>{
+      if(e.target && e.target.classList.contains("tClose")) return;
+      onClick();
+      t.remove();
     });
+  }
+
+  toastWrap.prepend(t);
+  setTimeout(()=>{ if(t.isConnected) t.remove(); }, 12000);
+}
+
+/* ============================================================
+   NOTIFICHE 9:00 (solo toast + push se disponibile)
+   ============================================================ */
+const NOTIF_KEY = "birthday_notifs_9am_v1";
+const ALERT_DAYS = new Set([10,5,0]);
+
+function loadNotifState(){
+  try{ return JSON.parse(localStorage.getItem(NOTIF_KEY) || "{}"); }
+  catch{ return {}; }
+}
+function saveNotifState(state){
+  localStorage.setItem(NOTIF_KEY, JSON.stringify(state));
+}
+function todayIso(){
+  const now = new Date();
+  return ymd(now.getFullYear(), now.getMonth()+1, now.getDate());
+}
+function isAroundNineAM(now){
+  const h = now.getHours();
+  const min = now.getMinutes();
+  return (h === 9 && min <= 15);
+}
+
+function checkBirthdayAlertsAt9(){
+  const now = new Date();
+  if(!isAroundNineAM(now)) return;
+
+  const state = loadNotifState();
+  const today = todayIso();
+
+  const y = now.getFullYear();
+  const all = [...getAllBirthdaysForYear(y), ...getAllBirthdaysForYear(y+1)];
+  const list = all
+    .map(e => ({...e, diff: daysBetween(now, e.dateObj)}))
+    .filter(e => e.diff >= 0 && e.diff <= 10)
+    .filter(e => ALERT_DAYS.has(e.diff));
+
+  list.forEach(e=>{
+    const dedupeKey = `${e.id}_${e.diff}_${today}`;
+    if(state[dedupeKey]) return;
+
+    const when = e.dateObj.toLocaleDateString("it-IT", {day:"2-digit", month:"long", year:"numeric"});
+    let title = "🎂 Compleanno in arrivo";
+    let msg = `Tra ${e.diff} giorni è il compleanno di ${e.name} (${when}).`;
+
+    if(e.diff === 10) msg = `⏳ Tra meno di 10 giorni è il compleanno di ${e.name} (${when}).`;
+    if(e.diff === 5)  msg = `⚠️ Tra 5 giorni è il compleanno di ${e.name} (${when}).`;
+    if(e.diff === 0){ title = "🎉 È oggi!"; msg = `Auguri ${e.name}! (${when})`; }
+
+    showToast({ icon:"🎂", title, message: msg, onClick: ()=> jumpToDate(e.date) });
+    pushWebNotification(title, msg);
+
+    state[dedupeKey] = true;
   });
 
-  // =========================
-  // MODAL LEGGE SCOUT
-  // =========================
-  lawsBtn.addEventListener("click", ()=> lawsBackdrop.classList.add("show"));
-  lawsClose.addEventListener("click", ()=> lawsBackdrop.classList.remove("show"));
-  lawsBackdrop.addEventListener("click", (e)=>{ if(e.target===lawsBackdrop) lawsBackdrop.classList.remove("show"); });
-  window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") lawsBackdrop.classList.remove("show"); });
+  saveNotifState(state);
+}
 
-  // =========================
-  // NAV CALENDARIO
-  // =========================
-  document.getElementById("prev").addEventListener("click", ()=>{
-    stateMonth--;
-    if(stateMonth<1){ stateMonth=12; stateYear--; }
-    if(!inRange(stateYear)){ stateYear=YEAR_MIN; stateMonth=1; }
-    renderCalendar();
+/* ============================================================
+   NODO + BUSSOLA DEL GIORNO
+   ============================================================ */
+function setKnotOfDay(){
+  const now = new Date();
+  const seed = (now.getFullYear()*10000) + ((now.getMonth()+1)*100) + now.getDate();
+  const idx = seed % KNOTS.length;
+  const k = KNOTS[idx];
+  knotName.textContent = k.name;
+  knotDesc.textContent = k.desc;
+  knotImg.innerHTML = k.svg;
+}
+
+function setVirtueOfDay(){
+  const now = new Date();
+  const seed = (now.getFullYear()*10000) + ((now.getMonth()+1)*100) + now.getDate();
+  const idx = seed % VIRTUES.length;
+  const v = VIRTUES[idx];
+
+  virtueName.textContent = `Virtù del giorno: ${v.name}`;
+  virtueDesc.textContent = v.desc;
+
+  const angle = idx * 72;
+  needle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+}
+
+/* ============================================================
+   ACCORDION
+   ============================================================ */
+document.querySelectorAll(".accBtn[data-acc]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const id = btn.getAttribute("data-acc");
+    const item = document.getElementById(id);
+    item.classList.toggle("open");
   });
-  document.getElementById("next").addEventListener("click", ()=>{
-    stateMonth++;
-    if(stateMonth>12){ stateMonth=1; stateYear++; }
-    if(!inRange(stateYear)){ stateYear=YEAR_MAX; stateMonth=12; }
-    renderCalendar();
-  });
-  yearSel.addEventListener("change", ()=>{
-    stateYear = parseInt(yearSel.value,10);
-    renderCalendar();
-  });
-  document.getElementById("todayBtn").addEventListener("click", ()=>{
-    const t = new Date();
-    if(t.getFullYear()<YEAR_MIN || t.getFullYear()>YEAR_MAX){ stateYear=YEAR_MIN; stateMonth=1; }
-    else { stateYear=t.getFullYear(); stateMonth=t.getMonth()+1; }
-    renderCalendar();
-  });
+});
 
-  // Swipe mese su mobile
-  const stage = document.getElementById("stage");
-  let touchStartX = null;
-  stage.addEventListener("touchstart",(e)=>{ touchStartX = e.touches[0].clientX; }, {passive:true});
-  stage.addEventListener("touchend",(e)=>{
-    if(touchStartX===null) return;
-    const endX = e.changedTouches[0].clientX;
-    const dx = endX - touchStartX;
-    touchStartX = null;
-    if(Math.abs(dx) < 40) return;
-    if(dx < 0) document.getElementById("next").click();
-    else document.getElementById("prev").click();
-  }, {passive:true});
-
-  // =========================
-  // EFFETTI: foglie + lucciole + scintille + stelle
-  // =========================
-  function spawnLeaves(){
-    const box = document.getElementById("leaves");
-    box.innerHTML = "";
-    const n = 30;
-    for(let i=0;i<n;i++){
-      const l = document.createElement("div");
-      l.className = "leafFall";
-      l.style.left = (Math.random()*100) + "%";
-      l.style.setProperty("--t", (7 + Math.random()*11) + "s");
-      l.style.setProperty("--dx", ((Math.random()*260)-130) + "px");
-      l.style.animationDelay = (Math.random()*6) + "s";
-      const s = 0.65 + Math.random()*1.15;
-      l.style.width = (28*s) + "px";
-      l.style.height = (28*s) + "px";
-      box.appendChild(l);
-    }
+/* ============================================================
+   NAV
+   ============================================================ */
+document.getElementById("prev").addEventListener("click", ()=>{
+  stateMonth--;
+  if(stateMonth<1){ stateMonth=12; stateYear--; }
+  if(!inRange(stateYear)){ stateYear=YEAR_MIN; stateMonth=1; }
+  renderCalendar();
+});
+document.getElementById("next").addEventListener("click", ()=>{
+  stateMonth++;
+  if(stateMonth>12){ stateMonth=1; stateYear++; }
+  if(!inRange(stateYear)){ stateYear=YEAR_MAX; stateMonth=12; }
+  renderCalendar();
+});
+yearSel.addEventListener("change", ()=>{
+  stateYear = parseInt(yearSel.value,10);
+  renderCalendar();
+});
+document.getElementById("todayBtn").addEventListener("click", ()=>{
+  const t = new Date();
+  if(t.getFullYear()<YEAR_MIN || t.getFullYear()>YEAR_MAX){
+    stateYear=YEAR_MIN; stateMonth=1;
+  } else {
+    stateYear=t.getFullYear(); stateMonth=t.getMonth()+1;
   }
-  function spawnFireflies(){
-    const box = document.getElementById("fireflies");
-    box.innerHTML = "";
-    const n = 18;
-    for(let i=0;i<n;i++){
-      const f = document.createElement("div");
-      f.className = "firefly";
-      f.style.left = (Math.random()*100) + "%";
-      f.style.top  = (Math.random()*100) + "%";
-      f.style.setProperty("--t", (6 + Math.random()*9) + "s");
-      f.style.setProperty("--dx", ((Math.random()*260)-130) + "px");
-      f.style.setProperty("--dy", ((Math.random()*240)-170) + "px");
-      f.style.animationDelay = (Math.random()*3) + "s";
-      box.appendChild(f);
-    }
-  }
-  function spawnSparks(){
-    const box = document.getElementById("sparks");
-    box.innerHTML = "";
-    const n = 22;
-    for(let i=0;i<n;i++){
-      const s = document.createElement("div");
-      s.className = "spark";
-      s.style.left = (Math.random()*100) + "%";
-      s.style.top  = (55 + Math.random()*50) + "%";
-      s.style.setProperty("--t", (4 + Math.random()*6) + "s");
-      s.style.setProperty("--dx", ((Math.random()*180)-90) + "px");
-      s.style.setProperty("--dy", (Math.random()*90) + "px");
-      s.style.animationDelay = (Math.random()*4) + "s";
-      box.appendChild(s);
-    }
-  }
-  function spawnStars(){
-    const box = document.getElementById("stars");
-    box.innerHTML = "";
-    const n = 10;
-    for(let i=0;i<n;i++){
-      const st = document.createElement("div");
-      st.className = "star";
-      st.style.left = (Math.random()*100) + "%";
-      st.style.top  = (Math.random()*60) + "%";
-      st.style.setProperty("--t", (6 + Math.random()*10) + "s");
-      st.style.setProperty("--dx", ((Math.random()*380)+180) + "px");
-      st.style.setProperty("--dy", ((Math.random()*260)+140) + "px");
-      st.style.animationDelay = (Math.random()*8) + "s";
-      box.appendChild(st);
-    }
-  }
-  window.addEventListener("resize", ()=>{ spawnLeaves(); spawnFireflies(); spawnSparks(); spawnStars(); });
+  renderCalendar();
+});
 
-  // =========================
-  // VENTO: reagisce allo scroll
-  // =========================
-  let lastY = window.scrollY;
-  let lastT = performance.now();
-  let wind = 0;
-  let calmTimer = null;
-  function setWindStrength(v){
-    wind = Math.max(0, Math.min(1, v));
-    document.documentElement.style.setProperty("--windStrength", String(wind));
-  }
-  window.addEventListener("scroll", ()=>{
-    const y = window.scrollY;
-    const t = performance.now();
-    const dy = Math.abs(y - lastY);
-    const dt = Math.max(16, (t - lastT));
-    const speed = dy / dt;
-
-    const boost = Math.max(0, Math.min(1, speed * 3.2));
-    setWindStrength(Math.max(wind, boost));
-
-    lastY = y; lastT = t;
-
-    clearTimeout(calmTimer);
-    calmTimer = setTimeout(()=> setWindStrength(wind * 0.45), 180);
-    setTimeout(()=> setWindStrength(wind * 0.35), 380);
-    setTimeout(()=> setWindStrength(wind * 0.25), 680);
-    setTimeout(()=> setWindStrength(wind * 0.15), 980);
-    setTimeout(()=> setWindStrength(0), 1400);
-  }, {passive:true});
-
-  // =========================
-  // PARALLAX mouse/touch (aurora)
-  // =========================
-  function setParallax(x,y){
-    const nx = (x / window.innerWidth) - 0.5;
-    const ny = (y / window.innerHeight) - 0.5;
-    document.documentElement.style.setProperty("--mx", String(nx));
-    document.documentElement.style.setProperty("--my", String(ny));
-  }
-  window.addEventListener("mousemove",(e)=> setParallax(e.clientX, e.clientY), {passive:true});
-  window.addEventListener("touchmove",(e)=>{
-    if(!e.touches || !e.touches[0]) return;
-    setParallax(e.touches[0].clientX, e.touches[0].clientY);
-  }, {passive:true});
-
-  // =========================
-  // CONFETTI burst
-  // =========================
-  function spawnConfettiBurst(){
-    const n = 24;
-    const colors = [
-      "rgba(255,210,77,.92)",
-      "rgba(124,255,138,.85)",
-      "rgba(255,255,255,.85)",
-      "rgba(255,63,63,.80)"
-    ];
-    for(let i=0;i<n;i++){
-      const c = document.createElement("div");
-      c.className = "conf";
-      c.style.left = (10 + Math.random()*80) + "vw";
-      c.style.background = colors[i % colors.length];
-      c.style.setProperty("--t", (1.8 + Math.random()*1.2) + "s");
-      c.style.setProperty("--dx", ((Math.random()*360)-180) + "px");
-      confettiBox.appendChild(c);
-      setTimeout(()=>{ if(c.isConnected) c.remove(); }, 3200);
-    }
-  }
-
-  // =========================
-  // FOTO + VIDEO
-  // =========================
-  const MEDIA = [
-    "1e38146e-d6d7-4fdd-bcb2-8a6b0887210e.jpg",
-    "3e799a83-3336-47db-a2eb-bc55540677ba.jpg",
-    "5aae342f-8b7f-43c5-85e9-13f6881e8f67.jpg",
-    "7e9d6930-3cb9-41a5-bae0-9e788f0abe50.jpg",
-    "8c78f8ec-652a-434f-ab06-e3e0788ecb31.jpg",
-    "8cc7054e-5881-420c-ba3a-435828560198.jpg",
-    "85ffc3dd-2321-4804-bd00-90a326a38b5f.jpg",
-    "95f82bcc-fe77-4a68-8089-a165afb315ee.jpg",
-    "338867c3-8486-4749-b364-f76e9232028a.jpg",
-    "91583127-dee0-4e25-bf9b-3ca8c7311e1c.jpg",
-    "a400cc11-4b2f-4672-8595-baeba587dacc.jpg",
-    "bdb6b79f-82a4-4800-8dec-98e9161d8f12.jpg",
-    "d24c8755-7cc8-464e-8a19-38c0e46e2dec.jpg",
-    "e08df019-6c8c-40b5-b813-802f3b8d41f7.jpg",
-    "E28F1480-5C8A-4E67-8C5D-D545474F5B32.jpg",
-    "f98df94d-5212-492c-a8a2-742e5ee1360c.jpg",
-    "5f08d156-ad8b-420c-8b9a-6662ce952cd5.mp4",
-    "dbea094f-77fa-4787-b1be-5e750421b67c.mp4",
-    "e62058ee-c8e9-4616-a3fe-fa8a46110433.mp4"
+/* ============================================================
+   CONFETTI
+   ============================================================ */
+function spawnConfettiBurst(){
+  const n = 24;
+  const colors = [
+    "rgba(255,210,77,.92)",
+    "rgba(124,255,138,.85)",
+    "rgba(255,255,255,.85)",
+    "rgba(255,63,63,.80)"
   ];
-
-  function isVideo(file){ return file.toLowerCase().endsWith(".mp4"); }
-
-  function renderGallery(){
-    galleryGrid.innerHTML = "";
-    MEDIA.forEach(file=>{
-      const box = document.createElement("div");
-      box.className = "thumb";
-
-      if(isVideo(file)){
-        box.innerHTML = `
-          <video src="${file}" muted playsinline preload="metadata"></video>
-          <div class="thumbCap">🎬 ${file}<small>Tocca per aprire</small></div>
-        `;
-      } else {
-        box.innerHTML = `
-          <img src="${file}" alt="${file}" loading="lazy">
-          <div class="thumbCap">📷 ${file}<small>Tocca per aprire</small></div>
-        `;
-      }
-
-      box.addEventListener("click", ()=> openLightbox(file));
-      galleryGrid.appendChild(box);
-    });
+  for(let i=0;i<n;i++){
+    const c = document.createElement("div");
+    c.className = "conf";
+    c.style.left = (10 + Math.random()*80) + "vw";
+    c.style.background = colors[i % colors.length];
+    c.style.setProperty("--t", (1.8 + Math.random()*1.2) + "s");
+    c.style.setProperty("--dx", ((Math.random()*360)-180) + "px");
+    confettiBox.appendChild(c);
+    setTimeout(()=>{ if(c.isConnected) c.remove(); }, 3200);
   }
+}
 
-  function openLightbox(file){
-    lbTitle.textContent = file;
-    lbMediaHost.innerHTML = "";
+/* ============================================================
+   AVVIO SICURO + ENTRA CHE NON SI BLOCCA MAI
+   ============================================================ */
+window.addEventListener("DOMContentLoaded", () => {
+  // init base
+  renderDOW();
+  renderCalendar();
+  renderCountdown();
+  setKnotOfDay();
+  setVirtueOfDay();
 
-    if(isVideo(file)){
-      const v = document.createElement("video");
-      v.className = "lbMedia";
-      v.src = file;
-      v.controls = true;
-      v.autoplay = true;
-      v.playsInline = true;
-      v.style.objectFit = "contain";
-      lbMediaHost.appendChild(v);
-    } else {
-      const img = document.createElement("img");
-      img.className = "lbMedia";
-      img.src = file;
-      img.alt = file;
-      img.style.objectFit = "contain";
-      lbMediaHost.appendChild(img);
-    }
-
-    lightbox.classList.add("show");
-  }
-
-  function closeLightbox(){
-    lightbox.classList.remove("show");
-    lbMediaHost.innerHTML = "";
-  }
-
-  lbClose.addEventListener("click", closeLightbox);
-  lightbox.addEventListener("click",(e)=>{ if(e.target===lightbox) closeLightbox(); });
-  window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeLightbox(); });
-
-  // =========================
-  // INTRO -> ENTRA
-  // =========================
-  enterBtn.addEventListener("click", async ()=>{
+  // click ENTRA (sempre)
+  enterBtn.addEventListener("click", async () => {
+    // chiudi sempre l’intro
     intro.classList.add("hide");
     app.style.opacity = "1";
     app.style.transform = "translateY(0)";
 
-    await ensureNotificationPermission();
-    checkBirthdayAlertsAt9();
+    // prova notifiche (se fallisce non importa)
+    try{
+      await ensureNotificationPermission();
+      checkBirthdayAlertsAt9();
+    }catch(e){
+      console.warn("Errore ENTRA:", e);
+    }
   });
 
-  // =========================
-  // AVVIO
-  // =========================
-  (function init(){
-    renderDOW();
-    spawnLeaves();
-    spawnFireflies();
-    spawnSparks();
-    spawnStars();
-
-    renderCalendar();
+  // refresh 1/min
+  setInterval(()=>{
     renderCountdown();
-
-    loadJournal();
     setKnotOfDay();
     setVirtueOfDay();
-    buildTimeline();
-
-    setTheme();
-    renderGallery();
-
     checkBirthdayAlertsAt9();
+  }, 60000);
 
-    setInterval(()=>{
-      setTheme();
-      renderCountdown();
-      setKnotOfDay();
-      setVirtueOfDay();
-      checkBirthdayAlertsAt9();
-    }, 60000);
-  })();
+  // controllo all'avvio
+  checkBirthdayAlertsAt9();
+});
 </script>
 </body>
 </html>
