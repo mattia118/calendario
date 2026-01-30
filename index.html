@@ -523,15 +523,15 @@
   /* NODO */
   .knotBox{ display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start; }
   .knotArt{
-    flex: 0 0 220px;
+    flex: 0 0 260px;
     background: rgba(0,0,0,.22);
     border:1px solid rgba(255,255,255,.14);
     border-radius: 16px;
     padding: 12px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    white-space: pre;
     line-height: 1.15;
     animation: knotFloat 4.8s ease-in-out infinite;
+    /* ✅ ora può contenere HTML/SVG */
+    white-space: normal;
   }
   @keyframes knotFloat{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-3px); } }
   .knotText{ flex: 1 1 260px; }
@@ -787,7 +787,7 @@
     text-transform: uppercase;
   }
 
-  /* ✅ TOAST NOTIFICA (sempre visibile nel sito) */
+  /* ✅ TOAST NOTIFICA */
   .toastWrap{
     position: fixed;
     left: 50%;
@@ -1051,7 +1051,7 @@
   // UTIL
   // =========================
   const pad = n => String(n).padStart(2,"0");
-  const ymd = (y,m,d) => `${y}-${pad(m)}-${pad(d)}`;
+  const ymd = (y,m,d) => \`\${y}-\${pad(m)}-\${pad(d)}\`;
   const itMonth = (y,m) => new Date(y, m-1, 1).toLocaleString("it-IT",{month:"long", year:"numeric"});
   const DOW = ["Lun","Mar","Mer","Gio","Ven","Sab","Dom"];
   const YEAR_MIN = 2026, YEAR_MAX = 2029;
@@ -1114,23 +1114,42 @@
   let stateMonth = 1;
 
   // =========================
-  // COMPLEANNI (SOLO QUESTI NEL CALENDARIO)
-  // ✅ Simone NON ESISTE
+  // COMPLEANNI (AGGIUNTI TUTTI QUELLI CHE MI HAI DATO)
   // =========================
   const BIRTHDAYS = [
     { id:"mariateresa", name:"Mariateresa", day:7,  month:1,  icon:"🎂" },
+    { id:"clara",       name:"Clara",       day:19, month:1,  icon:"🎂" },
     { id:"cristian",    name:"Cristian",    day:28, month:1,  icon:"🎂" },
+
     { id:"ambra",       name:"Ambra",       day:28, month:2,  icon:"🎂" },
+
     { id:"arta",        name:"Arta",        day:22, month:3,  icon:"🎂" },
     { id:"ginevra",     name:"Ginevra Di Buono", day:22, month:3, icon:"🎂" },
     { id:"greta",       name:"Greta Iorio", day:28, month:3,  icon:"🎂" },
+
     { id:"eliana",      name:"Eliana Alfieri", day:30, month:4, icon:"🎂" },
+
     { id:"rudi",        name:"Rudi",        day:11, month:5,  icon:"🎂" },
+    { id:"annalisa",    name:"Annalisa",    day:22, month:5,  icon:"🎂" },
+
+    { id:"alessia",     name:"Alessia Di Michele", day:12, month:6, icon:"🎂" },
     { id:"lorenzo",     name:"Lorenzo",     day:18, month:6,  icon:"🎂" },
     { id:"paolo",       name:"Paolo Iannetta", day:20, month:6, icon:"🎂" },
+
+    { id:"pasquale",    name:"Pasquale Petrone", day:1, month:7, icon:"🎂" },
     { id:"loris",       name:"Loris",       day:16, month:7,  icon:"🎂" },
+
+    { id:"vittorio",    name:"Vittorio",    day:20, month:8,  icon:"🎂" },
+
+    { id:"gabriele",    name:"Gabriele Pio Ciocca", day:13, month:9, icon:"🎂" },
+
+    { id:"sofia",       name:"Sofia",       day:31, month:10, icon:"🎂" },
+
+    { id:"giulia",      name:"Giulia Leone", day:15, month:11, icon:"🎂" },
     { id:"giuseppe",    name:"Giuseppe",    day:18, month:11, icon:"🎂" },
-    { id:"chiara",      name:"Chiara",      day:22, month:12, icon:"🎂" }
+
+    { id:"chiara",      name:"Chiara",      day:22, month:12, icon:"🎂" },
+    { id:"simone",      name:"Simone",      day:18, month:12, icon:"🎂" }
   ];
 
   function getAllBirthdaysForYear(year){
@@ -1148,14 +1167,114 @@
   }
 
   // =========================
-  // NODO + BUSSOLA
+  // NODO + BUSSOLA (NODI AUMENTATI + IMMAGINI SVG)
   // =========================
+  function knotSVG(type){
+    const stroke = "rgba(255,210,77,.95)";
+    const stroke2 = "rgba(124,255,138,.85)";
+    const bg = "rgba(0,0,0,.18)";
+
+    const base = (paths) => `
+      <div style="
+        width: 260px; max-width:100%;
+        background:${bg};
+        border:1px solid rgba(255,255,255,.14);
+        border-radius:16px;
+        padding:10px;
+        box-shadow:0 10px 26px rgba(0,0,0,.22);
+      ">
+        <svg viewBox="0 0 260 140" width="100%" height="120" role="img" aria-label="Nodo">
+          <defs>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="2.2" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          ${paths}
+        </svg>
+      </div>
+    `;
+
+    const rope = (d, color, w=10) =>
+      `<path d="${d}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>`;
+
+    const dot = (cx,cy,color) =>
+      `<circle cx="${cx}" cy="${cy}" r="4.6" fill="${color}" opacity=".9" />`;
+
+    switch(type){
+      case "piano":
+        return base(`
+          ${rope("M25,70 C65,30 105,30 130,70 C155,110 195,110 235,70", stroke, 10)}
+          ${rope("M25,70 C65,110 105,110 130,70 C155,30 195,30 235,70", stroke2, 10)}
+          ${dot(130,70,"rgba(255,255,255,.78)")}
+        `);
+
+      case "gassa":
+        return base(`
+          ${rope("M35,95 C35,55 70,32 110,45 C150,58 150,108 110,108 C75,108 58,85 58,64", stroke, 10)}
+          ${rope("M58,64 C90,55 116,66 132,92 C148,118 198,112 210,84 C222,56 190,35 155,45", stroke2, 10)}
+          ${dot(82,94,"rgba(255,255,255,.78)")}
+        `);
+
+      case "parlato":
+        return base(`
+          <rect x="190" y="18" width="18" height="104" rx="9" fill="rgba(255,255,255,.24)"/>
+          ${rope("M25,50 C80,50 110,75 190,75", stroke, 10)}
+          ${rope("M35,102 C95,102 120,75 190,75", stroke2, 10)}
+          ${rope("M190,75 C150,75 140,30 95,30", stroke, 10)}
+          ${dot(190,75,"rgba(255,255,255,.78)")}
+        `);
+
+      case "barcaiolo":
+        return base(`
+          <rect x="190" y="18" width="18" height="104" rx="9" fill="rgba(255,255,255,.24)"/>
+          ${rope("M25,48 C90,48 110,75 190,75", stroke, 10)}
+          ${rope("M25,102 C90,102 110,75 190,75", stroke2, 10)}
+          ${rope("M190,75 C150,75 145,35 105,35", stroke, 10)}
+          ${dot(185,75,"rgba(255,255,255,.78)")}
+        `);
+
+      case "savoia":
+        return base(`
+          ${rope("M22,70 C70,18 120,18 150,70 C180,122 238,122 238,70", stroke, 10)}
+          ${rope("M22,70 C70,122 120,122 150,70 C180,18 238,18 238,70", stroke2, 10)}
+          ${rope("M95,40 C108,60 108,80 95,100", "rgba(255,255,255,.62)", 6)}
+          ${rope("M125,40 C112,60 112,80 125,100", "rgba(255,255,255,.62)", 6)}
+        `);
+
+      case "otto":
+        return base(`
+          ${rope("M85,32 C55,52 60,88 90,88 C115,88 120,60 98,56 C82,52 72,70 85,78", stroke, 10)}
+          ${rope("M108,56 C132,45 170,55 176,82 C182,112 135,122 112,100 C96,84 108,72 125,72", stroke2, 10)}
+          ${dot(112,98,"rgba(255,255,255,.78)")}
+        `);
+
+      case "prusik":
+        return base(`
+          ${rope("M25,70 C90,70 160,70 235,70", "rgba(255,255,255,.55)", 8)}
+          ${rope("M118,40 C98,56 98,86 118,102", stroke, 10)}
+          ${rope("M142,40 C162,56 162,86 142,102", stroke2, 10)}
+          ${dot(130,70,"rgba(255,255,255,.78)")}
+        `);
+
+      default:
+        return base(`${rope("M25,70 C90,30 170,110 235,70", stroke, 10)}`);
+    }
+  }
+
   const KNOTS = [
-    { name:"Nodo piano", art:`\\ \\     / /\n \\ \\   / /\n  \\ \\_/ /\n   / _ \\\n  / / \\ \\\n /_/   \\_\\`, desc:"Unisce due corde simili. Semplice, ma va fatto bene." },
-    { name:"Gassa d’amante", art:`   ____ \n  / __ \\__\n / /  \\___)\n \\ \\__\n  \\___\\\n (____)`, desc:"Cappio fisso che non scorre. Utilissimo quando ti serve un anello sicuro." },
-    { name:"Nodo parlato", art:`|\\      /|\n| \\____/ |\n|  ____  |\n| /    \\ |\n|/      \\|`, desc:"Per fissare una corda a un palo. Molto usato in campo." },
-    { name:"Nodo savoia", art:`  __\n /  \\__\n \\__/  \\\n    \\__/`, desc:"Ottimo per accorciare una corda o isolare un tratto rovinato." }
+    { name:"Nodo piano",     svg: knotSVG("piano"),     desc:"Unisce due corde simili. Semplice ma va fatto bene." },
+    { name:"Gassa d’amante", svg: knotSVG("gassa"),     desc:"Cappio fisso che non scorre. Perfetto per un anello sicuro." },
+    { name:"Nodo parlato",   svg: knotSVG("parlato"),   desc:"Per fissare una corda a un palo. Usatissimo in campo." },
+    { name:"Nodo barcaiolo", svg: knotSVG("barcaiolo"), desc:"Nodo comodo per regolare la tensione al volo (pali e moschettoni)." },
+    { name:"Nodo savoia",    svg: knotSVG("savoia"),    desc:"Accorcia la corda o isola un tratto rovinato." },
+    { name:"Nodo a otto",    svg: knotSVG("otto"),      desc:"Nodo di arresto: impedisce alla corda di sfilarsi." },
+    { name:"Prusik",         svg: knotSVG("prusik"),    desc:"Autobloccante: fondamentale per sicurezza e recupero." }
   ];
+
   const VIRTUES = [
     { name:"Coraggio", desc:"Fare la cosa giusta anche quando hai paura." },
     { name:"Aiuto", desc:"Dare una mano senza aspettarsi niente in cambio." },
@@ -1165,7 +1284,7 @@
   ];
 
   // =========================
-  // TIMELINE (dal primo Jamboree al prossimo)
+  // TIMELINE
   // =========================
   function buildTimeline(){
     const items = [
@@ -1439,7 +1558,7 @@
   }
 
   // =========================
-  // TOAST (notifica in pagina)
+  // TOAST
   // =========================
   function showToast({ icon="🎂", title="Avviso", message="", onClick=null }){
     const t = document.createElement("div");
@@ -1468,7 +1587,7 @@
   }
 
   // =========================
-  // NOTIFICHE BROWSER (quando l'app è aperta)
+  // NOTIFICHE BROWSER
   // =========================
   function canNotify(){ return ("Notification" in window); }
 
@@ -1487,14 +1606,10 @@
   }
 
   // =========================
-  // ✅ LOGICA AVVISI: alle 09:00 manda solo:
-  // - 10 giorni prima
-  // - 5 giorni prima
-  // - giorno del compleanno
-  // (con dedupe per non ripeterla più volte lo stesso giorno)
+  // AVVISI 09:00 (-10, -5, 0)
   // =========================
   const NOTIF_KEY = "birthday_notifs_9am_v1";
-  const ALERT_DAYS = new Set([10, 5, 0]); // -10, -5, 0
+  const ALERT_DAYS = new Set([10, 5, 0]);
 
   function loadNotifState(){
     try{ return JSON.parse(localStorage.getItem(NOTIF_KEY) || "{}"); }
@@ -1510,7 +1625,6 @@
   }
 
   function isAroundNineAM(now){
-    // finestra: 09:00 -> 09:15 (così non si perde se apri alle 09:05)
     const h = now.getHours();
     const min = now.getMinutes();
     return (h === 9 && min <= 15);
@@ -1531,7 +1645,6 @@
       .filter(e => ALERT_DAYS.has(e.diff));
 
     list.forEach(e=>{
-      // dedupe: per ogni compleanno + diff + data di oggi
       const dedupeKey = `${e.id}_${e.diff}_${today}`;
       if(state[dedupeKey]) return;
 
@@ -1544,7 +1657,6 @@
       if(e.diff === 5)  msg = `⚠️ Tra 5 giorni è il compleanno di ${e.name} (${when}).`;
       if(e.diff === 0){ title = "🎉 È oggi!"; msg = `Auguri ${e.name}! (${when})`; }
 
-      // toast + notifica browser
       showToast({ icon:"🎂", title, message: msg, onClick: ()=> jumpToDate(e.date) });
       pushWebNotification(title, msg);
 
@@ -1582,8 +1694,9 @@
     const seed = (now.getFullYear()*10000) + ((now.getMonth()+1)*100) + now.getDate();
     const idx = seed % KNOTS.length;
     const k = KNOTS[idx];
+
     knotName.textContent = k.name;
-    knotArt.textContent = k.art;
+    knotArt.innerHTML = k.svg;   // ✅ immagini SVG
     knotDesc.textContent = k.desc;
   }
   function setVirtueOfDay(){
@@ -1882,7 +1995,7 @@
   window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeLightbox(); });
 
   // =========================
-  // INTRO -> ENTRA (qui chiede permesso notifiche)
+  // INTRO -> ENTRA
   // =========================
   enterBtn.addEventListener("click", async ()=>{
     intro.classList.add("hide");
@@ -1890,8 +2003,6 @@
     app.style.transform = "translateY(0)";
 
     await ensureNotificationPermission();
-
-    // controlla subito (se sono le 09:xx)
     checkBirthdayAlertsAt9();
   });
 
@@ -1916,10 +2027,8 @@
     setTheme();
     renderGallery();
 
-    // ✅ controlla sempre (ma invia solo tra 09:00 e 09:15)
     checkBirthdayAlertsAt9();
 
-    // ogni minuto aggiorna
     setInterval(()=>{
       setTheme();
       renderCountdown();
