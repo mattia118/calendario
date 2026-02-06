@@ -501,7 +501,7 @@
     padding: 10px;
     overflow:hidden;
     box-shadow: 0 14px 30px rgba(0,0,0,.25);
-    cursor: pointer; /* ✅ cliccabile */
+    cursor: pointer;
   }
   .knotImg img{
     width:100%;
@@ -594,7 +594,7 @@
   }
   .modalBackdrop.show{ display:flex; }
   .modal{
-    width:min(680px, 96vw);
+    width:min(720px, 96vw);
     background: rgba(14,44,25,.92);
     border:1px solid rgba(255,255,255,.14);
     border-radius: 22px;
@@ -748,6 +748,52 @@
     background: rgba(0,0,0,.20);
   }
 
+  /* ✅ BANNER FONDO PAGINA */
+  .ctaBanner{
+    margin-top:14px;
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+    background: rgba(0,0,0,.34);
+    border: 1px solid rgba(255,255,255,.22);
+    backdrop-filter: blur(10px);
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+  .ctaBanner .txt{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .ctaBanner .txt b{
+    font-size:14px;
+    letter-spacing:.04em;
+  }
+  .ctaBanner .txt small{
+    color: rgba(238,247,239,.78);
+  }
+  .ctaBanner a{
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding: 12px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.22);
+    background: rgba(255,255,255,.10);
+    color: var(--text);
+    font-weight: 900;
+    transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+  }
+  .ctaBanner a:hover{
+    transform: translateY(-1px) scale(1.01);
+    filter: brightness(1.08);
+    box-shadow: 0 18px 44px rgba(0,0,0,.30);
+  }
+
   .footerWindow{
     margin-top:14px;
     border-radius: 18px;
@@ -875,7 +921,6 @@
         </button>
         <div class="accBody">
           <div class="cards" id="countCards"></div>
-          <!-- ✅ NOTA RIMOSSA QUI -->
         </div>
       </div>
 
@@ -904,13 +949,10 @@
         </button>
         <div class="accBody">
           <div class="knotBox">
-            <!-- ✅ cliccabile: apre lightbox -->
             <div class="knotImg" id="knotImg" title="Clicca per ingrandire"></div>
-
             <div class="knotText">
               <p class="knotName" id="knotName">—</p>
               <p class="knotDesc" id="knotDesc">—</p>
-              <!-- ✅ ASCII ART RIMOSSA COMPLETAMENTE -->
             </div>
           </div>
         </div>
@@ -981,25 +1023,115 @@
       </div>
     </details>
 
+    <!-- ✅ BANNER FONDO PAGINA (LINK GOOGLE FORM) -->
+    <div class="ctaBanner">
+      <div class="txt">
+        <b>📝 Compila il modulo</b>
+        <small>Aiutaci a raccogliere informazioni in modo veloce e ordinato.</small>
+      </div>
+      <a
+        href="https://docs.google.com/forms/d/e/1FAIpQLSd9hDzRLv3vpohXDrpfIaKCQXM4D1vI05nWjHhNQ6fkhAVvFQ/viewform?usp=preview"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Apri il Google Form"
+      >
+        Apri il modulo ➜
+      </a>
+    </div>
+
     <div class="footerWindow">
       <b>Site created by Mattia Spensieri</b>
     </div>
   </div>
 
+  <!-- ✅ MODAL LEGGE SCOUT (AGGIORNATA: 10 PUNTI, ORDINE RICHIESTO) -->
   <div class="modalBackdrop" id="lawsBackdrop">
     <div class="modal">
       <div class="modalHeader">
         <h3 class="modalTitle">📜 Legge Scout</h3>
         <button id="lawsClose" type="button">Chiudi ✖</button>
       </div>
+
       <div class="modalBody">
-        <div class="line"><div class="ico">1️⃣</div><div><b>Lo scout è leale.</b><div class="sub">Dice la verità e mantiene la parola data.</div></div></div>
-        <div class="line"><div class="ico">2️⃣</div><div><b>Lo scout è amico di tutti e fratello di ogni altro scout.</b><div class="sub">Aiuta senza guardare chi sei.</div></div></div>
-        <div class="line"><div class="ico">3️⃣</div><div><b>Lo scout è cortese.</b><div class="sub">Rispetta gli altri e si comporta bene.</div></div></div>
-        <div class="line"><div class="ico">4️⃣</div><div><b>Lo scout ama e rispetta la natura.</b><div class="sub">Protegge il bosco, gli animali e l’ambiente.</div></div></div>
-        <div class="line"><div class="ico">5️⃣</div><div><b>Lo scout sorride e canta anche nelle difficoltà.</b><div class="sub">Non si arrende e porta buon umore.</div></div></div>
-        <div class="line"><div class="ico">6️⃣</div><div><b>Lo scout è laborioso ed economo.</b><div class="sub">Usa bene le cose e non spreca.</div></div></div>
-        <div class="line"><div class="ico">7️⃣</div><div><b>Lo scout è puro nei pensieri, parole e azioni.</b><div class="sub">Fa scelte giuste e rispettose.</div></div></div>
+        <div class="line">
+          <div class="ico">1️⃣</div>
+          <div>
+            <b>Pongono il loro onore nel meritare fiducia.</b>
+            <div class="sub">Sono affidabili: la parola conta.</div>
+          </div>
+        </div>
+
+        <div class="line">
+          <div class="ico">2️⃣</div>
+          <div>
+            <b>Sono leali.</b>
+            <div class="sub">Stanno dalla parte del bene e sono sinceri.</div>
+          </div>
+        </div>
+
+        <div class="line">
+          <div class="ico">3️⃣</div>
+          <div>
+            <b>Si rendono utili e aiutano gli altri.</b>
+            <div class="sub">Servono con gioia, senza aspettarsi nulla.</div>
+          </div>
+        </div>
+
+        <div class="line">
+          <div class="ico">4️⃣</div>
+          <div>
+            <b>Sono amici di tutti e fratelli di ogni altra Guida e Scout.</b>
+            <div class="sub">Accolgono, includono, fanno squadra.</div>
+          </div>
+        </div>
+
+        <div class="line">
+          <div class="ico">5️⃣</div>
+          <div>
+            <b>Sono cortesi.</b>
+            <div class="sub">Rispetto, educazione e gentilezza.</div>
+          </div>
+        </div>
+
+        <div class="line">
+          <div class="ico">6️⃣</div>
+          <div>
+            <b>Amano e rispettano la natura.</b>
+            <div class="sub">Proteggono l’ambiente, non sporcano, non sprecano.</div>
+          </div>
+        </div>
+
+        <div class="line">
+          <div class="ico">7️⃣</div>
+          <div>
+            <b>Sanno obbedire.</b>
+            <div class="sub">Ascoltano, collaborano e rispettano le regole.</div>
+          </div>
+        </div>
+
+        <div class="line">
+          <div class="ico">8️⃣</div>
+          <div>
+            <b>Sorridono e cantano anche nelle difficoltà.</b>
+            <div class="sub">Non si arrendono: portano coraggio e buonumore.</div>
+          </div>
+        </div>
+
+        <div class="line">
+          <div class="ico">9️⃣</div>
+          <div>
+            <b>Sono laboriosi ed economi.</b>
+            <div class="sub">Si impegnano e usano bene le risorse.</div>
+          </div>
+        </div>
+
+        <div class="line" style="margin-bottom:0;">
+          <div class="ico">🔟</div>
+          <div>
+            <b>Sono puri di pensieri parole e azioni.</b>
+            <div class="sub">Scelte giuste e rispetto per sé e per gli altri.</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1119,50 +1251,14 @@
     });
   }
 
-  // ✅ NODI (solo immagine + descrizione, senza ASCII ART)
   const KNOTS = [
-    {
-      id:"nodo_savoia",
-      name:"Nodo Savoia (nodo dell’amicizia scout)",
-      img:"ChatGPT Image 27 gen 2026, 17_09_46.png",
-      desc:"Nodo simbolico scout (amicizia). Bello da mostrare e ricordare."
-    },
-    {
-      id:"nodo_parlato",
-      name:"Nodo parlato",
-      img:"ChatGPT Image 27 gen 2026, 17_09_38.png",
-      desc:"Per fissare una corda a un palo. Molto usato in campo e nei lavori di legatura."
-    },
-    {
-      id:"nodo_piano",
-      name:"Nodo piano (o nodo diritto)",
-      img:"ChatGPT Image 27 gen 2026, 17_09_36.png",
-      desc:"Unisce due corde simili. Semplice ma va fatto bene (occhio al verso!)."
-    },
-    {
-      id:"gassa_damante",
-      name:"Gassa d’amante",
-      img:"ChatGPT Image 27 gen 2026, 17_15_10.png",
-      desc:"Cappio fisso che non scorre. Utilissimo quando ti serve un anello sicuro."
-    },
-    {
-      id:"prusik",
-      name:"Nodo Prusik",
-      img:"ChatGPT Image 27 gen 2026, 17_15_10.png",
-      desc:"Nodo autobloccante su corda. Si usa in progressione/recupero con grande attenzione."
-    },
-    {
-      id:"legatura_quadra",
-      name:"Legatura quadra",
-      img:"ChatGPT Image 27 gen 2026, 17_15_10.png",
-      desc:"Per unire due pali a 90°. Classica per costruzioni di campo."
-    },
-    {
-      id:"nodo_bandiera",
-      name:"Nodo bandiera",
-      img:"ChatGPT Image 27 gen 2026, 17_23_01.png",
-      desc:"Per unire due corde anche diverse. Tieni ben serrato e controlla sempre."
-    }
+    { id:"nodo_savoia", name:"Nodo Savoia (nodo dell’amicizia scout)", img:"ChatGPT Image 27 gen 2026, 17_09_46.png", desc:"Nodo simbolico scout (amicizia). Bello da mostrare e ricordare." },
+    { id:"nodo_parlato", name:"Nodo parlato", img:"ChatGPT Image 27 gen 2026, 17_09_38.png", desc:"Per fissare una corda a un palo. Molto usato in campo e nei lavori di legatura." },
+    { id:"nodo_piano", name:"Nodo piano (o nodo diritto)", img:"ChatGPT Image 27 gen 2026, 17_09_36.png", desc:"Unisce due corde simili. Semplice ma va fatto bene (occhio al verso!)." },
+    { id:"gassa_damante", name:"Gassa d’amante", img:"ChatGPT Image 27 gen 2026, 17_15_10.png", desc:"Cappio fisso che non scorre. Utilissimo quando ti serve un anello sicuro." },
+    { id:"prusik", name:"Nodo Prusik", img:"ChatGPT Image 27 gen 2026, 17_15_10.png", desc:"Nodo autobloccante su corda. Si usa in progressione/recupero con grande attenzione." },
+    { id:"legatura_quadra", name:"Legatura quadra", img:"ChatGPT Image 27 gen 2026, 17_15_10.png", desc:"Per unire due pali a 90°. Classica per costruzioni di campo." },
+    { id:"nodo_bandiera", name:"Nodo bandiera", img:"ChatGPT Image 27 gen 2026, 17_23_01.png", desc:"Per unire due corde anche diverse. Tieni ben serrato e controlla sempre." }
   ];
 
   const VIRTUES = [
@@ -1537,7 +1633,6 @@
   }
   journal.addEventListener("input", scheduleSave);
 
-  // ✅ LIGHTBOX (riusato anche per i nodi)
   function isVideo(file){ return file.toLowerCase().endsWith(".mp4"); }
 
   function openLightbox(file, titleOverride=null){
@@ -1574,7 +1669,6 @@
   lightbox.addEventListener("click",(e)=>{ if(e.target===lightbox) closeLightbox(); });
   window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeLightbox(); });
 
-  // ✅ Nodo del giorno (clic sull’immagine = ingrandisci)
   let currentKnot = null;
   function setKnotOfDay(){
     const now = new Date();
@@ -1599,7 +1693,6 @@
     }
   }
 
-  // ✅ click sull’immagine del nodo -> lightbox
   knotImg.addEventListener("click", ()=>{
     if(currentKnot && currentKnot.img){
       openLightbox(currentKnot.img, currentKnot.name);
@@ -1687,7 +1780,6 @@
     }
   }
 
-  // MEDIA campo estivo
   const MEDIA = [
     "1e38146e-d6d7-4fdd-bcb2-8a6b0887210e.jpg",
     "3e799a83-3336-47db-a2eb-bc55540677ba.jpg",
