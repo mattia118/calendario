@@ -1023,7 +1023,6 @@
       </div>
     </details>
 
-    <!-- ✅ BANNER FONDO PAGINA (LINK GOOGLE FORM) -->
     <div class="ctaBanner">
       <div class="txt">
         <b>📝 Compila il modulo</b>
@@ -1044,7 +1043,6 @@
     </div>
   </div>
 
-  <!-- ✅ MODAL LEGGE SCOUT (AGGIORNATA: 10 PUNTI, ORDINE RICHIESTO) -->
   <div class="modalBackdrop" id="lawsBackdrop">
     <div class="modal">
       <div class="modalHeader">
@@ -1105,7 +1103,7 @@
           <div class="ico">7️⃣</div>
           <div>
             <b>Sanno obbedire.</b>
-            <div class="sub">Ascoltano, collaborano e rispettano le regole.</div>
+            <div class="sub">Ascoltano, collaborano e rispettare le regole.</div>
           </div>
         </div>
 
@@ -1212,41 +1210,63 @@
   let stateYear = 2026;
   let stateMonth = 1;
 
+  // ✅ COMPLEANNI (aggiunti mancanti + età se disponibile)
   const BIRTHDAYS = [
-    { id:"mariateresa", name:"Mariateresa", day:7,  month:1,  icon:"🎂" },
-    { id:"clara",       name:"Clara",       day:19, month:1,  icon:"🎂" },
-    { id:"cristian",    name:"Cristian",    day:28, month:1,  icon:"🎂" },
-    { id:"ambra",       name:"Ambra",       day:28, month:2,  icon:"🎂" },
-    { id:"arta",        name:"Arta",        day:22, month:3,  icon:"🎂" },
-    { id:"ginevra",     name:"Ginevra Di Buono", day:22, month:3, icon:"🎂" },
-    { id:"greta",       name:"Greta Iorio", day:28, month:3,  icon:"🎂" },
-    { id:"eliana",      name:"Eliana Alfieri", day:30, month:4, icon:"🎂" },
-    { id:"rudi",        name:"Rudi",        day:11, month:5,  icon:"🎂" },
-    { id:"annalisa",    name:"Annalisa",    day:22, month:5,  icon:"🎂" },
-    { id:"alessia",     name:"Alessia Di Michele", day:12, month:6, icon:"🎂" },
-    { id:"lorenzo",     name:"Lorenzo",     day:18, month:6,  icon:"🎂" },
-    { id:"paolo",       name:"Paolo Iannetta", day:20, month:6, icon:"🎂" },
-    { id:"pasquale",    name:"Pasquale Petrone", day:1, month:7, icon:"🎂" },
-    { id:"loris",       name:"Loris",       day:16, month:7,  icon:"🎂" },
-    { id:"vittorio",    name:"Vittorio",    day:20, month:8,  icon:"🎂" },
+    { id:"mariateresa", name:"Mariateresa", day:7,  month:1,  icon:"🎂", birthYear:1990 },
+    { id:"clara",       name:"Clara",       day:19, month:1,  icon:"🎂" }, // anno non indicato
+    { id:"cristian",    name:"Cristian",    day:28, month:1,  icon:"🎂", birthYear:2011 },
+
+    { id:"ambra",       name:"Ambra",       day:28, month:2,  icon:"🎂" }, // anno non indicato
+
+    { id:"arta",        name:"Arta",        day:22, month:3,  icon:"🎂" }, // anno non indicato
+    { id:"ginevra",     name:"Ginevra Di Buono", day:22, month:3, icon:"🎂", birthYear:2012 },
+    { id:"greta",       name:"Greta Iorio", day:28, month:3,  icon:"🎂", birthYear:2014 },
+    { id:"daniel",      name:"Daniel Fazioli", day:15, month:3, icon:"🎂", birthYear:2014 },
+
+    { id:"eliana",      name:"Eliana Alfieri", day:30, month:4, icon:"🎂", birthYear:2012 },
+
+    { id:"aurora",      name:"Aurora",      day:4,  month:5,  icon:"🎂" }, // anno non indicato
+    { id:"rudi",        name:"Rudi",        day:11, month:5,  icon:"🎂" }, // anno non indicato
+    { id:"annalisa",    name:"Annalisa",    day:22, month:5,  icon:"🎂", birthYear:1969 },
+
+    { id:"alessia",     name:"Alessia Di Michele", day:12, month:6, icon:"🎂" }, // anno non indicato
+    { id:"lorenzo",     name:"Lorenzo",     day:18, month:6,  icon:"🎂", birthYear:2014 },
+    { id:"paolo",       name:"Paolo Iannetta", day:20, month:6, icon:"🎂", birthYear:2014 },
+
+    { id:"pasquale",    name:"Pasquale Petrone", day:1, month:7, icon:"🎂", birthYear:1995 },
+    { id:"loris",       name:"Loris",       day:16, month:7,  icon:"🎂" }, // anno non indicato
+    { id:"samuele",     name:"Samuele",     day:24, month:7,  icon:"🎂" }, // anno non indicato
+
+    { id:"vittorio",    name:"Vittorio",    day:20, month:8,  icon:"🎂" }, // anno non indicato
+
     { id:"gabriele",    name:"Gabriele Pio Ciocca", day:13, month:9, icon:"🎂" },
-    { id:"sofia",       name:"Sofia",       day:31, month:10, icon:"🎂" },
-    { id:"giuseppe",    name:"Giuseppe",    day:18, month:11, icon:"🎂" },
+
+    { id:"chiara_oct",  name:"Chiara",      day:4,  month:10, icon:"🎂" }, // anno non indicato
+    { id:"sofia",       name:"Sofia",       day:31, month:10, icon:"🎂" }, // anno non indicato
+
+    { id:"gabriel_g",   name:"Gabriel Gonzalez", day:7, month:11, icon:"🎂", birthYear:2012 },
     { id:"giulia",      name:"Giulia Leone",day:15, month:11, icon:"🎂" },
-    { id:"chiara",      name:"Chiara",      day:22, month:12, icon:"🎂" },
-    { id:"simone",      name:"Simone",      day:18, month:12, icon:"🎂" }
+    { id:"giuseppe",    name:"Giuseppe",    day:18, month:11, icon:"🎂" }, // anno non indicato
+
+    { id:"simone",      name:"Simone",      day:18, month:12, icon:"🎂" }, // anno non indicato
+    { id:"chiara_dec",  name:"Chiara",      day:22, month:12, icon:"🎂", birthYear:2012 }
   ];
 
+  // ✅ qui aggiungiamo nameLabel (nome + età) quando c'è birthYear
   function getAllBirthdaysForYear(year){
     return BIRTHDAYS.map(b=>{
       const d = new Date(year, b.month-1, b.day);
+      const age = (typeof b.birthYear === "number") ? (year - b.birthYear) : null;
+
       return {
         id: b.id,
         icon: b.icon,
         name: b.name,
+        nameLabel: age ? `${b.name} (${age} anni)` : b.name,
         kind: "birthday",
         dateObj: d,
-        date: ymd(year, b.month, b.day)
+        date: ymd(year, b.month, b.day),
+        ageTurning: age
       };
     });
   }
@@ -1444,7 +1464,7 @@
       line.innerHTML = `
         <div class="monthEventsIco">🎂</div>
         <div class="monthEventsTxt">
-          <b>${item.e.name}</b>
+          <b>${item.e.nameLabel}</b>
           <div class="monthEventsSub">📅 ${label}</div>
         </div>
       `;
@@ -1500,8 +1520,8 @@
     list.slice(0,10).forEach(e=>{
       const when = e.dateObj.toLocaleDateString("it-IT", {day:"2-digit", month:"long", year:"numeric"});
       const msg = (e.diff===0)
-        ? `🎉 È oggi il compleanno di ${e.name}!`
-        : `Tra ${e.diff} giorni è il compleanno di ${e.name} (${when}).`;
+        ? `🎉 È oggi il compleanno di ${e.nameLabel}!`
+        : `Tra ${e.diff} giorni è il compleanno di ${e.nameLabel} (${when}).`;
 
       const card = document.createElement("div");
       card.className="card";
@@ -1601,11 +1621,11 @@
       const when = e.dateObj.toLocaleDateString("it-IT", {day:"2-digit", month:"long", year:"numeric"});
 
       let title = "🎂 Compleanno in arrivo";
-      let msg = `Tra ${e.diff} giorni è il compleanno di ${e.name} (${when}).`;
+      let msg = `Tra ${e.diff} giorni è il compleanno di ${e.nameLabel} (${when}).`;
 
-      if(e.diff === 10) msg = `⏳ Tra meno di 10 giorni è il compleanno di ${e.name} (${when}).`;
-      if(e.diff === 5)  msg = `⚠️ Tra 5 giorni è il compleanno di ${e.name} (${when}).`;
-      if(e.diff === 0){ title = "🎉 È oggi!"; msg = `Auguri ${e.name}! (${when})`; }
+      if(e.diff === 10) msg = `⏳ Tra meno di 10 giorni è il compleanno di ${e.nameLabel} (${when}).`;
+      if(e.diff === 5)  msg = `⚠️ Tra 5 giorni è il compleanno di ${e.nameLabel} (${when}).`;
+      if(e.diff === 0){ title = "🎉 È oggi!"; msg = `Auguri ${e.nameLabel}! (${when})`; }
 
       showToast({ icon:"🎂", title, message: msg, onClick: ()=> jumpToDate(e.date) });
       pushWebNotification(title, msg);
