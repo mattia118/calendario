@@ -298,6 +298,7 @@
     border:1px solid rgba(0,0,0,.08); color: rgba(0,0,0,.88);
     position:relative; overflow:hidden; display:flex; align-items:flex-start; justify-content:flex-start;
     transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+    min-height: 60px;
   }
   .day:hover{
     transform: translateY(-2px) scale(1.01);
@@ -305,7 +306,15 @@
     box-shadow: 0 16px 30px rgba(0,0,0,.18);
   }
   .day .n{ font-weight:900; font-size:16px; }
-  .off{ opacity:.55; }
+
+  /* ✅ Celle “fuori mese” NON visibili (niente 29/30/31 del mese precedente/successivo) */
+  .blank{
+    visibility:hidden;
+    pointer-events:none;
+    border:0;
+    background:transparent;
+    box-shadow:none;
+  }
 
   .today{
     outline: 3px solid rgba(124,255,138,.75);
@@ -361,7 +370,7 @@
   @media (max-width: 780px){
     .content{ padding: 18px 14px 14px; }
     .grid{ gap:8px; }
-    .day{ aspect-ratio: 1/1; padding:8px; }
+    .day{ aspect-ratio: 1/1; padding:8px; min-height:auto; }
     .day .n{ font-size:14px; }
     .monthTitle{ font-size:16px; }
   }
@@ -491,331 +500,6 @@
   }
   .journalBox:focus{ box-shadow: 0 0 0 3px rgba(124,255,138,.22); filter: brightness(1.05); }
 
-  /* NODO */
-  .knotBox{ display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start; }
-  .knotImg{
-    flex: 0 0 260px;
-    background: rgba(0,0,0,.22);
-    border:1px solid rgba(255,255,255,.14);
-    border-radius: 16px;
-    padding: 10px;
-    overflow:hidden;
-    box-shadow: 0 14px 30px rgba(0,0,0,.25);
-    cursor: pointer;
-  }
-  .knotImg img{
-    width:100%;
-    height: 180px;
-    object-fit: cover;
-    display:block;
-    border-radius: 12px;
-    border:1px solid rgba(255,255,255,.10);
-    background: rgba(0,0,0,.18);
-  }
-  .knotImgCap{
-    margin-top:8px;
-    font-weight:900;
-    font-size:13px;
-    color: rgba(238,247,239,.92);
-  }
-  .knotText{ flex: 1 1 260px; }
-  .knotName{ font-weight:900; font-size:16px; margin:0; }
-  .knotDesc{ margin:8px 0 0; color: var(--muted); }
-
-  /* BUSSOLA */
-  .compassWrap{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
-  .compass{
-    width:140px; height:140px;
-    border-radius:50%;
-    border:2px solid rgba(255,255,255,.35);
-    background: rgba(0,0,0,.18);
-    position:relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,.35);
-    animation: compassBreath 3.6s ease-in-out infinite;
-  }
-  @keyframes compassBreath{ 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.02); } }
-  .compass::before{
-    content:""; position:absolute; inset:10px;
-    border-radius:50%;
-    border:1px dashed rgba(255,210,77,.28);
-    opacity:.85;
-    animation: spinSlow 18s linear infinite;
-  }
-  @keyframes spinSlow{ to{ transform: rotate(360deg); } }
-
-  .needle{
-    position:absolute;
-    left:50%; top:22px;
-    width:4px; height:54px;
-    transform-origin: 50% 100%;
-    background: rgba(255,63,63,.95);
-    border-radius: 6px;
-    box-shadow: 0 0 18px rgba(255,63,63,.35);
-    transform: translateX(-50%) rotate(0deg);
-    transition: transform .5s ease;
-  }
-  .needle::after{
-    content:""; position:absolute; left:-6px; top:-6px;
-    width:16px; height:16px; border-radius:50%;
-    background: rgba(255,255,255,.75);
-    box-shadow: 0 0 18px rgba(255,255,255,.25);
-  }
-  .virtueName{ margin:0; font-weight:900; font-size:16px; }
-  .virtueDesc{ margin:8px 0 0; color: var(--muted); }
-
-  /* TIMELINE */
-  .timeline{
-    display:flex; gap:12px;
-    overflow-x:auto;
-    scroll-snap-type: x mandatory;
-    padding-bottom: 6px;
-  }
-  .timeItem{
-    min-width: 240px;
-    scroll-snap-align: start;
-    background: rgba(0,0,0,.18);
-    border:1px solid rgba(255,255,255,.14);
-    border-radius: 16px;
-    padding: 12px;
-    transition: transform .18s ease, filter .18s ease;
-  }
-  .timeItem:hover{ transform: translateY(-2px); filter: brightness(1.08); }
-  .timeYear{ font-weight:900; font-size:16px; margin:0; }
-  .timeText{ margin:8px 0 0; color: var(--muted); font-size:13px; }
-
-  /* MODAL LEGGE SCOUT */
-  .modalBackdrop{
-    position:fixed; inset:0;
-    background: rgba(0,0,0,.60);
-    display:none;
-    align-items:center; justify-content:center;
-    padding: 18px;
-    z-index:99;
-  }
-  .modalBackdrop.show{ display:flex; }
-  .modal{
-    width:min(720px, 96vw);
-    background: rgba(14,44,25,.92);
-    border:1px solid rgba(255,255,255,.14);
-    border-radius: 22px;
-    box-shadow: var(--shadow);
-    padding: 16px;
-    transform: translateY(18px) scale(.95);
-    opacity:0;
-    animation: pop .32s ease forwards;
-    overflow:hidden;
-  }
-  @keyframes pop{ to{ transform: translateY(0) scale(1); opacity:1; } }
-  .modalHeader{ display:flex; justify-content:space-between; gap:12px; align-items:flex-start; padding:6px 6px 10px; }
-  .modalTitle{ font-weight:900; font-size:18px; margin:0; }
-  .modalBody{
-    background: rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.12);
-    border-radius: 18px;
-    padding: 12px;
-    margin: 6px;
-  }
-  .line{
-    display:flex; gap:10px; align-items:flex-start;
-    padding:10px; border-radius:14px;
-    background: rgba(0,0,0,.20);
-    border:1px solid rgba(255,255,255,.10);
-    margin-bottom: 10px;
-    animation: slideIn .35s ease both;
-  }
-  @keyframes slideIn{ from{ transform: translateX(-12px); opacity:0; } to{ transform: translateX(0); opacity:1; } }
-  .ico{ font-size: 22px; line-height:1; }
-  .sub{ color: rgba(238,247,239,.85); font-size: 13px; margin:2px 0 0; }
-
-  /* FOTO */
-  details.photoWin{
-    margin-top:14px;
-    background: var(--panel);
-    border:1px solid var(--panel2);
-    border-radius: 20px;
-    box-shadow: var(--shadow);
-    backdrop-filter: blur(10px);
-    overflow:hidden;
-  }
-  details.photoWin > summary{
-    list-style:none;
-    cursor:pointer;
-    padding:14px 14px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    font-weight:900;
-  }
-  details.photoWin > summary::-webkit-details-marker{ display:none; }
-  .sumLeft{ display:flex; gap:10px; align-items:center; }
-  .sumIco{
-    width:34px; height:34px; display:grid; place-items:center;
-    border-radius:12px;
-    background: rgba(0,0,0,.18);
-    border: 1px solid rgba(255,255,255,.14);
-    box-shadow: 0 10px 26px rgba(0,0,0,.22);
-  }
-  .sumChev{
-    width:40px; height:40px; display:grid; place-items:center;
-    border-radius: 14px;
-    background: rgba(0,0,0,.14);
-    border:1px solid rgba(255,255,255,.14);
-    transition: transform .25s ease;
-  }
-  details[open] .sumChev{ transform: rotate(180deg); }
-
-  .galleryWrap{ padding: 0 14px 14px; }
-  .galleryGrid{
-    display:grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap:10px;
-  }
-  @media (max-width: 860px){ .galleryGrid{ grid-template-columns: 1fr; } }
-
-  .thumb{
-    border-radius: 16px;
-    overflow:hidden;
-    border:1px solid rgba(255,255,255,.14);
-    background: rgba(0,0,0,.18);
-    box-shadow: 0 14px 30px rgba(0,0,0,.25);
-    cursor:pointer;
-    transition: transform .18s ease, filter .18s ease;
-  }
-  .thumb:hover{ transform: translateY(-2px); filter: brightness(1.06); }
-
-  .thumb img, .thumb video{
-    width:100%;
-    height: 280px;
-    object-fit: cover;
-    display:block;
-    background: rgba(0,0,0,.22);
-  }
-  .thumb video{ outline:none; }
-
-  .thumbCap{
-    padding:10px 12px;
-    font-weight:900;
-    color: rgba(238,247,239,.92);
-    border-top:1px solid rgba(255,255,255,.10);
-    background: rgba(0,0,0,.14);
-  }
-  .thumbCap small{ display:block; font-weight:600; color: rgba(238,247,239,.72); margin-top:4px; }
-
-  /* LIGHTBOX */
-  .lightbox{
-    position:fixed; inset:0;
-    background: rgba(0,0,0,.72);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding: 14px;
-    z-index: 200;
-  }
-  .lightbox.show{ display:flex; }
-  .lbBox{
-    width:min(980px, 96vw);
-    max-height: 88vh;
-    border-radius: 18px;
-    overflow:hidden;
-    border:1px solid rgba(255,255,255,.14);
-    background: rgba(10,28,16,.85);
-    box-shadow: 0 30px 80px rgba(0,0,0,.6);
-    animation: lbPop .26s ease both;
-  }
-  @keyframes lbPop{ from{ transform: translateY(14px) scale(.98); opacity:0; } to{ transform: translateY(0) scale(1); opacity:1; } }
-  .lbTop{
-    display:flex; justify-content:space-between; align-items:center;
-    padding: 10px 12px;
-    background: rgba(0,0,0,.25);
-    border-bottom: 1px solid rgba(255,255,255,.12);
-  }
-  .lbTitle{ font-weight:900; font-size: 14px; color: rgba(238,247,239,.92); }
-  .lbClose{
-    border:1px solid rgba(255,255,255,.18);
-    background: rgba(0,0,0,.22);
-    color: var(--text);
-    border-radius: 12px;
-    padding: 8px 10px;
-    cursor:pointer;
-    font-weight:900;
-  }
-  .lbMedia{
-    display:block;
-    width:100%;
-    height: min(78vh, 720px);
-    object-fit: contain;
-    background: rgba(0,0,0,.20);
-  }
-
-  /* ✅ BANNER FONDO PAGINA */
-  .ctaBanner{
-    margin-top:14px;
-    border-radius: 18px;
-    padding: 16px;
-    box-shadow: var(--shadow);
-    background: rgba(0,0,0,.34);
-    border: 1px solid rgba(255,255,255,.22);
-    backdrop-filter: blur(10px);
-    display:flex;
-    gap:12px;
-    align-items:center;
-    justify-content:space-between;
-    flex-wrap:wrap;
-  }
-  .ctaBanner .txt{
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-  }
-  .ctaBanner .txt b{
-    font-size:14px;
-    letter-spacing:.04em;
-  }
-  .ctaBanner .txt small{
-    color: rgba(238,247,239,.78);
-  }
-  .ctaBanner a{
-    text-decoration:none;
-    display:inline-flex;
-    align-items:center;
-    gap:10px;
-    padding: 12px 16px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,.22);
-    background: rgba(255,255,255,.10);
-    color: var(--text);
-    font-weight: 900;
-    transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
-  }
-  .ctaBanner a:hover{
-    transform: translateY(-1px) scale(1.01);
-    filter: brightness(1.08);
-    box-shadow: 0 18px 44px rgba(0,0,0,.30);
-  }
-
-  .footerWindow{
-    margin-top:14px;
-    border-radius: 18px;
-    padding: 14px;
-    text-align:center;
-    box-shadow: var(--shadow);
-    background: rgba(0,0,0,.34);
-    border: 1px solid rgba(255,255,255,.22);
-    backdrop-filter: blur(10px);
-  }
-  .footerWindow b{
-    display:inline-block;
-    font-size: 14px;
-    letter-spacing: .06em;
-    padding: 10px 16px;
-    border-radius: 999px;
-    background: rgba(255,255,255,.10);
-    border: 1px solid rgba(255,255,255,.18);
-    box-shadow: 0 18px 44px rgba(0,0,0,.30);
-    text-transform: uppercase;
-  }
-
   .toastWrap{
     position: fixed;
     left: 50%;
@@ -853,6 +537,28 @@
     padding: 6px 10px;
     cursor:pointer;
     font-weight:900;
+  }
+
+  .footerWindow{
+    margin-top:14px;
+    border-radius: 18px;
+    padding: 14px;
+    text-align:center;
+    box-shadow: var(--shadow);
+    background: rgba(0,0,0,.34);
+    border: 1px solid rgba(255,255,255,.22);
+    backdrop-filter: blur(10px);
+  }
+  .footerWindow b{
+    display:inline-block;
+    font-size: 14px;
+    letter-spacing: .06em;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.10);
+    border: 1px solid rgba(255,255,255,.18);
+    box-shadow: 0 18px 44px rgba(0,0,0,.30);
+    text-transform: uppercase;
   }
 </style>
 </head>
@@ -924,7 +630,7 @@
         </div>
       </div>
 
-      <div class="accItem" id="accThoughts">
+      <div class="accItem open" id="accThoughts">
         <button class="accBtn" type="button" data-acc="accThoughts">
           <div class="accLeft">
             <div class="accIco">💭</div>
@@ -938,209 +644,10 @@
           <div class="muted" id="journalStatus" style="margin-top:8px;"></div>
         </div>
       </div>
-
-      <div class="accItem open" id="accKnot">
-        <button class="accBtn" type="button" data-acc="accKnot">
-          <div class="accLeft">
-            <div class="accIco">🧵</div>
-            <p class="accTitle">Nodo del giorno</p>
-          </div>
-          <div class="chev">▾</div>
-        </button>
-        <div class="accBody">
-          <div class="knotBox">
-            <div class="knotImg" id="knotImg" title="Clicca per ingrandire"></div>
-            <div class="knotText">
-              <p class="knotName" id="knotName">—</p>
-              <p class="knotDesc" id="knotDesc">—</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="accItem open" id="accCompass">
-        <button class="accBtn" type="button" data-acc="accCompass">
-          <div class="accLeft">
-            <div class="accIco">🧭</div>
-            <p class="accTitle">Bussola morale</p>
-          </div>
-          <div class="chev">▾</div>
-        </button>
-        <div class="accBody">
-          <div class="compassWrap">
-            <div class="compass" aria-label="Bussola morale">
-              <div class="needle" id="needle"></div>
-            </div>
-            <div>
-              <p class="virtueName" id="virtueName">—</p>
-              <p class="virtueDesc" id="virtueDesc">—</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="accItem open" id="accTimeline">
-        <button class="accBtn" type="button" data-acc="accTimeline">
-          <div class="accLeft">
-            <div class="accIco">🕰️</div>
-            <p class="accTitle">Linea del tempo scout (Jamboree)</p>
-          </div>
-          <div class="chev">▾</div>
-        </button>
-        <div class="accBody">
-          <div class="timeline" id="timeline"></div>
-          <p class="muted" style="margin:10px 0 0;">Scorri a destra/sinistra 👉</p>
-        </div>
-      </div>
-
-      <div class="accItem" id="accLaws">
-        <button class="accBtn" type="button" id="lawsBtn">
-          <div class="accLeft">
-            <div class="accIco">📜</div>
-            <p class="accTitle">Legge Scout</p>
-          </div>
-          <div class="chev">▾</div>
-        </button>
-        <div class="accBody">
-          <p class="muted" style="margin:0;">Apri la finestra con la legge scout.</p>
-        </div>
-      </div>
-    </div>
-
-    <details class="photoWin" id="photoWin">
-      <summary>
-        <div class="sumLeft">
-          <div class="sumIco">📷</div>
-          <div>Foto campo estivo 2025</div>
-        </div>
-        <div class="sumChev">▾</div>
-      </summary>
-      <div class="galleryWrap">
-        <div class="galleryGrid" id="galleryGrid"></div>
-        <p class="muted" style="margin:10px 0 0;">
-          Nota: i file <b>.HEIC</b> non sempre si vedono nel browser. Qui ci sono JPG/MP4 quindi ok.
-        </p>
-      </div>
-    </details>
-
-    <div class="ctaBanner">
-      <div class="txt">
-        <b>📝 Compila il modulo</b>
-        <small>Aiutaci a raccogliere informazioni in modo veloce e ordinato.</small>
-      </div>
-      <a
-        href="https://docs.google.com/forms/d/e/1FAIpQLSd9hDzRLv3vpohXDrpfIaKCQXM4D1vI05nWjHhNQ6fkhAVvFQ/viewform?usp=preview"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Apri il Google Form"
-      >
-        Apri il modulo ➜
-      </a>
     </div>
 
     <div class="footerWindow">
       <b>Site created by Mattia Spensieri</b>
-    </div>
-  </div>
-
-  <div class="modalBackdrop" id="lawsBackdrop">
-    <div class="modal">
-      <div class="modalHeader">
-        <h3 class="modalTitle">📜 Legge Scout</h3>
-        <button id="lawsClose" type="button">Chiudi ✖</button>
-      </div>
-
-      <div class="modalBody">
-        <div class="line">
-          <div class="ico">1️⃣</div>
-          <div>
-            <b>Pongono il loro onore nel meritare fiducia.</b>
-            <div class="sub">Sono affidabili: la parola conta.</div>
-          </div>
-        </div>
-
-        <div class="line">
-          <div class="ico">2️⃣</div>
-          <div>
-            <b>Sono leali.</b>
-            <div class="sub">Stanno dalla parte del bene e sono sinceri.</div>
-          </div>
-        </div>
-
-        <div class="line">
-          <div class="ico">3️⃣</div>
-          <div>
-            <b>Si rendono utili e aiutano gli altri.</b>
-            <div class="sub">Servono con gioia, senza aspettarsi nulla.</div>
-          </div>
-        </div>
-
-        <div class="line">
-          <div class="ico">4️⃣</div>
-          <div>
-            <b>Sono amici di tutti e fratelli di ogni altra Guida e Scout.</b>
-            <div class="sub">Accolgono, includono, fanno squadra.</div>
-          </div>
-        </div>
-
-        <div class="line">
-          <div class="ico">5️⃣</div>
-          <div>
-            <b>Sono cortesi.</b>
-            <div class="sub">Rispetto, educazione e gentilezza.</div>
-          </div>
-        </div>
-
-        <div class="line">
-          <div class="ico">6️⃣</div>
-          <div>
-            <b>Amano e rispettano la natura.</b>
-            <div class="sub">Proteggono l’ambiente, non sporcano, non sprecano.</div>
-          </div>
-        </div>
-
-        <div class="line">
-          <div class="ico">7️⃣</div>
-          <div>
-            <b>Sanno obbedire.</b>
-            <div class="sub">Ascoltano, collaborano e rispettare le regole.</div>
-          </div>
-        </div>
-
-        <div class="line">
-          <div class="ico">8️⃣</div>
-          <div>
-            <b>Sorridono e cantano anche nelle difficoltà.</b>
-            <div class="sub">Non si arrendono: portano coraggio e buonumore.</div>
-          </div>
-        </div>
-
-        <div class="line">
-          <div class="ico">9️⃣</div>
-          <div>
-            <b>Sono laboriosi ed economi.</b>
-            <div class="sub">Si impegnano e usano bene le risorse.</div>
-          </div>
-        </div>
-
-        <div class="line" style="margin-bottom:0;">
-          <div class="ico">🔟</div>
-          <div>
-            <b>Sono puri di pensieri parole e azioni.</b>
-            <div class="sub">Scelte giuste e rispetto per sé e per gli altri.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="lightbox" id="lightbox">
-    <div class="lbBox">
-      <div class="lbTop">
-        <div class="lbTitle" id="lbTitle">Media</div>
-        <button class="lbClose" id="lbClose" type="button">Chiudi ✖</button>
-      </div>
-      <div id="lbMediaHost"></div>
     </div>
   </div>
 
@@ -1157,6 +664,7 @@
   const ymd = (y,m,d) => `${y}-${pad(m)}-${pad(d)}`;
   const itMonth = (y,m) => new Date(y, m-1, 1).toLocaleString("it-IT",{month:"long", year:"numeric"});
   const DOW = ["Lun","Mar","Mer","Gio","Ven","Sab","Dom"];
+
   const YEAR_MIN = 2026, YEAR_MAX = 2029;
   const inRange = y => (y>=YEAR_MIN && y<=YEAR_MAX);
 
@@ -1169,6 +677,15 @@
   function dateToObj(iso){
     const [y,m,d] = iso.split("-").map(n=>parseInt(n,10));
     return new Date(y, m-1, d);
+  }
+
+  // ✅ START: si aggiorna automaticamente al mese corrente (se oggi è nel range 2026–2029)
+  function getInitialYearMonth(){
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = now.getMonth()+1;
+    if(inRange(y)) return { y, m };
+    return { y: YEAR_MIN, m: 1 };
   }
 
   const intro = document.getElementById("intro");
@@ -1185,133 +702,84 @@
   const journal = document.getElementById("journal");
   const journalStatus = document.getElementById("journalStatus");
 
-  const knotImg = document.getElementById("knotImg");
-  const knotName = document.getElementById("knotName");
-  const knotDesc = document.getElementById("knotDesc");
-
-  const needle = document.getElementById("needle");
-  const virtueName = document.getElementById("virtueName");
-  const virtueDesc = document.getElementById("virtueDesc");
-
-  const lawsBtn = document.getElementById("lawsBtn");
-  const lawsBackdrop = document.getElementById("lawsBackdrop");
-  const lawsClose = document.getElementById("lawsClose");
-
-  const galleryGrid = document.getElementById("galleryGrid");
-  const lightbox = document.getElementById("lightbox");
-  const lbTitle = document.getElementById("lbTitle");
-  const lbClose = document.getElementById("lbClose");
-  const lbMediaHost = document.getElementById("lbMediaHost");
-
   const toastWrap = document.getElementById("toastWrap");
   const confettiBox = document.getElementById("confetti");
-  const timelineEl = document.getElementById("timeline");
+  const stage = document.getElementById("stage");
 
-  let stateYear = 2026;
-  let stateMonth = 1;
+  // ✅ Imposta subito anno/mese correnti
+  let { y: stateYear, m: stateMonth } = getInitialYearMonth();
 
-  // ✅ COMPLEANNI (aggiunti mancanti + età se disponibile)
+  // ✅ COMPLEANNI con birthYear (anni che compiono = stateYear - birthYear)
+  // IMPORTANTISSIMO: per Arta / Ambra / Aurora / Rudi devi mettere TU l’anno vero.
+  // Io ho messo dei placeholder da compilare: 2000 (cambia con l'anno reale).
   const BIRTHDAYS = [
     { id:"mariateresa", name:"Mariateresa", day:7,  month:1,  icon:"🎂", birthYear:1990 },
-    { id:"clara",       name:"Clara",       day:19, month:1,  icon:"🎂" }, // anno non indicato
+    { id:"clara",       name:"Clara",       day:19, month:1,  icon:"🎂", birthYear:2000 }, // ✅ METTI ANNO VERO
     { id:"cristian",    name:"Cristian",    day:28, month:1,  icon:"🎂", birthYear:2011 },
 
-    { id:"ambra",       name:"Ambra",       day:28, month:2,  icon:"🎂" }, // anno non indicato
+    { id:"ambra",       name:"Ambra",       day:28, month:2,  icon:"🎂", birthYear:2000 }, // ✅ METTI ANNO VERO
 
-    { id:"arta",        name:"Arta",        day:22, month:3,  icon:"🎂" }, // anno non indicato
+    { id:"arta",        name:"Arta",        day:22, month:3,  icon:"🎂", birthYear:2000 }, // ✅ METTI ANNO VERO
     { id:"ginevra",     name:"Ginevra Di Buono", day:22, month:3, icon:"🎂", birthYear:2012 },
     { id:"greta",       name:"Greta Iorio", day:28, month:3,  icon:"🎂", birthYear:2014 },
     { id:"daniel",      name:"Daniel Fazioli", day:15, month:3, icon:"🎂", birthYear:2014 },
 
     { id:"eliana",      name:"Eliana Alfieri", day:30, month:4, icon:"🎂", birthYear:2012 },
-
-    { id:"aurora",      name:"Aurora",      day:4,  month:5,  icon:"🎂" }, // anno non indicato
-    { id:"rudi",        name:"Rudi",        day:11, month:5,  icon:"🎂" }, // anno non indicato
+    { id:"aurora",      name:"Aurora",      day:4,  month:5,  icon:"🎂", birthYear:2000 }, // ✅ METTI ANNO VERO
+    { id:"rudi",        name:"Rudi",        day:11, month:5,  icon:"🎂", birthYear:2000 }, // ✅ METTI ANNO VERO
     { id:"annalisa",    name:"Annalisa",    day:22, month:5,  icon:"🎂", birthYear:1969 },
 
-    { id:"alessia",     name:"Alessia Di Michele", day:12, month:6, icon:"🎂" }, // anno non indicato
+    { id:"alessia",     name:"Alessia Di Michele", day:12, month:6, icon:"🎂", birthYear:2000 }, // ✅ METTI ANNO VERO
     { id:"lorenzo",     name:"Lorenzo",     day:18, month:6,  icon:"🎂", birthYear:2014 },
     { id:"paolo",       name:"Paolo Iannetta", day:20, month:6, icon:"🎂", birthYear:2014 },
 
     { id:"pasquale",    name:"Pasquale Petrone", day:1, month:7, icon:"🎂", birthYear:1995 },
-    { id:"loris",       name:"Loris",       day:16, month:7,  icon:"🎂" }, // anno non indicato
-    { id:"samuele",     name:"Samuele",     day:24, month:7,  icon:"🎂" }, // anno non indicato
+    { id:"loris",       name:"Loris",       day:16, month:7,  icon:"🎂", birthYear:2000 }, // ✅ METTI ANNO VERO
+    { id:"samuele",     name:"Samuele",     day:24, month:7,  icon:"🎂", birthYear:2000 }, // ✅ METTI ANNO VERO
 
-    { id:"vittorio",    name:"Vittorio",    day:20, month:8,  icon:"🎂" }, // anno non indicato
+    { id:"vittorio",    name:"Vittorio",    day:20, month:8,  icon:"🎂", birthYear:2000 }, // ✅ METTI ANNO VERO
+    { id:"gabriele",    name:"Gabriele Pio Ciocca", day:13, month:9, icon:"🎂", birthYear:2000 }, // ✅ METTI ANNO VERO
+    { id:"chiara_oct",  name:"Chiara",      day:4,  month:10, icon:"🎂", birthYear:2000 }, // ✅ METTI ANNO VERO
+    { id:"sofia",       name:"Sofia",       day:31, month:10, icon:"🎂", birthYear:2000 }, // ✅ METTI ANNO VERO
 
-    { id:"gabriele",    name:"Gabriele Pio Ciocca", day:13, month:9, icon:"🎂" },
+    { id:"gabriel",     name:"Gabriel Gonzalez", day:7, month:11, icon:"🎂", birthYear:2012 },
+    { id:"giuseppe",    name:"Giuseppe",    day:18, month:11, icon:"🎂", birthYear:2000 }, // ✅ METTI ANNO VERO
+    { id:"giulia",      name:"Giulia Leone",day:15, month:11, icon:"🎂", birthYear:2000 }, // ✅ METTI ANNO VERO
 
-    { id:"chiara_oct",  name:"Chiara",      day:4,  month:10, icon:"🎂" }, // anno non indicato
-    { id:"sofia",       name:"Sofia",       day:31, month:10, icon:"🎂" }, // anno non indicato
-
-    { id:"gabriel_g",   name:"Gabriel Gonzalez", day:7, month:11, icon:"🎂", birthYear:2012 },
-    { id:"giulia",      name:"Giulia Leone",day:15, month:11, icon:"🎂" },
-    { id:"giuseppe",    name:"Giuseppe",    day:18, month:11, icon:"🎂" }, // anno non indicato
-
-    { id:"simone",      name:"Simone",      day:18, month:12, icon:"🎂" }, // anno non indicato
-    { id:"chiara_dec",  name:"Chiara",      day:22, month:12, icon:"🎂", birthYear:2012 }
+    { id:"chiara_dic",  name:"Chiara",      day:22, month:12, icon:"🎂", birthYear:2012 },
+    { id:"simone",      name:"Simone",      day:18, month:12, icon:"🎂", birthYear:2000 }  // ✅ METTI ANNO VERO
   ];
 
-  // ✅ qui aggiungiamo nameLabel (nome + età) quando c'è birthYear
+  function formatNameWithAge(e){
+    // età che compie in quell'anno (stateYear)
+    if(typeof e.age === "number" && isFinite(e.age) && e.age > 0){
+      return `${e.name} (${e.age} anni)`;
+    }
+    return e.name;
+  }
+
   function getAllBirthdaysForYear(year){
     return BIRTHDAYS.map(b=>{
       const d = new Date(year, b.month-1, b.day);
       const age = (typeof b.birthYear === "number") ? (year - b.birthYear) : null;
-
       return {
         id: b.id,
         icon: b.icon,
         name: b.name,
-        nameLabel: age ? `${b.name} (${age} anni)` : b.name,
         kind: "birthday",
+        birthYear: b.birthYear ?? null,
+        age,
         dateObj: d,
         date: ymd(year, b.month, b.day),
-        ageTurning: age
+        day: b.day,
+        month: b.month
       };
     });
   }
 
-  const KNOTS = [
-    { id:"nodo_savoia", name:"Nodo Savoia (nodo dell’amicizia scout)", img:"ChatGPT Image 27 gen 2026, 17_09_46.png", desc:"Nodo simbolico scout (amicizia). Bello da mostrare e ricordare." },
-    { id:"nodo_parlato", name:"Nodo parlato", img:"ChatGPT Image 27 gen 2026, 17_09_38.png", desc:"Per fissare una corda a un palo. Molto usato in campo e nei lavori di legatura." },
-    { id:"nodo_piano", name:"Nodo piano (o nodo diritto)", img:"ChatGPT Image 27 gen 2026, 17_09_36.png", desc:"Unisce due corde simili. Semplice ma va fatto bene (occhio al verso!)." },
-    { id:"gassa_damante", name:"Gassa d’amante", img:"ChatGPT Image 27 gen 2026, 17_15_10.png", desc:"Cappio fisso che non scorre. Utilissimo quando ti serve un anello sicuro." },
-    { id:"prusik", name:"Nodo Prusik", img:"ChatGPT Image 27 gen 2026, 17_15_10.png", desc:"Nodo autobloccante su corda. Si usa in progressione/recupero con grande attenzione." },
-    { id:"legatura_quadra", name:"Legatura quadra", img:"ChatGPT Image 27 gen 2026, 17_15_10.png", desc:"Per unire due pali a 90°. Classica per costruzioni di campo." },
-    { id:"nodo_bandiera", name:"Nodo bandiera", img:"ChatGPT Image 27 gen 2026, 17_23_01.png", desc:"Per unire due corde anche diverse. Tieni ben serrato e controlla sempre." }
-  ];
-
-  const VIRTUES = [
-    { name:"Coraggio", desc:"Fare la cosa giusta anche quando hai paura." },
-    { name:"Aiuto", desc:"Dare una mano senza aspettarsi niente in cambio." },
-    { name:"Onestà", desc:"Dire la verità e rispettare la parola data." },
-    { name:"Lealtà", desc:"Essere affidabile con gli altri e con te stesso." },
-    { name:"Servizio", desc:"Mettere il bene comune davanti alla comodità personale." }
-  ];
-
-  function buildTimeline(){
-    const items = [
-      { year:"1920", text:"1° World Scout Jamboree — Olympia, Londra (30 luglio–8 agosto)." },
-      { year:"1947", text:"Jamboree della Pace — ripartenza dopo la guerra (Francia)." },
-      { year:"1957", text:"50 anni di scoutismo — Jamboree a Sutton Park (UK)." },
-      { year:"2007", text:"Centenario dello scoutismo — grande celebrazione mondiale." },
-      { year:"2019", text:"Jamboree — Nord America (USA)." },
-      { year:"2023", text:"Jamboree — Corea del Sud (Saemangeum)." },
-      { year:"2027", text:"Jamboree — Polonia (Gdańsk), 30 luglio–8 agosto." }
-    ];
-
-    timelineEl.innerHTML = "";
-    items.forEach(x=>{
-      const div = document.createElement("div");
-      div.className="timeItem";
-      div.innerHTML = `<p class="timeYear">${x.year}</p><p class="timeText">${x.text}</p>`;
-      timelineEl.appendChild(div);
-    });
-  }
-
   function firstDayOffset(y,m){
-    const js = new Date(y, m-1, 1).getDay();
-    return (js + 6) % 7;
+    const js = new Date(y, m-1, 1).getDay(); // 0=dom
+    return (js + 6) % 7; // 0=lun
   }
   function daysInMonth(y,m){ return new Date(y, m, 0).getDate(); }
 
@@ -1358,6 +826,7 @@
     });
   }
 
+  // ✅ CALENDARIO SOLO MESE CORRENTE: niente giorni 29/30/31 “fuori mese”
   function renderCalendar(){
     if(!inRange(stateYear)){ stateYear=YEAR_MIN; stateMonth=1; }
     setTheme();
@@ -1372,56 +841,51 @@
     const offset = firstDayOffset(stateYear, stateMonth);
     const dim = daysInMonth(stateYear, stateMonth);
 
-    const prevMonth = stateMonth === 1 ? 12 : stateMonth - 1;
-    const prevYear  = stateMonth === 1 ? stateYear - 1 : stateYear;
-    const nextMonth = stateMonth === 12 ? 1 : stateMonth + 1;
-    const nextYear  = stateMonth === 12 ? stateYear + 1 : stateYear;
-
-    const dimPrev = daysInMonth(prevYear, prevMonth);
     const eventMap = birthdaysByKeyForCurrentView();
 
-    let cells = 0;
-
+    // offset = celle vuote prima del giorno 1 (ma invisibili)
     for(let i=0;i<offset;i++){
-      const dayNum = dimPrev - offset + 1 + i;
-      const key = ymd(prevYear, prevMonth, dayNum);
-      calEl.appendChild(makeDayCell(prevYear, prevMonth, dayNum, key, true, todayKey, eventMap));
-      cells++;
+      const blank = document.createElement("div");
+      blank.className = "day blank";
+      blank.innerHTML = `<div class="n">—</div>`;
+      calEl.appendChild(blank);
     }
 
     for(let d=1; d<=dim; d++){
       const key = ymd(stateYear, stateMonth, d);
-      calEl.appendChild(makeDayCell(stateYear, stateMonth, d, key, false, todayKey, eventMap));
-      cells++;
+      calEl.appendChild(makeDayCell(stateYear, stateMonth, d, key, todayKey, eventMap));
     }
 
-    let nextDay = 1;
-    while(cells < 42){
-      const key = ymd(nextYear, nextMonth, nextDay);
-      calEl.appendChild(makeDayCell(nextYear, nextMonth, nextDay, key, true, todayKey, eventMap));
-      cells++;
-      nextDay++;
+    // per completare la griglia (ultima riga) con celle invisibili
+    const totalCells = offset + dim;
+    const remainder = totalCells % 7;
+    const fill = (remainder === 0) ? 0 : (7 - remainder);
+    for(let i=0;i<fill;i++){
+      const blank = document.createElement("div");
+      blank.className = "day blank";
+      blank.innerHTML = `<div class="n">—</div>`;
+      calEl.appendChild(blank);
     }
 
     renderMonthEventsList(eventMap);
   }
 
-  function makeDayCell(y,m,d,key,isOff,todayKey,eventMap){
+  function makeDayCell(y,m,d,key,todayKey,eventMap){
     const div = document.createElement("div");
-    div.className = "day" + (isOff ? " off" : "") + (key===todayKey ? " today" : "");
+    div.className = "day" + (key===todayKey ? " today" : "");
 
     const evs = eventMap.get(key) || [];
     const marker = markerForDate(key, eventMap);
 
-    if(evs.length && !isOff) div.classList.add("eventDay");
+    if(evs.length) div.classList.add("eventDay");
     div.dataset.key = key;
 
     div.innerHTML = `
       <div class="n">${d}</div>
-      ${marker && !isOff ? `<div class="marker"><span>${marker}</span><span class="dotRed"></span></div>` : ""}
+      ${marker ? `<div class="marker"><span>${marker}</span><span class="dotRed"></span></div>` : ""}
     `;
 
-    if(evs.length && !isOff){
+    if(evs.length){
       div.style.cursor = "pointer";
       div.addEventListener("click", ()=>{
         div.classList.remove("jumpFlash");
@@ -1437,16 +901,15 @@
     monthEventsBox.innerHTML = "";
 
     const dim = daysInMonth(stateYear, stateMonth);
-    const keys = [];
-    for(let d=1; d<=dim; d++) keys.push(ymd(stateYear, stateMonth, d));
-
     const items = [];
-    keys.forEach(k=>{
+
+    for(let d=1; d<=dim; d++){
+      const k = ymd(stateYear, stateMonth, d);
       const evs = eventMap.get(k);
       if(evs && evs.length){
         evs.forEach(e => items.push({ key:k, e }));
       }
-    });
+    }
 
     if(items.length === 0){
       const line = document.createElement("div");
@@ -1461,32 +924,17 @@
       const label = dt.toLocaleDateString("it-IT",{day:"2-digit", month:"long"});
       const line = document.createElement("div");
       line.className="monthEventsLine";
+
+      const shownName = formatNameWithAge(item.e);
+
       line.innerHTML = `
         <div class="monthEventsIco">🎂</div>
         <div class="monthEventsTxt">
-          <b>${item.e.nameLabel}</b>
+          <b>${shownName}</b>
           <div class="monthEventsSub">📅 ${label}</div>
         </div>
       `;
-      line.addEventListener("click", ()=> jumpToDate(item.key));
       monthEventsBox.appendChild(line);
-    });
-  }
-
-  function jumpToDate(isoKey){
-    const [y,m] = isoKey.split("-").map(n=>parseInt(n,10));
-    if(!inRange(y)) return;
-    stateYear = y; stateMonth = m;
-    renderCalendar();
-
-    requestAnimationFrame(()=>{
-      const cell = calEl.querySelector(`[data-key="${isoKey}"]`);
-      if(cell){
-        cell.scrollIntoView({behavior:"smooth", block:"center"});
-        cell.classList.remove("jumpFlash");
-        void cell.offsetWidth;
-        cell.classList.add("jumpFlash");
-      }
     });
   }
 
@@ -1519,9 +967,11 @@
 
     list.slice(0,10).forEach(e=>{
       const when = e.dateObj.toLocaleDateString("it-IT", {day:"2-digit", month:"long", year:"numeric"});
+      const shownName = formatNameWithAge(e);
+
       const msg = (e.diff===0)
-        ? `🎉 È oggi il compleanno di ${e.nameLabel}!`
-        : `Tra ${e.diff} giorni è il compleanno di ${e.nameLabel} (${when}).`;
+        ? `🎉 È oggi il compleanno di ${shownName}!`
+        : `Tra ${e.diff} giorni è il compleanno di ${shownName} (${when}).`;
 
       const card = document.createElement("div");
       card.className="card";
@@ -1531,7 +981,6 @@
         <p class="small">📅 ${when}</p>
         <div class="redNote">🔴 Segnato sul calendario</div>
       `;
-      card.addEventListener("click", ()=> jumpToDate(e.date));
       countCards.appendChild(card);
     });
   }
@@ -1578,7 +1027,7 @@
     try{ new Notification(title, { body }); }catch(e){}
   }
 
-  const NOTIF_KEY = "birthday_notifs_9am_v1";
+  const NOTIF_KEY = "birthday_notifs_9am_v2";
   const ALERT_DAYS = new Set([10, 5, 0]);
 
   function loadNotifState(){
@@ -1619,15 +1068,16 @@
       if(state[dedupeKey]) return;
 
       const when = e.dateObj.toLocaleDateString("it-IT", {day:"2-digit", month:"long", year:"numeric"});
+      const shownName = formatNameWithAge(e);
 
       let title = "🎂 Compleanno in arrivo";
-      let msg = `Tra ${e.diff} giorni è il compleanno di ${e.nameLabel} (${when}).`;
+      let msg = `Tra ${e.diff} giorni è il compleanno di ${shownName} (${when}).`;
 
-      if(e.diff === 10) msg = `⏳ Tra meno di 10 giorni è il compleanno di ${e.nameLabel} (${when}).`;
-      if(e.diff === 5)  msg = `⚠️ Tra 5 giorni è il compleanno di ${e.nameLabel} (${when}).`;
-      if(e.diff === 0){ title = "🎉 È oggi!"; msg = `Auguri ${e.nameLabel}! (${when})`; }
+      if(e.diff === 10) msg = `⏳ Tra meno di 10 giorni è il compleanno di ${shownName} (${when}).`;
+      if(e.diff === 5)  msg = `⚠️ Tra 5 giorni è il compleanno di ${shownName} (${when}).`;
+      if(e.diff === 0){ title = "🎉 È oggi!"; msg = `Auguri ${shownName}! (${when})`; }
 
-      showToast({ icon:"🎂", title, message: msg, onClick: ()=> jumpToDate(e.date) });
+      showToast({ icon:"🎂", title, message: msg });
       pushWebNotification(title, msg);
 
       state[dedupeKey] = true;
@@ -1653,85 +1103,6 @@
   }
   journal.addEventListener("input", scheduleSave);
 
-  function isVideo(file){ return file.toLowerCase().endsWith(".mp4"); }
-
-  function openLightbox(file, titleOverride=null){
-    lbTitle.textContent = titleOverride || file;
-    lbMediaHost.innerHTML = "";
-
-    if(isVideo(file)){
-      const v = document.createElement("video");
-      v.className = "lbMedia";
-      v.src = file;
-      v.controls = true;
-      v.autoplay = true;
-      v.playsInline = true;
-      v.style.objectFit = "contain";
-      lbMediaHost.appendChild(v);
-    } else {
-      const img = document.createElement("img");
-      img.className = "lbMedia";
-      img.src = file;
-      img.alt = titleOverride || file;
-      img.style.objectFit = "contain";
-      lbMediaHost.appendChild(img);
-    }
-
-    lightbox.classList.add("show");
-  }
-
-  function closeLightbox(){
-    lightbox.classList.remove("show");
-    lbMediaHost.innerHTML = "";
-  }
-
-  lbClose.addEventListener("click", closeLightbox);
-  lightbox.addEventListener("click",(e)=>{ if(e.target===lightbox) closeLightbox(); });
-  window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeLightbox(); });
-
-  let currentKnot = null;
-  function setKnotOfDay(){
-    const now = new Date();
-    const seed = (now.getFullYear()*10000) + ((now.getMonth()+1)*100) + now.getDate();
-    const idx = seed % KNOTS.length;
-    const k = KNOTS[idx];
-    currentKnot = k;
-
-    knotName.textContent = k.name;
-    knotDesc.textContent = k.desc || "—";
-
-    if(k.img){
-      knotImg.innerHTML = `
-        <img src="${k.img}" alt="${k.name}">
-        <div class="knotImgCap">🔍 Clicca per ingrandire</div>
-      `;
-    } else {
-      knotImg.innerHTML = `
-        <img src="frame.jpg" alt="Nodo del giorno">
-        <div class="knotImgCap">Nodo del giorno</div>
-      `;
-    }
-  }
-
-  knotImg.addEventListener("click", ()=>{
-    if(currentKnot && currentKnot.img){
-      openLightbox(currentKnot.img, currentKnot.name);
-    }
-  });
-
-  function setVirtueOfDay(){
-    const now = new Date();
-    const seed = (now.getFullYear()*10000) + ((now.getMonth()+1)*100) + now.getDate();
-    const idx = seed % VIRTUES.length;
-    const v = VIRTUES[idx];
-
-    virtueName.textContent = `Virtù del giorno: ${v.name}`;
-    virtueDesc.textContent = v.desc;
-
-    const angle = idx * 72;
-    needle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
-  }
-
   document.querySelectorAll(".accBtn[data-acc]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const id = btn.getAttribute("data-acc");
@@ -1740,34 +1111,42 @@
     });
   });
 
-  lawsBtn.addEventListener("click", ()=> lawsBackdrop.classList.add("show"));
-  lawsClose.addEventListener("click", ()=> lawsBackdrop.classList.remove("show"));
-  lawsBackdrop.addEventListener("click", (e)=>{ if(e.target===lawsBackdrop) lawsBackdrop.classList.remove("show"); });
-
   document.getElementById("prev").addEventListener("click", ()=>{
     stateMonth--;
     if(stateMonth<1){ stateMonth=12; stateYear--; }
     if(!inRange(stateYear)){ stateYear=YEAR_MIN; stateMonth=1; }
     renderCalendar();
+    renderCountdown();
   });
+
   document.getElementById("next").addEventListener("click", ()=>{
     stateMonth++;
     if(stateMonth>12){ stateMonth=1; stateYear++; }
     if(!inRange(stateYear)){ stateYear=YEAR_MAX; stateMonth=12; }
     renderCalendar();
+    renderCountdown();
   });
+
   yearSel.addEventListener("change", ()=>{
     stateYear = parseInt(yearSel.value,10);
     renderCalendar();
-  });
-  document.getElementById("todayBtn").addEventListener("click", ()=>{
-    const t = new Date();
-    if(t.getFullYear()<YEAR_MIN || t.getFullYear()>YEAR_MAX){ stateYear=YEAR_MIN; stateMonth=1; }
-    else { stateYear=t.getFullYear(); stateMonth=t.getMonth()+1; }
-    renderCalendar();
+    renderCountdown();
   });
 
-  const stage = document.getElementById("stage");
+  document.getElementById("todayBtn").addEventListener("click", ()=>{
+    const now = new Date();
+    if(inRange(now.getFullYear())){
+      stateYear = now.getFullYear();
+      stateMonth = now.getMonth()+1;
+    } else {
+      stateYear = YEAR_MIN;
+      stateMonth = 1;
+    }
+    renderCalendar();
+    renderCountdown();
+  });
+
+  // swipe su mobile
   let touchStartX = null;
   stage.addEventListener("touchstart",(e)=>{ touchStartX = e.touches[0].clientX; }, {passive:true});
   stage.addEventListener("touchend",(e)=>{
@@ -1800,58 +1179,62 @@
     }
   }
 
-  const MEDIA = [
-    "1e38146e-d6d7-4fdd-bcb2-8a6b0887210e.jpg",
-    "3e799a83-3336-47db-a2eb-bc55540677ba.jpg",
-    "5aae342f-8b7f-43c5-85e9-13f6881e8f67.jpg",
-    "7e9d6930-3cb9-41a5-bae0-9e788f0abe50.jpg",
-    "8c78f8ec-652a-434f-ab06-e3e0788ecb31.jpg",
-    "8cc7054e-5881-420c-ba3a-435828560198.jpg",
-    "85ffc3dd-2321-4804-bd00-90a326a38b5f.jpg",
-    "95f82bcc-fe77-4a68-8089-a165afb315ee.jpg",
-    "338867c3-8486-4749-b364-f76e9232028a.jpg",
-    "91583127-dee0-4e25-bf9b-3ca8c7311e1c.jpg",
-    "a400cc11-4b2f-4672-8595-baeba587dacc.jpg",
-    "bdb6b79f-82a4-4800-8dec-98e9161d8f12.jpg",
-    "d24c8755-7cc8-464e-8a19-38c0e46e2dec.jpg",
-    "e08df019-6c8c-40b5-b813-802f3b8d41f7.jpg",
-    "E28F1480-5C8A-4E67-8C5D-D545474F5B32.jpg",
-    "f98df94d-5212-492c-a8a2-742e5ee1360c.jpg",
-    "5f08d156-ad8b-420c-8b9a-6662ce952cd5.mp4",
-    "dbea094f-77fa-4787-b1be-5e750421b67c.mp4",
-    "e62058ee-c8e9-4616-a3fe-fa8a46110433.mp4"
-  ];
-
-  function renderGallery(){
-    galleryGrid.innerHTML = "";
-    MEDIA.forEach(file=>{
-      const box = document.createElement("div");
-      box.className = "thumb";
-
-      if(isVideo(file)){
-        box.innerHTML = `
-          <video src="${file}" muted playsinline preload="metadata"></video>
-          <div class="thumbCap">🎬 ${file}<small>Tocca per aprire</small></div>
-        `;
-      } else {
-        box.innerHTML = `
-          <img src="${file}" alt="${file}" loading="lazy">
-          <div class="thumbCap">📷 ${file}<small>Tocca per aprire</small></div>
-        `;
-      }
-
-      box.addEventListener("click", ()=> openLightbox(file, file));
-      galleryGrid.appendChild(box);
-    });
-  }
-
   async function doEnter(){
     intro.classList.add("hide");
     app.style.opacity = "1";
     app.style.transform = "translateY(0)";
     await ensureNotificationPermission();
     checkBirthdayAlertsAt9();
-    try{ localStorage.setItem("scout_entered_v1","1"); }catch(e){}
+    try{ localStorage.setItem("scout_entered_v2","1"); }catch(e){}
+  }
+
+  function initParticles(){
+    // fireflies
+    const fireflies = document.getElementById("fireflies");
+    for(let i=0;i<26;i++){
+      const f = document.createElement("div");
+      f.className="firefly";
+      f.style.left = (Math.random()*100) + "vw";
+      f.style.top = (Math.random()*100) + "vh";
+      f.style.setProperty("--t", (6 + Math.random()*10) + "s");
+      f.style.setProperty("--dx", ((Math.random()*260)-130) + "px");
+      f.style.setProperty("--dy", ((Math.random()*260)-130) + "px");
+      fireflies.appendChild(f);
+    }
+    // sparks
+    const sparks = document.getElementById("sparks");
+    for(let i=0;i<18;i++){
+      const s = document.createElement("div");
+      s.className="spark";
+      s.style.left = (Math.random()*100) + "vw";
+      s.style.bottom = (Math.random()*30) + "vh";
+      s.style.setProperty("--t", (4 + Math.random()*8) + "s");
+      s.style.setProperty("--dx", ((Math.random()*180)-90) + "px");
+      s.style.setProperty("--dy", (Math.random()*180) + "px");
+      sparks.appendChild(s);
+    }
+    // leaves
+    const leaves = document.getElementById("leaves");
+    for(let i=0;i<14;i++){
+      const l = document.createElement("div");
+      l.className="leafFall";
+      l.style.left = (Math.random()*100) + "vw";
+      l.style.setProperty("--t", (7 + Math.random()*10) + "s");
+      l.style.setProperty("--dx", ((Math.random()*260)-130) + "px");
+      leaves.appendChild(l);
+    }
+    // stars
+    const stars = document.getElementById("stars");
+    for(let i=0;i<14;i++){
+      const st = document.createElement("div");
+      st.className="star";
+      st.style.left = (Math.random()*100) + "vw";
+      st.style.top = (Math.random()*60) + "vh";
+      st.style.setProperty("--t", (4 + Math.random()*10) + "s");
+      st.style.setProperty("--dx", ((Math.random()*520)-260) + "px");
+      st.style.setProperty("--dy", ((Math.random()*220)-110) + "px");
+      stars.appendChild(st);
+    }
   }
 
   (function init(){
@@ -1859,19 +1242,14 @@
     renderCalendar();
     renderCountdown();
     loadJournal();
-    setKnotOfDay();
-    setVirtueOfDay();
-    buildTimeline();
     setTheme();
-    renderGallery();
+    initParticles();
 
     checkBirthdayAlertsAt9();
 
     setInterval(()=>{
       setTheme();
       renderCountdown();
-      setKnotOfDay();
-      setVirtueOfDay();
       checkBirthdayAlertsAt9();
     }, 60000);
 
