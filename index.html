@@ -52,6 +52,12 @@
     background-repeat:no-repeat;
   }
 
+  /* ✅ Animazione entrata app */
+  @keyframes appIn{
+    from{ opacity:0; transform: translateY(14px) scale(.985); filter: blur(2px); }
+    to{ opacity:1; transform: translateY(0) scale(1); filter: blur(0); }
+  }
+
   .bg{
     position:fixed; top:0; left:0;
     width:100vw; height:100vh; height:100dvh;
@@ -198,6 +204,7 @@
     100%{ transform: translate3d(var(--dx), 110vh, 0) rotate(680deg); opacity:0; }
   }
 
+  /* ✅ Intro con animazione più “wow” */
   .intro{
     position:fixed; inset:0;
     display:flex; align-items:center; justify-content:center;
@@ -223,6 +230,15 @@
     border:1px dashed rgba(255,210,77,.22);
     animation: ring2 6.8s linear infinite;
   }
+  .introRing::before{
+    content:"";
+    position:absolute; inset:-40px;
+    border-radius:50%;
+    background: radial-gradient(closest-side, rgba(124,255,138,.18), transparent 70%);
+    filter: blur(10px);
+    animation: pulseAura 2.4s ease-in-out infinite;
+  }
+  @keyframes pulseAura{ 0%,100%{ opacity:.35; transform: scale(1); } 50%{ opacity:.7; transform: scale(1.06); } }
   @keyframes ring{ 0%,100%{ transform: scale(1); opacity:.65; } 50%{ transform: scale(1.06); opacity:.95; } }
   @keyframes ring2{ to{ transform: rotate(360deg); } }
 
@@ -240,6 +256,7 @@
     box-shadow: 0 22px 60px rgba(0,0,0,.55), 0 0 40px rgba(255,255,255,.18);
     animation: pulse 2.2s ease-in-out infinite;
     overflow:hidden;
+    transform: translateZ(0);
   }
   .enterBtn::after{
     content:"";
@@ -248,6 +265,7 @@
     transform: translateX(-40%);
     animation: shimmer 2.6s ease-in-out infinite;
   }
+  .enterBtn:active{ transform: scale(.98); }
   @keyframes shimmer{ 0%,100%{ opacity:.25; transform: translateX(-40%); } 50%{ opacity:.55; transform: translateX(40%); } }
   @keyframes pulse{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-2px); } }
 
@@ -289,35 +307,28 @@
   }
   @keyframes popIn{ from{ transform: translateY(6px); opacity:0; } to{ transform: translateY(0); opacity:1; } }
 
-  /* Giorni visibili */
   .day{
     border-radius:16px; padding:10px; background: rgba(255,255,255,.90);
     border:1px solid rgba(0,0,0,.08); color: rgba(0,0,0,.88);
     position:relative; overflow:hidden; display:flex; align-items:flex-start; justify-content:flex-start;
     transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
-    animation: cellPop .35s ease both;
+    animation: cellPop .35s cubic-bezier(.2,.9,.2,1.2) both;
     animation-delay: calc(var(--i) * 10ms);
+    transform: translateZ(0);
   }
   @keyframes cellPop{
-    from{ transform: translateY(10px) scale(.98); opacity:0; }
+    from{ transform: translateY(12px) scale(.965); opacity:0; }
     to{ transform: translateY(0) scale(1); opacity:1; }
   }
 
-  /* Celle vuote: servono solo per allineare, ma non si vedono */
-  .blank{
-    visibility:hidden;
-    pointer-events:none;
-    background: transparent !important;
-    border: 0 !important;
-    animation:none !important;
-    box-shadow:none !important;
-  }
+  .blank{ visibility:hidden; pointer-events:none; background: transparent !important; border: 0 !important; animation:none !important; box-shadow:none !important; }
 
   .day:hover{
     transform: translateY(-2px) scale(1.01);
     filter: brightness(1.03);
     box-shadow: 0 16px 30px rgba(0,0,0,.18);
   }
+  .day:active{ transform: translateY(0) scale(.99); }
   .day .n{ font-weight:900; font-size:16px; }
 
   .today{
@@ -364,6 +375,17 @@
   }
   @keyframes eventAura{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-6px); } }
 
+  /* ✅ Animazione “tada” quando clicchi un giorno col compleanno */
+  .tada{ animation: tada 750ms ease both; }
+  @keyframes tada{
+    0%{ transform: scale(1); }
+    12%{ transform: scale(1.04) rotate(-1deg); }
+    28%{ transform: scale(1.02) rotate(1deg); }
+    45%{ transform: scale(1.04) rotate(-1deg); }
+    62%{ transform: scale(1.02) rotate(1deg); }
+    100%{ transform: scale(1); }
+  }
+
   .jumpFlash{ animation: jumpFlash 1.6s ease-in-out 0s 3; }
   @keyframes jumpFlash{
     0%{ transform: scale(1); }
@@ -397,7 +419,17 @@
     border:1px solid rgba(255,255,255,.10);
     transition: transform .18s ease, filter .18s ease;
     cursor:pointer;
+    position:relative;
+    overflow:hidden;
   }
+  .monthEventsLine::after{
+    content:"";
+    position:absolute; inset:-60px;
+    background: radial-gradient(360px 240px at 20% 20%, rgba(255,255,255,.10), transparent 60%);
+    opacity:0;
+    transition: opacity .25s ease;
+  }
+  .monthEventsLine:hover::after{ opacity:.8; }
   .monthEventsLine:hover{ transform: translateY(-1px); filter: brightness(1.06); }
   .monthEventsIco{ font-size:18px; line-height:1; }
   .monthEventsTxt{ font-size:13px; color: rgba(238,247,239,.88); }
@@ -460,11 +492,24 @@
     border:1px solid rgba(255,255,255,.14);
     transition: transform .25s ease, filter .25s ease;
   }
-  .accItem.open .chev{ transform: rotate(180deg); filter: brightness(1.15); }
 
-  .accBody{ display:none; padding: 0 14px 14px; }
-  .accItem.open .accBody{ display:block; animation: rise .32s ease both; }
-  @keyframes rise{ from{ opacity:0; transform: translateY(10px);} to{ opacity:1; transform: translateY(0);} }
+  /* ✅ Nuova animazione apertura/chiusura pannelli (più fluida) */
+  .accBody{
+    display:block;
+    max-height:0;
+    overflow:hidden;
+    padding: 0 14px;
+    opacity:0;
+    transform: translateY(6px);
+    transition: max-height .35s ease, opacity .25s ease, transform .25s ease, padding .35s ease;
+  }
+  .accItem.open .accBody{
+    max-height: 900px;
+    opacity:1;
+    transform: translateY(0);
+    padding: 0 14px 14px;
+  }
+  .accItem.open .chev{ transform: rotate(180deg); filter: brightness(1.15); }
 
   .cards{ display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
   @media (max-width: 900px){ .cards{ grid-template-columns: 1fr; } }
@@ -474,6 +519,14 @@
     border-radius: 16px; padding:12px; position:relative; overflow:hidden;
     transition: transform .18s ease, filter .18s ease;
   }
+  .card::after{
+    content:"";
+    position:absolute; inset:-60px;
+    background: radial-gradient(380px 260px at 20% 20%, rgba(255,255,255,.10), transparent 60%);
+    opacity:0;
+    transition: opacity .25s ease;
+  }
+  .card:hover::after{ opacity:.8; }
   .card:hover{ transform: translateY(-2px); filter: brightness(1.06); }
 
   .kicker{ font-size:12px; color: var(--muted); margin-bottom:6px; }
@@ -522,7 +575,9 @@
     overflow:hidden;
     box-shadow: 0 14px 30px rgba(0,0,0,.25);
     cursor: pointer;
+    transition: transform .18s ease, filter .18s ease;
   }
+  .knotImg:hover{ transform: translateY(-2px); filter: brightness(1.06); }
   .knotImg img{
     width:100%;
     height: 180px;
@@ -603,7 +658,7 @@
   .timeYear{ font-weight:900; font-size:16px; margin:0; }
   .timeText{ margin:8px 0 0; color: var(--muted); font-size:13px; }
 
-  /* MODAL LEGGE SCOUT (fix mobile: header sticky + close sempre visibile + scroll interno) */
+  /* MODAL LEGGE SCOUT */
   .modalBackdrop{
     position:fixed; inset:0;
     background: rgba(0,0,0,.66);
@@ -649,15 +704,15 @@
     cursor:pointer;
     font-weight:900;
     min-width: 56px;
+    transition: transform .18s ease, filter .18s ease;
   }
-
+  .modalCloseBtn:active{ transform: scale(.98); }
   .modalScroll{
     overflow:auto;
     -webkit-overflow-scrolling: touch;
     padding: 12px;
   }
 
-  /* “Rotellina” suggerimento scroll */
   .scrollHint{
     position: absolute;
     right: 14px;
@@ -818,7 +873,7 @@
     background: rgba(0,0,0,.20);
   }
 
-  /* ✅ BANNER FONDO PAGINA */
+  /* ✅ BANNER FONDO PAGINA (testo cambiato) */
   .ctaBanner{
     margin-top:14px;
     border-radius: 18px;
@@ -832,20 +887,31 @@
     align-items:center;
     justify-content:space-between;
     flex-wrap:wrap;
+    position:relative;
+    overflow:hidden;
   }
+  .ctaBanner::after{
+    content:"";
+    position:absolute; inset:-60px;
+    background: radial-gradient(520px 360px at 20% 20%, rgba(255,255,255,.12), transparent 60%);
+    opacity:.65;
+    animation: bannerGlow 4.6s ease-in-out infinite;
+  }
+  @keyframes bannerGlow{ 0%,100%{ opacity:.45; } 50%{ opacity:.8; } }
+
   .ctaBanner .txt{
+    position:relative;
     display:flex;
     flex-direction:column;
     gap:4px;
+    z-index:1;
   }
-  .ctaBanner .txt b{
-    font-size:14px;
-    letter-spacing:.04em;
-  }
-  .ctaBanner .txt small{
-    color: rgba(238,247,239,.78);
-  }
+  .ctaBanner .txt b{ font-size:14px; letter-spacing:.04em; }
+  .ctaBanner .txt small{ color: rgba(238,247,239,.78); }
+
   .ctaBanner a{
+    position:relative;
+    z-index:1;
     text-decoration:none;
     display:inline-flex;
     align-items:center;
@@ -944,7 +1010,7 @@
     <button class="enterBtn" id="enterBtn" type="button">ENTRA</button>
   </div>
 
-  <div class="wrap" id="app" style="opacity:0; transform: translateY(8px); transition: opacity .5s ease, transform .5s ease;">
+  <div class="wrap" id="app" style="opacity:0; transform: translateY(8px);">
     <div class="topbar">
       <div class="title">
         <div style="font-size:22px;">🌲</div>
@@ -1097,10 +1163,11 @@
       </div>
     </details>
 
+    <!-- ✅ TESTO CAMBIATO QUI -->
     <div class="ctaBanner">
       <div class="txt">
-        <b>📝 Compila il modulo</b>
-        <small>Aiutaci a raccogliere informazioni in modo veloce e ordinato.</small>
+        <b>📝 Scrivi quando compi gli anni</b>
+        <small>Apri il modulo e inserisci la tua data di nascita. 🎂</small>
       </div>
       <a
         href="https://docs.google.com/forms/d/e/1FAIpQLSd9hDzRLv3vpohXDrpfIaKCQXM4D1vI05nWjHhNQ6fkhAVvFQ/viewform?usp=preview"
@@ -1127,85 +1194,16 @@
 
       <div class="modalScroll" id="lawsScroll">
         <div class="modalBody">
-          <div class="line">
-            <div class="ico">1️⃣</div>
-            <div>
-              <b>Pongono il loro onore nel meritare fiducia.</b>
-              <div class="sub">Sono affidabili: la parola conta.</div>
-            </div>
-          </div>
-
-          <div class="line">
-            <div class="ico">2️⃣</div>
-            <div>
-              <b>Sono leali.</b>
-              <div class="sub">Stanno dalla parte del bene e sono sinceri.</div>
-            </div>
-          </div>
-
-          <div class="line">
-            <div class="ico">3️⃣</div>
-            <div>
-              <b>Si rendono utili e aiutano gli altri.</b>
-              <div class="sub">Servono con gioia, senza aspettarsi nulla.</div>
-            </div>
-          </div>
-
-          <div class="line">
-            <div class="ico">4️⃣</div>
-            <div>
-              <b>Sono amici di tutti e fratelli di ogni altra Guida e Scout.</b>
-              <div class="sub">Accolgono, includono, fanno squadra.</div>
-            </div>
-          </div>
-
-          <div class="line">
-            <div class="ico">5️⃣</div>
-            <div>
-              <b>Sono cortesi.</b>
-              <div class="sub">Rispetto, educazione e gentilezza.</div>
-            </div>
-          </div>
-
-          <div class="line">
-            <div class="ico">6️⃣</div>
-            <div>
-              <b>Amano e rispettano la natura.</b>
-              <div class="sub">Proteggono l’ambiente, non sporcano, non sprecano.</div>
-            </div>
-          </div>
-
-          <div class="line">
-            <div class="ico">7️⃣</div>
-            <div>
-              <b>Sanno obbedire.</b>
-              <div class="sub">Ascoltano, collaborano e rispettano le regole.</div>
-            </div>
-          </div>
-
-          <div class="line">
-            <div class="ico">8️⃣</div>
-            <div>
-              <b>Sorridono e cantano anche nelle difficoltà.</b>
-              <div class="sub">Non si arrendono: portano coraggio e buonumore.</div>
-            </div>
-          </div>
-
-          <div class="line">
-            <div class="ico">9️⃣</div>
-            <div>
-              <b>Sono laboriosi ed economi.</b>
-              <div class="sub">Si impegnano e usano bene le risorse.</div>
-            </div>
-          </div>
-
-          <div class="line" style="margin-bottom:0;">
-            <div class="ico">🔟</div>
-            <div>
-              <b>Sono puri di pensieri parole e azioni.</b>
-              <div class="sub">Scelte giuste e rispetto per sé e per gli altri.</div>
-            </div>
-          </div>
+          <div class="line"><div class="ico">1️⃣</div><div><b>Pongono il loro onore nel meritare fiducia.</b><div class="sub">Sono affidabili: la parola conta.</div></div></div>
+          <div class="line"><div class="ico">2️⃣</div><div><b>Sono leali.</b><div class="sub">Stanno dalla parte del bene e sono sinceri.</div></div></div>
+          <div class="line"><div class="ico">3️⃣</div><div><b>Si rendono utili e aiutano gli altri.</b><div class="sub">Servono con gioia, senza aspettarsi nulla.</div></div></div>
+          <div class="line"><div class="ico">4️⃣</div><div><b>Sono amici di tutti e fratelli di ogni altra Guida e Scout.</b><div class="sub">Accolgono, includono, fanno squadra.</div></div></div>
+          <div class="line"><div class="ico">5️⃣</div><div><b>Sono cortesi.</b><div class="sub">Rispetto, educazione e gentilezza.</div></div></div>
+          <div class="line"><div class="ico">6️⃣</div><div><b>Amano e rispettano la natura.</b><div class="sub">Proteggono l’ambiente, non sporcano, non sprecano.</div></div></div>
+          <div class="line"><div class="ico">7️⃣</div><div><b>Sanno obbedire.</b><div class="sub">Ascoltano, collaborano e rispettano le regole.</div></div></div>
+          <div class="line"><div class="ico">8️⃣</div><div><b>Sorridono e cantano anche nelle difficoltà.</b><div class="sub">Non si arrendono: portano coraggio e buonumore.</div></div></div>
+          <div class="line"><div class="ico">9️⃣</div><div><b>Sono laboriosi ed economi.</b><div class="sub">Si impegnano e usano bene le risorse.</div></div></div>
+          <div class="line" style="margin-bottom:0;"><div class="ico">🔟</div><div><b>Sono puri di pensieri parole e azioni.</b><div class="sub">Scelte giuste e rispetto per sé e per gli altri.</div></div></div>
         </div>
       </div>
 
@@ -1276,42 +1274,42 @@
     return targetYear - birthYear;
   }
 
-  // ✅ Compleanni: aggiunti quelli con anno certo (gli altri restano SENZA età)
+  // ✅ Compleanni: anni solo dove CERTI (gli altri senza età)
   const BIRTHDAYS = [
     { id:"mariateresa", name:"Mariateresa", day:7,  month:1,  birthYear:1990, icon:"🎂" },
-    { id:"clara",       name:"Clara",       day:19, month:1,  birthYear:null, icon:"🎂" }, // anno non dato → niente età
+    { id:"clara",       name:"Clara",       day:19, month:1,  birthYear:null, icon:"🎂" },
     { id:"cristian",    name:"Cristian",    day:28, month:1,  birthYear:2011, icon:"🎂" },
 
-    { id:"ambra",       name:"Ambra",       day:28, month:2,  birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"ambra",       name:"Ambra",       day:28, month:2,  birthYear:null, icon:"🎂" },
 
     { id:"daniel",      name:"Daniel Fazioli", day:15, month:3, birthYear:2014, icon:"🎂" },
-    { id:"arta",        name:"Arta",        day:22, month:3,  birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"arta",        name:"Arta",        day:22, month:3,  birthYear:null, icon:"🎂" },
     { id:"ginevra",     name:"Ginevra Di Buono", day:22, month:3, birthYear:2012, icon:"🎂" },
     { id:"greta",       name:"Greta Iorio", day:28, month:3,  birthYear:2014, icon:"🎂" },
 
     { id:"eliana",      name:"Eliana Alfieri", day:30, month:4, birthYear:2012, icon:"🎂" },
-    { id:"aurora",      name:"Aurora",      day:4,  month:5,  birthYear:null, icon:"🎂" }, // anno non dato
-    { id:"rudi",        name:"Rudi",        day:11, month:5,  birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"aurora",      name:"Aurora",      day:4,  month:5,  birthYear:null, icon:"🎂" },
+    { id:"rudi",        name:"Rudi",        day:11, month:5,  birthYear:null, icon:"🎂" },
     { id:"annalisa",    name:"Annalisa",    day:22, month:5,  birthYear:1969, icon:"🎂" },
 
-    { id:"alessia",     name:"Alessia Di Michele", day:12, month:6, birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"alessia",     name:"Alessia Di Michele", day:12, month:6, birthYear:null, icon:"🎂" },
     { id:"lorenzo",     name:"Lorenzo",     day:18, month:6,  birthYear:2014, icon:"🎂" },
     { id:"paolo",       name:"Paolo Iannetta", day:20, month:6, birthYear:2014, icon:"🎂" },
 
     { id:"pasquale",    name:"Pasquale Petrone", day:1, month:7, birthYear:1995, icon:"🎂" },
-    { id:"loris",       name:"Loris",       day:16, month:7,  birthYear:null, icon:"🎂" }, // anno non dato
-    { id:"samuele",     name:"Samuele",     day:24, month:7,  birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"loris",       name:"Loris",       day:16, month:7,  birthYear:null, icon:"🎂" },
+    { id:"samuele",     name:"Samuele",     day:24, month:7,  birthYear:null, icon:"🎂" },
 
-    { id:"vittorio",    name:"Vittorio",    day:20, month:8,  birthYear:null, icon:"🎂" }, // anno non dato
-    { id:"gabriele",    name:"Gabriele Pio Ciocca", day:13, month:9, birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"vittorio",    name:"Vittorio",    day:20, month:8,  birthYear:null, icon:"🎂" },
+    { id:"gabriele",    name:"Gabriele Pio Ciocca", day:13, month:9, birthYear:null, icon:"🎂" },
 
-    { id:"chiara_ott",  name:"Chiara",      day:4,  month:10, birthYear:null, icon:"🎂" }, // anno non dato
-    { id:"sofia",       name:"Sofia",       day:31, month:10, birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"chiara_ott",  name:"Chiara",      day:4,  month:10, birthYear:null, icon:"🎂" },
+    { id:"sofia",       name:"Sofia",       day:31, month:10, birthYear:null, icon:"🎂" },
     { id:"gabriel",     name:"Gabriel Gonzalez", day:7, month:11, birthYear:2012, icon:"🎂" },
-    { id:"giulia",      name:"Giulia Leone",day:15, month:11, birthYear:null, icon:"🎂" }, // anno non dato
-    { id:"giuseppe",    name:"Giuseppe",    day:18, month:11, birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"giulia",      name:"Giulia Leone",day:15, month:11, birthYear:null, icon:"🎂" },
+    { id:"giuseppe",    name:"Giuseppe",    day:18, month:11, birthYear:null, icon:"🎂" },
 
-    { id:"simone",      name:"Simone",      day:18, month:12, birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"simone",      name:"Simone",      day:18, month:12, birthYear:null, icon:"🎂" },
     { id:"chiara_dic",  name:"Chiara",      day:22, month:12, birthYear:2012, icon:"🎂" }
   ];
 
@@ -1507,7 +1505,6 @@
 
     let idx = 0;
 
-    // ✅ blanks (invisibili): mantengono l’allineamento senza mostrare “celle trasparenti”
     for(let i=0;i<offset;i++){
       const blank = document.createElement("div");
       blank.className = "day blank";
@@ -1523,7 +1520,7 @@
     }
 
     renderMonthEventsList(eventMap);
-    renderCountdown(); // aggiorna anche le card
+    renderCountdown();
   }
 
   function makeDayCell(y,m,d,key,todayKey,eventMap){
@@ -1544,9 +1541,10 @@
     if(evs.length){
       div.style.cursor = "pointer";
       div.addEventListener("click", ()=>{
-        div.classList.remove("jumpFlash");
+        // ✅ animazione nuova + confetti
+        div.classList.remove("tada");
         void div.offsetWidth;
-        div.classList.add("jumpFlash");
+        div.classList.add("tada");
         spawnConfettiBurst();
       });
     }
@@ -1844,7 +1842,7 @@
     });
   });
 
-  // Legge scout modal (fix mobile)
+  // Legge scout modal
   function openLaws(){
     lawsBackdrop.classList.add("show");
     document.body.style.overflow = "hidden";
@@ -1962,28 +1960,103 @@
     });
   }
 
-  // ✅ Tutto chiuso all’avvio: rimuove “open” da qualsiasi accItem
+  // ✅ Tutto chiuso all’avvio
   function closeAllPanels(){
     document.querySelectorAll(".accItem.open").forEach(x=> x.classList.remove("open"));
-    // anche foto chiusa
     try{ document.getElementById("photoWin").open = false; }catch(e){}
-    // e modal legge chiusa
     lawsBackdrop.classList.remove("show");
   }
 
   async function doEnter(){
     intro.classList.add("hide");
-    app.style.opacity = "1";
-    app.style.transform = "translateY(0)";
+    // ✅ App entra con animazione
+    app.style.animation = "appIn .55s ease forwards";
     closeAllPanels();
     await ensureNotificationPermission();
     checkBirthdayAlertsAt9();
     try{ localStorage.setItem("scout_entered_v1","1"); }catch(e){}
   }
 
-  function initAmbient(){
-    // (qui lascio il tuo “ambiente” invariato: stelle, foglie, lucciole ecc.)
+  /* ✅ Ambient extra: stelle + lucciole + foglie + scintille */
+  function rand(min,max){ return min + Math.random()*(max-min); }
+
+  function spawnStars(n=14){
+    const host = document.getElementById("stars");
+    host.innerHTML = "";
+    for(let i=0;i<n;i++){
+      const s = document.createElement("div");
+      s.className = "star";
+      s.style.left = rand(5,95) + "vw";
+      s.style.top  = rand(0,40) + "vh";
+      s.style.setProperty("--t", rand(5,11)+"s");
+      s.style.setProperty("--dx", rand(160,420)+"px");
+      s.style.setProperty("--dy", rand(140,320)+"px");
+      host.appendChild(s);
+    }
   }
+
+  function spawnFireflies(n=18){
+    const host = document.getElementById("fireflies");
+    host.innerHTML = "";
+    for(let i=0;i<n;i++){
+      const f = document.createElement("div");
+      f.className = "firefly";
+      f.style.left = rand(0,100)+"vw";
+      f.style.top  = rand(30,95)+"vh";
+      f.style.setProperty("--t", rand(6,16)+"s");
+      f.style.setProperty("--dx", rand(-220,220)+"px");
+      f.style.setProperty("--dy", rand(-240,-80)+"px");
+      host.appendChild(f);
+    }
+  }
+
+  function spawnLeaves(n=10){
+    const host = document.getElementById("leaves");
+    host.innerHTML = "";
+    for(let i=0;i<n;i++){
+      const l = document.createElement("div");
+      l.className = "leafFall";
+      l.style.left = rand(0,100)+"vw";
+      l.style.setProperty("--t", rand(8,18)+"s");
+      l.style.setProperty("--dx", rand(-220,220)+"px");
+      host.appendChild(l);
+    }
+  }
+
+  function spawnSparks(n=10){
+    const host = document.getElementById("sparks");
+    host.innerHTML = "";
+    for(let i=0;i<n;i++){
+      const s = document.createElement("div");
+      s.className = "spark";
+      s.style.left = rand(0,100)+"vw";
+      s.style.top  = rand(60,100)+"vh";
+      s.style.setProperty("--t", rand(4,9)+"s");
+      s.style.setProperty("--dx", rand(-120,120)+"px");
+      s.style.setProperty("--dy", rand(0,120)+"px");
+      host.appendChild(s);
+    }
+  }
+
+  /* ✅ Parallax leggero */
+  window.addEventListener("pointermove", (e)=>{
+    const x = (e.clientX / window.innerWidth) * 2 - 1;
+    const y = (e.clientY / window.innerHeight) * 2 - 1;
+    document.documentElement.style.setProperty("--mx", x.toFixed(3));
+    document.documentElement.style.setProperty("--my", y.toFixed(3));
+  }, {passive:true});
+
+  // ✅ vento leggero quando scrolli (animazione extra)
+  let wind = 0;
+  window.addEventListener("scroll", ()=>{
+    wind = Math.min(1, wind + 0.25);
+    document.documentElement.style.setProperty("--windStrength", wind.toFixed(2));
+    clearTimeout(window.__windT);
+    window.__windT = setTimeout(()=>{
+      wind = 0;
+      document.documentElement.style.setProperty("--windStrength", "0");
+    }, 220);
+  }, {passive:true});
 
   (function init(){
     renderDOW();
@@ -1996,6 +2069,12 @@
     renderGallery();
     loadJournalDay(journalDate);
     closeAllPanels();
+
+    // ✅ ambient
+    spawnStars(14);
+    spawnFireflies(18);
+    spawnLeaves(10);
+    spawnSparks(10);
 
     checkBirthdayAlertsAt9();
 
