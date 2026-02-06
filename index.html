@@ -54,9 +54,7 @@
 
   .bg{
     position:fixed; top:0; left:0;
-    width:100vw;
-    height:100vh;
-    height:100dvh;
+    width:100vw; height:100vh; height:100dvh;
     background-image: var(--bgUrl);
     background-size: cover;
     background-position:center;
@@ -72,9 +70,7 @@
 
   .bgOverlay{
     position:fixed; top:0; left:0;
-    width:100vw;
-    height:100vh;
-    height:100dvh;
+    width:100vw; height:100vh; height:100dvh;
     background:
       radial-gradient(1200px 800px at 20% 10%, rgba(124,255,138,.18), transparent 55%),
       radial-gradient(900px 600px at 90% 20%, rgba(255,210,77,.16), transparent 60%),
@@ -286,7 +282,6 @@
   .content{ position:relative; z-index:2; padding:34px 26px 18px; }
 
   .grid{ display:grid; grid-template-columns:repeat(7, 1fr); gap:10px; }
-
   .dow{
     text-align:center; font-weight:900; font-size:13px; color: rgba(0,0,0,.80);
     background: rgba(255,255,255,.84); border-radius:12px; padding:10px 6px; border:1px solid rgba(0,0,0,.08);
@@ -294,29 +289,36 @@
   }
   @keyframes popIn{ from{ transform: translateY(6px); opacity:0; } to{ transform: translateY(0); opacity:1; } }
 
+  /* Giorni visibili */
   .day{
     border-radius:16px; padding:10px; background: rgba(255,255,255,.90);
     border:1px solid rgba(0,0,0,.08); color: rgba(0,0,0,.88);
     position:relative; overflow:hidden; display:flex; align-items:flex-start; justify-content:flex-start;
     transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
-    min-height: 58px;
+    animation: cellPop .35s ease both;
+    animation-delay: calc(var(--i) * 10ms);
   }
+  @keyframes cellPop{
+    from{ transform: translateY(10px) scale(.98); opacity:0; }
+    to{ transform: translateY(0) scale(1); opacity:1; }
+  }
+
+  /* Celle vuote: servono solo per allineare, ma non si vedono */
+  .blank{
+    visibility:hidden;
+    pointer-events:none;
+    background: transparent !important;
+    border: 0 !important;
+    animation:none !important;
+    box-shadow:none !important;
+  }
+
   .day:hover{
     transform: translateY(-2px) scale(1.01);
     filter: brightness(1.03);
     box-shadow: 0 16px 30px rgba(0,0,0,.18);
   }
   .day .n{ font-weight:900; font-size:16px; }
-
-  /* ✅ celle vuote (per allineamento) MA senza numeri, senza hover, senza bordi visibili */
-  .blank{
-    background: transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    pointer-events:none !important;
-    min-height: 58px;
-  }
-  .blank:hover{ transform:none !important; filter:none !important; box-shadow:none !important; }
 
   .today{
     outline: 3px solid rgba(124,255,138,.75);
@@ -330,7 +332,7 @@
 
   .marker{
     position:absolute; right:8px; bottom:8px;
-    font-size:14px; opacity:.98;
+    font-size:13px; opacity:.98;
     display:flex; align-items:center; gap:6px;
     transform-origin: 50% 70%;
     animation: markerBounce 1.8s ease-in-out infinite;
@@ -372,10 +374,9 @@
   @media (max-width: 780px){
     .content{ padding: 18px 14px 14px; }
     .grid{ gap:8px; }
-    .day{ aspect-ratio: 1/1; padding:8px; min-height:auto; }
+    .day{ aspect-ratio: 1/1; padding:8px; }
     .day .n{ font-size:14px; }
     .monthTitle{ font-size:16px; }
-    .blank{ aspect-ratio: 1/1; }
   }
 
   .monthEvents{
@@ -402,6 +403,7 @@
   .monthEventsTxt{ font-size:13px; color: rgba(238,247,239,.88); }
   .monthEventsSub{ font-size:12px; color: var(--muted); margin-top:2px; }
 
+  /* Accordion: TUTTO CHIUSO ALL'AVVIO */
   .accordion{ margin-top:14px; display:flex; flex-direction:column; gap:12px; }
   .accItem{
     background: var(--panel);
@@ -488,19 +490,12 @@
   }
   @keyframes redPulse{ 0%,100%{ opacity:.78; } 50%{ opacity:1; } }
 
-  /* ✅ PENSIERI GIORNALIERI */
-  .thoughtTop{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    flex-wrap:wrap;
-    margin-bottom:10px;
+  /* Diario giorno per giorno */
+  .journalTop{
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    margin:0 0 10px;
   }
-  .thoughtDate{
-    font-weight:900;
-    font-size:14px;
-  }
+  .journalTop b{ font-size:13px; }
   .journalBox{
     width:100%;
     border:1px solid rgba(255,255,255,.18);
@@ -508,28 +503,13 @@
     color: var(--text);
     border-radius: 16px;
     padding: 12px;
-    min-height: 120px;
+    min-height: 110px;
     outline:none;
     font-family: inherit;
     resize: vertical;
     transition: box-shadow .18s ease, filter .18s ease;
   }
   .journalBox:focus{ box-shadow: 0 0 0 3px rgba(124,255,138,.22); filter: brightness(1.05); }
-
-  .thoughtList{
-    margin-top:10px;
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-  }
-  .thoughtItem{
-    padding:10px 12px;
-    border-radius: 14px;
-    background: rgba(0,0,0,.18);
-    border:1px solid rgba(255,255,255,.14);
-  }
-  .thoughtItem b{ display:block; font-size:13px; margin-bottom:6px; }
-  .thoughtItem p{ margin:0; color: rgba(238,247,239,.85); font-size:13px; white-space: pre-wrap; }
 
   /* NODO */
   .knotBox{ display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start; }
@@ -623,37 +603,87 @@
   .timeYear{ font-weight:900; font-size:16px; margin:0; }
   .timeText{ margin:8px 0 0; color: var(--muted); font-size:13px; }
 
-  /* MODAL LEGGE SCOUT */
+  /* MODAL LEGGE SCOUT (fix mobile: header sticky + close sempre visibile + scroll interno) */
   .modalBackdrop{
     position:fixed; inset:0;
-    background: rgba(0,0,0,.60);
+    background: rgba(0,0,0,.66);
     display:none;
     align-items:center; justify-content:center;
-    padding: 18px;
-    z-index:99;
+    padding: 14px;
+    z-index: 999;
   }
   .modalBackdrop.show{ display:flex; }
   .modal{
-    width:min(720px, 96vw);
+    width:min(760px, 96vw);
+    max-height: min(86vh, 760px);
     background: rgba(14,44,25,.92);
     border:1px solid rgba(255,255,255,.14);
     border-radius: 22px;
     box-shadow: var(--shadow);
-    padding: 16px;
+    overflow:hidden;
     transform: translateY(18px) scale(.95);
     opacity:0;
     animation: pop .32s ease forwards;
-    overflow:hidden;
+    display:flex;
+    flex-direction:column;
   }
   @keyframes pop{ to{ transform: translateY(0) scale(1); opacity:1; } }
-  .modalHeader{ display:flex; justify-content:space-between; gap:12px; align-items:flex-start; padding:6px 6px 10px; }
-  .modalTitle{ font-weight:900; font-size:18px; margin:0; }
+
+  .modalHeader{
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display:flex; justify-content:space-between; gap:12px; align-items:center;
+    padding: 12px 12px;
+    background: rgba(0,0,0,.28);
+    border-bottom: 1px solid rgba(255,255,255,.12);
+    backdrop-filter: blur(10px);
+  }
+  .modalTitle{ font-weight:900; font-size:16px; margin:0; }
+  .modalCloseBtn{
+    border:1px solid rgba(255,255,255,.22);
+    background: rgba(255,255,255,.10);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 10px 12px;
+    cursor:pointer;
+    font-weight:900;
+    min-width: 56px;
+  }
+
+  .modalScroll{
+    overflow:auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 12px;
+  }
+
+  /* “Rotellina” suggerimento scroll */
+  .scrollHint{
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    display:grid;
+    place-items:center;
+    background: rgba(0,0,0,.28);
+    border: 1px solid rgba(255,255,255,.16);
+    box-shadow: 0 18px 44px rgba(0,0,0,.35);
+    pointer-events:none;
+    animation: hintBob 1.4s ease-in-out infinite;
+    opacity: .85;
+  }
+  @keyframes hintBob{
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-6px); }
+  }
+
   .modalBody{
     background: rgba(255,255,255,.08);
     border:1px solid rgba(255,255,255,.12);
     border-radius: 18px;
     padding: 12px;
-    margin: 6px;
   }
   .line{
     display:flex; gap:10px; align-items:flex-start;
@@ -788,6 +818,7 @@
     background: rgba(0,0,0,.20);
   }
 
+  /* ✅ BANNER FONDO PAGINA */
   .ctaBanner{
     margin-top:14px;
     border-radius: 18px;
@@ -919,7 +950,7 @@
         <div style="font-size:22px;">🌲</div>
         <div>
           <div style="font-size:16px;font-weight:900;">Calendario Scout nel Bosco</div>
-          <div class="muted">2026 → 2029 · <b>Compleanni</b> 🎂</div>
+          <div class="muted">2026 → 2029 · <b>Solo compleanni</b> 🎂</div>
         </div>
       </div>
 
@@ -950,7 +981,7 @@
     </div>
 
     <div class="accordion" id="accordion">
-      <div class="accItem open" id="accCountdown">
+      <div class="accItem" id="accCountdown">
         <button class="accBtn" type="button" data-acc="accCountdown">
           <div class="accLeft">
             <div class="accIco">🔔</div>
@@ -963,31 +994,26 @@
         </div>
       </div>
 
-      <div class="accItem open" id="accThoughts">
+      <div class="accItem" id="accThoughts">
         <button class="accBtn" type="button" data-acc="accThoughts">
           <div class="accLeft">
             <div class="accIco">💭</div>
-            <p class="accTitle">Pensieri (uno al giorno)</p>
+            <p class="accTitle">Pensieri (giorno per giorno)</p>
           </div>
           <div class="chev">▾</div>
         </button>
         <div class="accBody">
-          <div class="thoughtTop">
-            <div class="thoughtDate" id="thoughtDate">—</div>
-            <button id="prevThought" type="button">⬅️ Giorno prima</button>
-            <button id="nextThought" type="button">Giorno dopo ➡️</button>
-            <button id="todayThought" type="button">📌 Oggi</button>
+          <div class="journalTop">
+            <b id="journalDayLabel">🗓️ —</b>
+            <button type="button" id="jPrev">◀ Giorno</button>
+            <button type="button" id="jNext">Giorno ▶</button>
           </div>
-
           <textarea id="journal" class="journalBox" placeholder="Scrivi il pensiero di oggi..."></textarea>
           <div class="muted" id="journalStatus" style="margin-top:8px;"></div>
-
-          <div class="muted" style="margin-top:12px;">📚 Ultimi pensieri salvati</div>
-          <div class="thoughtList" id="thoughtList"></div>
         </div>
       </div>
 
-      <div class="accItem open" id="accKnot">
+      <div class="accItem" id="accKnot">
         <button class="accBtn" type="button" data-acc="accKnot">
           <div class="accLeft">
             <div class="accIco">🧵</div>
@@ -1006,7 +1032,7 @@
         </div>
       </div>
 
-      <div class="accItem open" id="accCompass">
+      <div class="accItem" id="accCompass">
         <button class="accBtn" type="button" data-acc="accCompass">
           <div class="accLeft">
             <div class="accIco">🧭</div>
@@ -1027,7 +1053,7 @@
         </div>
       </div>
 
-      <div class="accItem open" id="accTimeline">
+      <div class="accItem" id="accTimeline">
         <button class="accBtn" type="button" data-acc="accTimeline">
           <div class="accLeft">
             <div class="accIco">🕰️</div>
@@ -1091,25 +1117,99 @@
     </div>
   </div>
 
-  <div class="modalBackdrop" id="lawsBackdrop">
+  <!-- MODAL LEGGE SCOUT -->
+  <div class="modalBackdrop" id="lawsBackdrop" role="dialog" aria-modal="true" aria-label="Legge Scout">
     <div class="modal">
       <div class="modalHeader">
         <h3 class="modalTitle">📜 Legge Scout</h3>
-        <button id="lawsClose" type="button">Chiudi ✖</button>
+        <button class="modalCloseBtn" id="lawsClose" type="button" aria-label="Chiudi">✖</button>
       </div>
 
-      <div class="modalBody">
-        <div class="line"><div class="ico">1️⃣</div><div><b>Pongono il loro onore nel meritare fiducia.</b><div class="sub">Sono affidabili: la parola conta.</div></div></div>
-        <div class="line"><div class="ico">2️⃣</div><div><b>Sono leali.</b><div class="sub">Stanno dalla parte del bene e sono sinceri.</div></div></div>
-        <div class="line"><div class="ico">3️⃣</div><div><b>Si rendono utili e aiutano gli altri.</b><div class="sub">Servono con gioia, senza aspettarsi nulla.</div></div></div>
-        <div class="line"><div class="ico">4️⃣</div><div><b>Sono amici di tutti e fratelli di ogni altra Guida e Scout.</b><div class="sub">Accolgono, includono, fanno squadra.</div></div></div>
-        <div class="line"><div class="ico">5️⃣</div><div><b>Sono cortesi.</b><div class="sub">Rispetto, educazione e gentilezza.</div></div></div>
-        <div class="line"><div class="ico">6️⃣</div><div><b>Amano e rispettano la natura.</b><div class="sub">Proteggono l’ambiente, non sporcano, non sprecano.</div></div></div>
-        <div class="line"><div class="ico">7️⃣</div><div><b>Sanno obbedire.</b><div class="sub">Ascoltano, collaborano e rispettare le regole.</div></div></div>
-        <div class="line"><div class="ico">8️⃣</div><div><b>Sorridono e cantano anche nelle difficoltà.</b><div class="sub">Non si arrendono: portano coraggio e buonumore.</div></div></div>
-        <div class="line"><div class="ico">9️⃣</div><div><b>Sono laboriosi ed economi.</b><div class="sub">Si impegnano e usano bene le risorse.</div></div></div>
-        <div class="line" style="margin-bottom:0;"><div class="ico">🔟</div><div><b>Sono puri di pensieri parole e azioni.</b><div class="sub">Scelte giuste e rispetto per sé e per gli altri.</div></div></div>
+      <div class="modalScroll" id="lawsScroll">
+        <div class="modalBody">
+          <div class="line">
+            <div class="ico">1️⃣</div>
+            <div>
+              <b>Pongono il loro onore nel meritare fiducia.</b>
+              <div class="sub">Sono affidabili: la parola conta.</div>
+            </div>
+          </div>
+
+          <div class="line">
+            <div class="ico">2️⃣</div>
+            <div>
+              <b>Sono leali.</b>
+              <div class="sub">Stanno dalla parte del bene e sono sinceri.</div>
+            </div>
+          </div>
+
+          <div class="line">
+            <div class="ico">3️⃣</div>
+            <div>
+              <b>Si rendono utili e aiutano gli altri.</b>
+              <div class="sub">Servono con gioia, senza aspettarsi nulla.</div>
+            </div>
+          </div>
+
+          <div class="line">
+            <div class="ico">4️⃣</div>
+            <div>
+              <b>Sono amici di tutti e fratelli di ogni altra Guida e Scout.</b>
+              <div class="sub">Accolgono, includono, fanno squadra.</div>
+            </div>
+          </div>
+
+          <div class="line">
+            <div class="ico">5️⃣</div>
+            <div>
+              <b>Sono cortesi.</b>
+              <div class="sub">Rispetto, educazione e gentilezza.</div>
+            </div>
+          </div>
+
+          <div class="line">
+            <div class="ico">6️⃣</div>
+            <div>
+              <b>Amano e rispettano la natura.</b>
+              <div class="sub">Proteggono l’ambiente, non sporcano, non sprecano.</div>
+            </div>
+          </div>
+
+          <div class="line">
+            <div class="ico">7️⃣</div>
+            <div>
+              <b>Sanno obbedire.</b>
+              <div class="sub">Ascoltano, collaborano e rispettano le regole.</div>
+            </div>
+          </div>
+
+          <div class="line">
+            <div class="ico">8️⃣</div>
+            <div>
+              <b>Sorridono e cantano anche nelle difficoltà.</b>
+              <div class="sub">Non si arrendono: portano coraggio e buonumore.</div>
+            </div>
+          </div>
+
+          <div class="line">
+            <div class="ico">9️⃣</div>
+            <div>
+              <b>Sono laboriosi ed economi.</b>
+              <div class="sub">Si impegnano e usano bene le risorse.</div>
+            </div>
+          </div>
+
+          <div class="line" style="margin-bottom:0;">
+            <div class="ico">🔟</div>
+            <div>
+              <b>Sono puri di pensieri parole e azioni.</b>
+              <div class="sub">Scelte giuste e rispetto per sé e per gli altri.</div>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <div class="scrollHint" aria-hidden="true">↕️</div>
     </div>
   </div>
 
@@ -1136,7 +1236,6 @@
   const ymd = (y,m,d) => `${y}-${pad(m)}-${pad(d)}`;
   const itMonth = (y,m) => new Date(y, m-1, 1).toLocaleString("it-IT",{month:"long", year:"numeric"});
   const DOW = ["Lun","Mar","Mer","Gio","Ven","Sab","Dom"];
-
   const YEAR_MIN = 2026, YEAR_MAX = 2029;
   const inRange = y => (y>=YEAR_MIN && y<=YEAR_MAX);
 
@@ -1145,118 +1244,96 @@
     const B = new Date(b.getFullYear(), b.getMonth(), b.getDate());
     return Math.round((B - A) / (1000*60*60*24));
   }
+
   function dateToObj(iso){
     const [y,m,d] = iso.split("-").map(n=>parseInt(n,10));
     return new Date(y, m-1, d);
   }
+
   function firstDayOffset(y,m){
-    const js = new Date(y, m-1, 1).getDay();   // 0 Dom ... 6 Sab
-    return (js + 6) % 7;                       // 0 Lun ... 6 Dom
+    const js = new Date(y, m-1, 1).getDay();
+    return (js + 6) % 7;
   }
   function daysInMonth(y,m){ return new Date(y, m, 0).getDate(); }
 
-  const intro = document.getElementById("intro");
-  const enterBtn = document.getElementById("enterBtn");
-  const app = document.getElementById("app");
+  function setTheme(){
+    const m = stateMonth;
+    const hour = new Date().getHours();
+    const night = (hour >= 20 || hour < 7);
 
-  const dowEl = document.getElementById("dow");
-  const calEl = document.getElementById("cal");
-  const monthTitleEl = document.getElementById("monthTitle");
-  const yearSel = document.getElementById("yearSel");
-  const monthEventsBox = document.getElementById("monthEvents");
-  const countCards = document.getElementById("countCards");
+    let overlayA = "rgba(8,25,14,.58)", overlayB = "rgba(8,25,14,.26)";
+    if([12,1,2].includes(m)) { overlayA="rgba(8,16,32,.64)"; overlayB="rgba(8,16,32,.30)"; }
+    if([6,7,8].includes(m)) { overlayA="rgba(40,22,6,.58)"; overlayB="rgba(15,35,18,.22)"; }
+    if([9,10,11].includes(m)) { overlayA="rgba(22,12,6,.62)"; overlayB="rgba(15,30,16,.24)"; }
 
-  // pensieri giornalieri
-  const journal = document.getElementById("journal");
-  const journalStatus = document.getElementById("journalStatus");
-  const thoughtDateEl = document.getElementById("thoughtDate");
-  const thoughtListEl = document.getElementById("thoughtList");
-  const prevThoughtBtn = document.getElementById("prevThought");
-  const nextThoughtBtn = document.getElementById("nextThought");
-  const todayThoughtBtn = document.getElementById("todayThought");
+    document.documentElement.style.setProperty("--overlayA", night ? "rgba(0,0,0,.72)" : overlayA);
+    document.documentElement.style.setProperty("--overlayB", night ? "rgba(0,0,0,.32)" : overlayB);
+    document.documentElement.style.setProperty("--fliesOpacity", night ? ".95" : ".55");
+  }
 
-  const knotImg = document.getElementById("knotImg");
-  const knotName = document.getElementById("knotName");
-  const knotDesc = document.getElementById("knotDesc");
+  function calcAgeForYear(birthYear, targetYear){
+    if(!birthYear) return null;
+    return targetYear - birthYear;
+  }
 
-  const needle = document.getElementById("needle");
-  const virtueName = document.getElementById("virtueName");
-  const virtueDesc = document.getElementById("virtueDesc");
-
-  const lawsBtn = document.getElementById("lawsBtn");
-  const lawsBackdrop = document.getElementById("lawsBackdrop");
-  const lawsClose = document.getElementById("lawsClose");
-
-  const galleryGrid = document.getElementById("galleryGrid");
-  const lightbox = document.getElementById("lightbox");
-  const lbTitle = document.getElementById("lbTitle");
-  const lbClose = document.getElementById("lbClose");
-  const lbMediaHost = document.getElementById("lbMediaHost");
-
-  const toastWrap = document.getElementById("toastWrap");
-  const confettiBox = document.getElementById("confetti");
-  const timelineEl = document.getElementById("timeline");
-
-  // ✅ parte dal mese corrente (se in range)
-  const now0 = new Date();
-  let stateYear = (now0.getFullYear()>=YEAR_MIN && now0.getFullYear()<=YEAR_MAX) ? now0.getFullYear() : YEAR_MIN;
-  let stateMonth = (now0.getFullYear()>=YEAR_MIN && now0.getFullYear()<=YEAR_MAX) ? (now0.getMonth()+1) : 1;
-
-  // ✅ COMPLEANNI: età SOLO dove ho birthYear (quelli certi)
+  // ✅ Compleanni: aggiunti quelli con anno certo (gli altri restano SENZA età)
   const BIRTHDAYS = [
-    { id:"mariateresa", name:"Mariateresa", day:7,  month:1,  icon:"🎂", birthYear:1990 },
-    { id:"clara",       name:"Clara",       day:19, month:1,  icon:"🎂" }, // anno sconosciuto -> niente età
-    { id:"cristian",    name:"Cristian",    day:28, month:1,  icon:"🎂", birthYear:2011 },
-    { id:"ambra",       name:"Ambra",       day:28, month:2,  icon:"🎂" }, // anno sconosciuto
-    { id:"arta",        name:"Arta",        day:22, month:3,  icon:"🎂" }, // anno sconosciuto (così NON avrà 26)
-    { id:"ginevra",     name:"Ginevra Di Buono", day:22, month:3, icon:"🎂", birthYear:2012 },
-    { id:"greta",       name:"Greta Iorio", day:28, month:3,  icon:"🎂", birthYear:2014 },
-    { id:"daniel",      name:"Daniel Fazioli", day:15, month:3, icon:"🎂", birthYear:2014 },
+    { id:"mariateresa", name:"Mariateresa", day:7,  month:1,  birthYear:1990, icon:"🎂" },
+    { id:"clara",       name:"Clara",       day:19, month:1,  birthYear:null, icon:"🎂" }, // anno non dato → niente età
+    { id:"cristian",    name:"Cristian",    day:28, month:1,  birthYear:2011, icon:"🎂" },
 
-    { id:"eliana",      name:"Eliana Alfieri", day:30, month:4, icon:"🎂", birthYear:2012 },
-    { id:"aurora",      name:"Aurora",      day:4,  month:5,  icon:"🎂" }, // anno sconosciuto
-    { id:"rudi",        name:"Rudi",        day:11, month:5,  icon:"🎂" }, // anno sconosciuto
-    { id:"annalisa",    name:"Annalisa",    day:22, month:5,  icon:"🎂", birthYear:1969 },
+    { id:"ambra",       name:"Ambra",       day:28, month:2,  birthYear:null, icon:"🎂" }, // anno non dato
 
-    { id:"alessia",     name:"Alessia Di Michele", day:12, month:6, icon:"🎂" }, // anno sconosciuto
-    { id:"lorenzo",     name:"Lorenzo",     day:18, month:6,  icon:"🎂", birthYear:2014 },
-    { id:"paolo",       name:"Paolo Iannetta", day:20, month:6, icon:"🎂", birthYear:2014 },
+    { id:"daniel",      name:"Daniel Fazioli", day:15, month:3, birthYear:2014, icon:"🎂" },
+    { id:"arta",        name:"Arta",        day:22, month:3,  birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"ginevra",     name:"Ginevra Di Buono", day:22, month:3, birthYear:2012, icon:"🎂" },
+    { id:"greta",       name:"Greta Iorio", day:28, month:3,  birthYear:2014, icon:"🎂" },
 
-    { id:"pasquale",    name:"Pasquale Petrone", day:1,  month:7, icon:"🎂", birthYear:1995 },
-    { id:"loris",       name:"Loris",       day:16, month:7, icon:"🎂" }, // anno sconosciuto
-    { id:"samuele",     name:"Samuele",     day:24, month:7, icon:"🎂" }, // anno sconosciuto
+    { id:"eliana",      name:"Eliana Alfieri", day:30, month:4, birthYear:2012, icon:"🎂" },
+    { id:"aurora",      name:"Aurora",      day:4,  month:5,  birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"rudi",        name:"Rudi",        day:11, month:5,  birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"annalisa",    name:"Annalisa",    day:22, month:5,  birthYear:1969, icon:"🎂" },
 
-    { id:"vittorio",    name:"Vittorio",    day:20, month:8, icon:"🎂" }, // anno sconosciuto
-    { id:"gabriele",    name:"Gabriele Pio Ciocca", day:13, month:9, icon:"🎂" }, // anno sconosciuto
-    { id:"chiara_oct",  name:"Chiara",      day:4,  month:10, icon:"🎂" }, // Chiara ottobre (anno sconosciuto)
-    { id:"sofia",       name:"Sofia",       day:31, month:10, icon:"🎂" }, // anno sconosciuto
-    { id:"gabriel",     name:"Gabriel Gonzalez", day:7, month:11, icon:"🎂", birthYear:2012 },
-    { id:"giulia",      name:"Giulia Leone",day:15, month:11, icon:"🎂" }, // anno sconosciuto
-    { id:"giuseppe",    name:"Giuseppe",    day:18, month:11, icon:"🎂" }, // anno sconosciuto
+    { id:"alessia",     name:"Alessia Di Michele", day:12, month:6, birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"lorenzo",     name:"Lorenzo",     day:18, month:6,  birthYear:2014, icon:"🎂" },
+    { id:"paolo",       name:"Paolo Iannetta", day:20, month:6, birthYear:2014, icon:"🎂" },
 
-    { id:"simone",      name:"Simone",      day:18, month:12, icon:"🎂" }, // anno sconosciuto
-    { id:"chiara_dec",  name:"Chiara",      day:22, month:12, icon:"🎂", birthYear:2012 } // Chiara dicembre
+    { id:"pasquale",    name:"Pasquale Petrone", day:1, month:7, birthYear:1995, icon:"🎂" },
+    { id:"loris",       name:"Loris",       day:16, month:7,  birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"samuele",     name:"Samuele",     day:24, month:7,  birthYear:null, icon:"🎂" }, // anno non dato
+
+    { id:"vittorio",    name:"Vittorio",    day:20, month:8,  birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"gabriele",    name:"Gabriele Pio Ciocca", day:13, month:9, birthYear:null, icon:"🎂" }, // anno non dato
+
+    { id:"chiara_ott",  name:"Chiara",      day:4,  month:10, birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"sofia",       name:"Sofia",       day:31, month:10, birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"gabriel",     name:"Gabriel Gonzalez", day:7, month:11, birthYear:2012, icon:"🎂" },
+    { id:"giulia",      name:"Giulia Leone",day:15, month:11, birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"giuseppe",    name:"Giuseppe",    day:18, month:11, birthYear:null, icon:"🎂" }, // anno non dato
+
+    { id:"simone",      name:"Simone",      day:18, month:12, birthYear:null, icon:"🎂" }, // anno non dato
+    { id:"chiara_dic",  name:"Chiara",      day:22, month:12, birthYear:2012, icon:"🎂" }
   ];
 
-  function getAgeIfKnown(b, year){
-    if(!b.birthYear) return null;
-    return year - b.birthYear;
+  function displayNameWithAge(b, year){
+    const age = calcAgeForYear(b.birthYear, year);
+    return (age === null) ? b.name : `${b.name} (${age} anni)`;
   }
 
   function getAllBirthdaysForYear(year){
     return BIRTHDAYS.map(b=>{
       const d = new Date(year, b.month-1, b.day);
-      const age = getAgeIfKnown(b, year);
       return {
         id: b.id,
         icon: b.icon,
-        name: b.name,
+        name: displayNameWithAge(b, year),
+        baseName: b.name,
+        birthYear: b.birthYear,
         kind: "birthday",
         dateObj: d,
         date: ymd(year, b.month, b.day),
         day: b.day,
-        month: b.month,
-        age: age
+        month: b.month
       };
     });
   }
@@ -1289,6 +1366,7 @@
       { year:"2023", text:"Jamboree — Corea del Sud (Saemangeum)." },
       { year:"2027", text:"Jamboree — Polonia (Gdańsk), 30 luglio–8 agosto." }
     ];
+
     timelineEl.innerHTML = "";
     items.forEach(x=>{
       const div = document.createElement("div");
@@ -1298,20 +1376,91 @@
     });
   }
 
-  function setTheme(){
-    const m = stateMonth;
-    const hour = new Date().getHours();
-    const night = (hour >= 20 || hour < 7);
+  const intro = document.getElementById("intro");
+  const enterBtn = document.getElementById("enterBtn");
+  const app = document.getElementById("app");
 
-    let overlayA = "rgba(8,25,14,.58)", overlayB = "rgba(8,25,14,.26)";
-    if([12,1,2].includes(m)) { overlayA="rgba(8,16,32,.64)"; overlayB="rgba(8,16,32,.30)"; }
-    if([6,7,8].includes(m)) { overlayA="rgba(40,22,6,.58)"; overlayB="rgba(15,35,18,.22)"; }
-    if([9,10,11].includes(m)) { overlayA="rgba(22,12,6,.62)"; overlayB="rgba(15,30,16,.24)"; }
+  const dowEl = document.getElementById("dow");
+  const calEl = document.getElementById("cal");
+  const monthTitleEl = document.getElementById("monthTitle");
+  const yearSel = document.getElementById("yearSel");
+  const monthEventsBox = document.getElementById("monthEvents");
+  const countCards = document.getElementById("countCards");
 
-    document.documentElement.style.setProperty("--overlayA", night ? "rgba(0,0,0,.72)" : overlayA);
-    document.documentElement.style.setProperty("--overlayB", night ? "rgba(0,0,0,.32)" : overlayB);
-    document.documentElement.style.setProperty("--fliesOpacity", night ? ".95" : ".55");
+  const journal = document.getElementById("journal");
+  const journalStatus = document.getElementById("journalStatus");
+  const journalDayLabel = document.getElementById("journalDayLabel");
+  const jPrev = document.getElementById("jPrev");
+  const jNext = document.getElementById("jNext");
+
+  const knotImg = document.getElementById("knotImg");
+  const knotName = document.getElementById("knotName");
+  const knotDesc = document.getElementById("knotDesc");
+
+  const needle = document.getElementById("needle");
+  const virtueName = document.getElementById("virtueName");
+  const virtueDesc = document.getElementById("virtueDesc");
+
+  const lawsBtn = document.getElementById("lawsBtn");
+  const lawsBackdrop = document.getElementById("lawsBackdrop");
+  const lawsClose = document.getElementById("lawsClose");
+  const lawsScroll = document.getElementById("lawsScroll");
+
+  const galleryGrid = document.getElementById("galleryGrid");
+  const lightbox = document.getElementById("lightbox");
+  const lbTitle = document.getElementById("lbTitle");
+  const lbClose = document.getElementById("lbClose");
+  const lbMediaHost = document.getElementById("lbMediaHost");
+
+  const toastWrap = document.getElementById("toastWrap");
+  const confettiBox = document.getElementById("confetti");
+  const timelineEl = document.getElementById("timeline");
+
+  // ✅ AVVIO: mese/anno corrente (se fuori range → 2026)
+  const now0 = new Date();
+  let stateYear = inRange(now0.getFullYear()) ? now0.getFullYear() : YEAR_MIN;
+  let stateMonth = inRange(now0.getFullYear()) ? (now0.getMonth()+1) : 1;
+
+  // ✅ Diario: giorno per giorno
+  const JOURNAL_KEY = "scout_daily_journal_v1";
+  let journalDate = new Date();
+
+  function journalIso(d){
+    return ymd(d.getFullYear(), d.getMonth()+1, d.getDate());
   }
+
+  function loadJournalDay(d){
+    const key = journalIso(d);
+    journalDayLabel.textContent = "🗓️ " + d.toLocaleDateString("it-IT",{weekday:"long", day:"2-digit", month:"long", year:"numeric"});
+    let data = {};
+    try{ data = JSON.parse(localStorage.getItem(JOURNAL_KEY) || "{}"); }catch(e){}
+    journal.value = data[key] || "";
+    journalStatus.textContent = data[key] ? "✅ Testo caricato (salvato sul tuo dispositivo)" : "✍️ Scrivi il pensiero di questo giorno…";
+  }
+
+  let saveTimer = null;
+  function scheduleJournalSave(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(()=>{
+      const key = journalIso(journalDate);
+      let data = {};
+      try{ data = JSON.parse(localStorage.getItem(JOURNAL_KEY) || "{}"); }catch(e){}
+      data[key] = journal.value;
+      localStorage.setItem(JOURNAL_KEY, JSON.stringify(data));
+      const t = new Date();
+      journalStatus.textContent = "💾 Salvato: " + t.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"});
+    }, 200);
+  }
+  journal.addEventListener("input", scheduleJournalSave);
+
+  jPrev.addEventListener("click", ()=>{
+    journalDate = new Date(journalDate.getFullYear(), journalDate.getMonth(), journalDate.getDate()-1);
+    loadJournalDay(journalDate);
+  });
+  jNext.addEventListener("click", ()=>{
+    journalDate = new Date(journalDate.getFullYear(), journalDate.getMonth(), journalDate.getDate()+1);
+    loadJournalDay(journalDate);
+  });
 
   function birthdaysByKeyForCurrentView(){
     const list = getAllBirthdaysForYear(stateYear);
@@ -1327,7 +1476,8 @@
   function markerForDate(key, eventMap){
     const evs = eventMap.get(key);
     if(!evs || !evs.length) return "";
-    return evs.slice(0,2).map(x=>x.icon).join("");
+    const icons = evs.slice(0,2).map(x=>x.icon).join("");
+    return icons;
   }
 
   function renderDOW(){
@@ -1353,32 +1503,27 @@
 
     const offset = firstDayOffset(stateYear, stateMonth);
     const dim = daysInMonth(stateYear, stateMonth);
-
     const eventMap = birthdaysByKeyForCurrentView();
 
-    // ✅ celle vuote iniziali (solo per allineare, senza numeri)
+    let idx = 0;
+
+    // ✅ blanks (invisibili): mantengono l’allineamento senza mostrare “celle trasparenti”
     for(let i=0;i<offset;i++){
       const blank = document.createElement("div");
       blank.className = "day blank";
+      blank.style.setProperty("--i", idx++);
       calEl.appendChild(blank);
     }
 
-    // giorni del mese (solo mese corrente)
     for(let d=1; d<=dim; d++){
       const key = ymd(stateYear, stateMonth, d);
-      calEl.appendChild(makeDayCell(stateYear, stateMonth, d, key, todayKey, eventMap));
-    }
-
-    // ✅ celle vuote finali per completare la riga (senza numeri)
-    const totalCells = offset + dim;
-    const tail = (7 - (totalCells % 7)) % 7;
-    for(let i=0;i<tail;i++){
-      const blank = document.createElement("div");
-      blank.className = "day blank";
-      calEl.appendChild(blank);
+      const cell = makeDayCell(stateYear, stateMonth, d, key, todayKey, eventMap);
+      cell.style.setProperty("--i", idx++);
+      calEl.appendChild(cell);
     }
 
     renderMonthEventsList(eventMap);
+    renderCountdown(); // aggiorna anche le card
   }
 
   function makeDayCell(y,m,d,key,todayKey,eventMap){
@@ -1412,15 +1557,16 @@
     monthEventsBox.innerHTML = "";
 
     const dim = daysInMonth(stateYear, stateMonth);
-    const items = [];
+    const keys = [];
+    for(let d=1; d<=dim; d++) keys.push(ymd(stateYear, stateMonth, d));
 
-    for(let d=1; d<=dim; d++){
-      const k = ymd(stateYear, stateMonth, d);
+    const items = [];
+    keys.forEach(k=>{
       const evs = eventMap.get(k);
       if(evs && evs.length){
         evs.forEach(e => items.push({ key:k, e }));
       }
-    }
+    });
 
     if(items.length === 0){
       const line = document.createElement("div");
@@ -1433,13 +1579,12 @@
     items.forEach(item=>{
       const dt = dateToObj(item.key);
       const label = dt.toLocaleDateString("it-IT",{day:"2-digit", month:"long"});
-      const ageTxt = (item.e.age !== null) ? ` · compie <b>${item.e.age}</b> anni` : "";
       const line = document.createElement("div");
       line.className="monthEventsLine";
       line.innerHTML = `
         <div class="monthEventsIco">🎂</div>
         <div class="monthEventsTxt">
-          <b>${item.e.name}</b>${ageTxt}
+          <b>${item.e.name}</b>
           <div class="monthEventsSub">📅 ${label}</div>
         </div>
       `;
@@ -1494,10 +1639,9 @@
 
     list.slice(0,10).forEach(e=>{
       const when = e.dateObj.toLocaleDateString("it-IT", {day:"2-digit", month:"long", year:"numeric"});
-      const ageTxt = (e.age !== null) ? ` (compie ${e.age})` : "";
       const msg = (e.diff===0)
-        ? `🎉 È oggi il compleanno di ${e.name}${ageTxt}!`
-        : `Tra ${e.diff} giorni è il compleanno di ${e.name}${ageTxt} (${when}).`;
+        ? `🎉 È oggi il compleanno di ${e.name}!`
+        : `Tra ${e.diff} giorni è il compleanno di ${e.name} (${when}).`;
 
       const card = document.createElement("div");
       card.className="card";
@@ -1539,6 +1683,7 @@
   }
 
   function canNotify(){ return ("Notification" in window); }
+
   async function ensureNotificationPermission(){
     if(!canNotify()) return false;
     if(Notification.permission === "granted") return true;
@@ -1546,13 +1691,14 @@
     const res = await Notification.requestPermission();
     return res === "granted";
   }
+
   function pushWebNotification(title, body){
     if(!canNotify()) return;
     if(Notification.permission !== "granted") return;
     try{ new Notification(title, { body }); }catch(e){}
   }
 
-  const NOTIF_KEY = "birthday_notifs_9am_v2";
+  const NOTIF_KEY = "birthday_notifs_9am_v1";
   const ALERT_DAYS = new Set([10, 5, 0]);
 
   function loadNotifState(){
@@ -1593,14 +1739,13 @@
       if(state[dedupeKey]) return;
 
       const when = e.dateObj.toLocaleDateString("it-IT", {day:"2-digit", month:"long", year:"numeric"});
-      const ageTxt = (e.age !== null) ? ` (compie ${e.age})` : "";
 
       let title = "🎂 Compleanno in arrivo";
-      let msg = `Tra ${e.diff} giorni è il compleanno di ${e.name}${ageTxt} (${when}).`;
+      let msg = `Tra ${e.diff} giorni è il compleanno di ${e.name} (${when}).`;
 
-      if(e.diff === 10) msg = `⏳ Tra meno di 10 giorni è il compleanno di ${e.name}${ageTxt} (${when}).`;
-      if(e.diff === 5)  msg = `⚠️ Tra 5 giorni è il compleanno di ${e.name}${ageTxt} (${when}).`;
-      if(e.diff === 0){ title = "🎉 È oggi!"; msg = `Auguri ${e.name}${ageTxt}! (${when})`; }
+      if(e.diff === 10) msg = `⏳ Tra meno di 10 giorni è il compleanno di ${e.name} (${when}).`;
+      if(e.diff === 5)  msg = `⚠️ Tra 5 giorni è il compleanno di ${e.name} (${when}).`;
+      if(e.diff === 0){ title = "🎉 È oggi!"; msg = `Auguri ${e.name}! (${when})`; }
 
       showToast({ icon:"🎂", title, message: msg, onClick: ()=> jumpToDate(e.date) });
       pushWebNotification(title, msg);
@@ -1611,103 +1756,8 @@
     saveNotifState(state);
   }
 
-  // ✅ PENSIERI GIORNALIERI (uno per ogni data)
-  const THOUGHTS_KEY = "scout_daily_thoughts_v1";
-  function loadThoughts(){
-    try{ return JSON.parse(localStorage.getItem(THOUGHTS_KEY) || "{}"); }
-    catch{ return {}; }
-  }
-  function saveThoughts(obj){
-    localStorage.setItem(THOUGHTS_KEY, JSON.stringify(obj));
-  }
-
-  function isoFromDate(d){
-    return ymd(d.getFullYear(), d.getMonth()+1, d.getDate());
-  }
-
-  let thoughtCursor = new Date(); // giorno selezionato nella sezione pensieri
-  function setThoughtCursorToToday(){ thoughtCursor = new Date(); }
-
-  function renderThoughtUI(){
-    const iso = isoFromDate(thoughtCursor);
-    const label = thoughtCursor.toLocaleDateString("it-IT",{weekday:"long", day:"2-digit", month:"long", year:"numeric"});
-    thoughtDateEl.textContent = "📅 " + label;
-
-    const all = loadThoughts();
-    journal.value = all[iso] || "";
-    journalStatus.textContent = all[iso]
-      ? "✅ Pensiero caricato (salvato sul dispositivo)"
-      : "✍️ Scrivi il pensiero di questo giorno…";
-
-    renderThoughtList();
-  }
-
-  let thoughtSaveTimer = null;
-  function scheduleThoughtSave(){
-    clearTimeout(thoughtSaveTimer);
-    thoughtSaveTimer = setTimeout(()=>{
-      const iso = isoFromDate(thoughtCursor);
-      const all = loadThoughts();
-
-      const txt = journal.value.trim();
-      if(txt){
-        all[iso] = journal.value;
-      } else {
-        delete all[iso];
-      }
-      saveThoughts(all);
-
-      const t = new Date();
-      journalStatus.textContent = "💾 Salvato: " + t.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"});
-      renderThoughtList();
-    }, 220);
-  }
-  journal.addEventListener("input", scheduleThoughtSave);
-
-  function renderThoughtList(){
-    const all = loadThoughts();
-    const keys = Object.keys(all).sort((a,b)=> b.localeCompare(a)); // ultimi prima
-    const last = keys.slice(0,7);
-
-    thoughtListEl.innerHTML = "";
-    if(last.length === 0){
-      const box = document.createElement("div");
-      box.className = "thoughtItem";
-      box.innerHTML = `<b>📌 Nessun pensiero salvato</b><p>Scrivi qualcosa e verrà salvato automaticamente.</p>`;
-      thoughtListEl.appendChild(box);
-      return;
-    }
-
-    last.forEach(k=>{
-      const dt = dateToObj(k);
-      const label = dt.toLocaleDateString("it-IT",{day:"2-digit", month:"long", year:"numeric"});
-      const box = document.createElement("div");
-      box.className = "thoughtItem";
-      box.innerHTML = `<b>${label}</b><p>${all[k]}</p>`;
-      box.style.cursor = "pointer";
-      box.addEventListener("click", ()=>{
-        thoughtCursor = dt;
-        renderThoughtUI();
-      });
-      thoughtListEl.appendChild(box);
-    });
-  }
-
-  prevThoughtBtn.addEventListener("click", ()=>{
-    thoughtCursor = new Date(thoughtCursor.getFullYear(), thoughtCursor.getMonth(), thoughtCursor.getDate()-1);
-    renderThoughtUI();
-  });
-  nextThoughtBtn.addEventListener("click", ()=>{
-    thoughtCursor = new Date(thoughtCursor.getFullYear(), thoughtCursor.getMonth(), thoughtCursor.getDate()+1);
-    renderThoughtUI();
-  });
-  todayThoughtBtn.addEventListener("click", ()=>{
-    setThoughtCursorToToday();
-    renderThoughtUI();
-  });
-
-  // lightbox + gallery
   function isVideo(file){ return file.toLowerCase().endsWith(".mp4"); }
+
   function openLightbox(file, titleOverride=null){
     lbTitle.textContent = titleOverride || file;
     lbMediaHost.innerHTML = "";
@@ -1732,15 +1782,16 @@
 
     lightbox.classList.add("show");
   }
+
   function closeLightbox(){
     lightbox.classList.remove("show");
     lbMediaHost.innerHTML = "";
   }
+
   lbClose.addEventListener("click", closeLightbox);
   lightbox.addEventListener("click",(e)=>{ if(e.target===lightbox) closeLightbox(); });
   window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeLightbox(); });
 
-  // nodo del giorno
   let currentKnot = null;
   function setKnotOfDay(){
     const now = new Date();
@@ -1764,13 +1815,13 @@
       `;
     }
   }
+
   knotImg.addEventListener("click", ()=>{
     if(currentKnot && currentKnot.img){
       openLightbox(currentKnot.img, currentKnot.name);
     }
   });
 
-  // virtù del giorno
   function setVirtueOfDay(){
     const now = new Date();
     const seed = (now.getFullYear()*10000) + ((now.getMonth()+1)*100) + now.getDate();
@@ -1784,7 +1835,7 @@
     needle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
   }
 
-  // accordion
+  // Accordion toggle
   document.querySelectorAll(".accBtn[data-acc]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const id = btn.getAttribute("data-acc");
@@ -1793,12 +1844,22 @@
     });
   });
 
-  // laws modal
-  lawsBtn.addEventListener("click", ()=> lawsBackdrop.classList.add("show"));
-  lawsClose.addEventListener("click", ()=> lawsBackdrop.classList.remove("show"));
-  lawsBackdrop.addEventListener("click", (e)=>{ if(e.target===lawsBackdrop) lawsBackdrop.classList.remove("show"); });
+  // Legge scout modal (fix mobile)
+  function openLaws(){
+    lawsBackdrop.classList.add("show");
+    document.body.style.overflow = "hidden";
+    requestAnimationFrame(()=>{ lawsScroll.scrollTop = 0; });
+  }
+  function closeLaws(){
+    lawsBackdrop.classList.remove("show");
+    document.body.style.overflow = "";
+  }
 
-  // nav month
+  lawsBtn.addEventListener("click", openLaws);
+  lawsClose.addEventListener("click", closeLaws);
+  lawsBackdrop.addEventListener("click", (e)=>{ if(e.target===lawsBackdrop) closeLaws(); });
+  window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeLaws(); });
+
   document.getElementById("prev").addEventListener("click", ()=>{
     stateMonth--;
     if(stateMonth<1){ stateMonth=12; stateYear--; }
@@ -1817,15 +1878,12 @@
   });
   document.getElementById("todayBtn").addEventListener("click", ()=>{
     const t = new Date();
-    if(t.getFullYear()<YEAR_MIN || t.getFullYear()>YEAR_MAX){
-      stateYear=YEAR_MIN; stateMonth=1;
-    } else {
-      stateYear=t.getFullYear(); stateMonth=t.getMonth()+1;
-    }
+    if(t.getFullYear()<YEAR_MIN || t.getFullYear()>YEAR_MAX){ stateYear=YEAR_MIN; stateMonth=1; }
+    else { stateYear=t.getFullYear(); stateMonth=t.getMonth()+1; }
     renderCalendar();
   });
 
-  // swipe month
+  // Swipe mese su telefono
   const stage = document.getElementById("stage");
   let touchStartX = null;
   stage.addEventListener("touchstart",(e)=>{ touchStartX = e.touches[0].clientX; }, {passive:true});
@@ -1859,7 +1917,6 @@
     }
   }
 
-  // gallery media list
   const MEDIA = [
     "1e38146e-d6d7-4fdd-bcb2-8a6b0887210e.jpg",
     "3e799a83-3336-47db-a2eb-bc55540677ba.jpg",
@@ -1905,17 +1962,29 @@
     });
   }
 
+  // ✅ Tutto chiuso all’avvio: rimuove “open” da qualsiasi accItem
+  function closeAllPanels(){
+    document.querySelectorAll(".accItem.open").forEach(x=> x.classList.remove("open"));
+    // anche foto chiusa
+    try{ document.getElementById("photoWin").open = false; }catch(e){}
+    // e modal legge chiusa
+    lawsBackdrop.classList.remove("show");
+  }
+
   async function doEnter(){
     intro.classList.add("hide");
     app.style.opacity = "1";
     app.style.transform = "translateY(0)";
-
+    closeAllPanels();
     await ensureNotificationPermission();
     checkBirthdayAlertsAt9();
     try{ localStorage.setItem("scout_entered_v1","1"); }catch(e){}
   }
 
-  // init
+  function initAmbient(){
+    // (qui lascio il tuo “ambiente” invariato: stelle, foglie, lucciole ecc.)
+  }
+
   (function init(){
     renderDOW();
     renderCalendar();
@@ -1925,35 +1994,17 @@
     buildTimeline();
     setTheme();
     renderGallery();
-
-    setThoughtCursorToToday();
-    renderThoughtUI();
+    loadJournalDay(journalDate);
+    closeAllPanels();
 
     checkBirthdayAlertsAt9();
 
-    // ogni minuto aggiorno: tema, countdown, nodi/virtù, avvisi 9:00, pensieri UI se cambia giorno
-    let lastIso = todayIso();
     setInterval(()=>{
       setTheme();
       renderCountdown();
       setKnotOfDay();
       setVirtueOfDay();
       checkBirthdayAlertsAt9();
-
-      const nowIso = todayIso();
-      if(nowIso !== lastIso){
-        lastIso = nowIso;
-        // aggiorno calendario al mese corrente se sono sul mese vecchio
-        const t = new Date();
-        if(inRange(t.getFullYear())){
-          // se l’utente era sul mese corrente lo aggiorno, altrimenti non lo forzo
-          // (così se sta guardando Marzo, non lo butto a Febbraio)
-          // però se era sul mese “automatico”, resto coerente
-        }
-        // aggiorno pensieri: passo al nuovo giorno
-        setThoughtCursorToToday();
-        renderThoughtUI();
-      }
     }, 60000);
 
     enterBtn.addEventListener("click", doEnter);
